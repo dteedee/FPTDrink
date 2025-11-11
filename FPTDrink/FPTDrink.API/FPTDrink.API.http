@@ -1,0 +1,6 @@
+@FPTDrink.API_HostAddress = http://localhost:5213
+
+GET {{FPTDrink.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

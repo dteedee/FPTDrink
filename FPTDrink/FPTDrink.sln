@@ -1,0 +1,43 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36212.18 d17.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FPTDrink.API", "FPTDrink.API\FPTDrink.API.csproj", "{4AE3518F-1DDB-4989-A982-C4CC75BED8A6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FPTDrink.Core", "FPTDrink.Core\FPTDrink.Core.csproj", "{10607721-C2DB-47FB-949B-45546214961D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FPTDrink.Infrastructure", "FPTDrink.Infrastructure\FPTDrink.Infrastructure.csproj", "{8826F88C-2803-4C00-A4DD-F1AE472FC5AF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FPTDrink.Web", "FPTDrink.Web\FPTDrink.Web.csproj", "{0C32163E-EEE7-4EDC-83F0-F57B5590AA72}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4AE3518F-1DDB-4989-A982-C4CC75BED8A6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4AE3518F-1DDB-4989-A982-C4CC75BED8A6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4AE3518F-1DDB-4989-A982-C4CC75BED8A6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4AE3518F-1DDB-4989-A982-C4CC75BED8A6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{10607721-C2DB-47FB-949B-45546214961D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{10607721-C2DB-47FB-949B-45546214961D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{10607721-C2DB-47FB-949B-45546214961D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{10607721-C2DB-47FB-949B-45546214961D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8826F88C-2803-4C00-A4DD-F1AE472FC5AF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8826F88C-2803-4C00-A4DD-F1AE472FC5AF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8826F88C-2803-4C00-A4DD-F1AE472FC5AF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8826F88C-2803-4C00-A4DD-F1AE472FC5AF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0C32163E-EEE7-4EDC-83F0-F57B5590AA72}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0C32163E-EEE7-4EDC-83F0-F57B5590AA72}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0C32163E-EEE7-4EDC-83F0-F57B5590AA72}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0C32163E-EEE7-4EDC-83F0-F57B5590AA72}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {F3A88B20-CEE2-4911-BA8E-25C8308C1325}
+	EndGlobalSection
+EndGlobal
