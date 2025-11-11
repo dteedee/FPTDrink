@@ -89,7 +89,162 @@
             transform: translateY(-2px);
             box-shadow: 0 6px 20px rgba(212, 165, 116, 0.5);
         }
+
+        .cart-section .quantity-control {
+            display: inline-flex;
+            align-items: center;
+            border-radius: 999px;
+            background: rgba(212, 165, 116, 0.1);
+            border: 1px solid rgba(212, 165, 116, 0.3);
+            padding: 4px;
+            gap: 4px;
+        }
+
+        .cart-section .quantity-control button {
+            border: none;
+            background: transparent;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #2d1b0e;
+            transition: all 0.3s ease;
+        }
+
+        .cart-section .quantity-control button:hover:not(:disabled) {
+            background: rgba(212, 165, 116, 0.2);
+            color: #1a0f08;
+        }
+
+        .cart-section .quantity-control button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .cart-section .quantity-control input {
+            width: 48px;
+            text-align: center;
+            border: none;
+            background: transparent;
+            font-weight: 600;
+            color: #2d1b0e;
+            -moz-appearance: textfield;
+        }
+
+        .cart-section .quantity-control input::-webkit-outer-spin-button,
+        .cart-section .quantity-control input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        .cart-section .quantity-control input:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            background: rgba(0, 0, 0, 0.05);
+        }
     </style>
+}
+
+@section Scripts {
+    <script>
+        (function() {
+            const quantityContainers = document.querySelectorAll('[data-quantity]');
+            
+            quantityContainers.forEach(function (container) {
+                const input = container.querySelector('input[name="quantity"]');
+                if (!input) return;
+                
+                const btnMinus = container.querySelector('.btn-minus');
+                const btnPlus = container.querySelector('.btn-plus');
+                const form = container.closest('form');
+                
+                if (!btnMinus || !btnPlus || !form) return;
+                
+                const maxQuantity = parseInt(container.getAttribute('data-max') || '0', 10);
+                const stock = parseInt(container.getAttribute('data-stock') || '0', 10);
+                const productId = container.getAttribute('data-product-id');
+                const stockDisplay = document.querySelector(`[data-stock-display="${productId}"] .stock-value`);
+                const stockBadge = document.querySelector(`[data-stock-display="${productId}"]`);
+                
+                const newBtnMinus = btnMinus.cloneNode(true);
+                const newBtnPlus = btnPlus.cloneNode(true);
+                btnMinus.parentNode.replaceChild(newBtnMinus, btnMinus);
+                btnPlus.parentNode.replaceChild(newBtnPlus, btnPlus);
+                
+                function updateStockDisplay(newQuantity) {
+                    if (stockDisplay && stockBadge) {
+                        const newStock = Math.max(0, maxQuantity - newQuantity);
+                        stockDisplay.textContent = newStock;
+                        if (newStock > 0) {
+                            stockBadge.classList.remove('bg-danger');
+                            stockBadge.classList.add('bg-success');
+                        } else {
+                            stockBadge.classList.remove('bg-success');
+                            stockBadge.classList.add('bg-danger');
+                        }
+                    }
+                }
+                
+                function updateButtons() {
+                    const current = parseInt(input.value || '1', 10);
+                    newBtnMinus.disabled = current <= 1;
+                    const availableStock = maxQuantity - current;
+                    newBtnPlus.disabled = current >= maxQuantity || availableStock <= 0;
+                    updateStockDisplay(current);
+                }
+                
+                updateButtons();
+                
+                newBtnMinus.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    e.stopImmediatePropagation();
+                    
+                    if (input.disabled || stock === 0) return;
+                    
+                    const current = parseInt(input.value || '1', 10);
+                    const newValue = Math.max(1, current - 1);
+                    input.value = newValue;
+                    updateButtons();
+                    form.submit();
+                }, true);
+                
+                newBtnPlus.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    e.stopImmediatePropagation();
+                    
+                    if (input.disabled || stock === 0) return;
+                    
+                    const current = parseInt(input.value || '1', 10);
+                    const newValue = Math.min(maxQuantity, current + 1);
+                    input.value = newValue;
+                    updateButtons();
+                    form.submit();
+                }, true);
+                
+                input.addEventListener('keydown', function (e) {
+                    if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+                        e.preventDefault();
+                    }
+                });
+                
+                input.addEventListener('change', function() {
+                    if (stock === 0) {
+                        this.value = 1;
+                        return;
+                    }
+                    const val = parseInt(this.value || '1', 10);
+                    if (val < 1) this.value = 1;
+                    if (val > maxQuantity) this.value = maxQuantity;
+                    updateButtons();
+                    form.submit();
+                });
+            });
+        })();
+    </script>
 }
 
 <section class="products-section cart-section">
@@ -114,7 +269,8 @@ else
 				<tr>
 							<th style="width:72px" class="border-0"></th>
 							<th class="border-0" style="color: #2d1b0e; font-weight: 700;">Sản phẩm</th>
-							<th style="width:120px" class="text-end border-0" style="color: #2d1b0e; font-weight: 700;">Giá</th>
+							<th style="width:120px" class="text-start border-0" style="color: #2d1b0e; font-weight: 700;">Giá</th>
+							<th style="width:150px" class="text-center border-0" style="color: #2d1b0e; font-weight: 700;">Số lượng tồn kho</th>
 							<th style="width:160px" class="text-center border-0" style="color: #2d1b0e; font-weight: 700;">Số lượng</th>
 							<th style="width:140px" class="text-end border-0" style="color: #2d1b0e; font-weight: 700;">Thành tiền</th>
 							<th style="width:80px" class="border-0"></th>
@@ -132,29 +288,35 @@ else
 						<td>
 									<div class="fw-bold" style="color: #2d1b0e;">@item.ProductName</div>
 								</td>
-								<td class="text-end">
-									<span class="text-primary fw-bold">@string.Format("{0:N0} ₫", item.Price)</span>
+								<td class="text-start">
+									<span class="fw-bold" style="color: #2d1b0e;">@string.Format("{0:N0} ₫", item.Price)</span>
 						</td>
 						<td class="text-center">
-							<form class="d-inline-block" method="post" asp-action="Update">
+							<span class="badge @(item.TonKho > 0 ? "bg-success" : "bg-danger") px-3 py-2" style="font-size: 0.9rem; font-weight: 600;" data-stock-display="@item.ProductId">
+								<i class="bx bx-package me-1"></i><span class="stock-value">@item.TonKho</span>
+							</span>
+						</td>
+						<td class="text-center">
+							<form class="d-inline-block" method="post" asp-action="Update" id="update-form-@item.ProductId">
 								<input type="hidden" name="productId" value="@item.ProductId" />
-								<div class="input-group input-group-sm" style="max-width: 140px;">
-											<input class="form-control text-center" 
-											       name="quantity" 
-											       type="number" 
-											       min="0" 
-											       value="@item.Quantity"
-											       style="border: 1px solid rgba(212, 165, 116, 0.3); border-radius: 8px 0 0 8px;" />
-											<button class="btn btn-outline-primary" 
-											        type="submit"
-											        style="border-radius: 0 8px 8px 0; border-left: none;">
-												<i class="bx bx-check"></i>
-											</button>
+								@{
+									var actualStock = item.TonKho + item.Quantity;
+								}
+								<div class="quantity-control" data-quantity data-max="@actualStock" data-stock="@actualStock" data-product-id="@item.ProductId">
+									<button type="button" class="btn-minus" aria-label="Giảm" @(item.Quantity <= 1 ? "disabled" : "")><i class="bx bx-minus"></i></button>
+									<input type="number" 
+									       name="quantity" 
+									       value="@item.Quantity" 
+									       min="1" 
+									       max="@actualStock"
+									       class="cart-quantity-input"
+									       data-product-id="@item.ProductId" />
+									<button type="button" class="btn-plus" aria-label="Tăng" @(item.Quantity >= actualStock ? "disabled" : "")><i class="bx bx-plus"></i></button>
 								</div>
 							</form>
 						</td>
 								<td class="text-end">
-									<span class="text-primary fw-bold">@string.Format("{0:N0} ₫", item.TotalPrice)</span>
+									<span class="fw-bold" style="color: #2d1b0e;">@string.Format("{0:N0} ₫", item.TotalPrice)</span>
 								</td>
 						<td class="text-end">
 							<form method="post" asp-action="Remove">
@@ -169,7 +331,7 @@ else
 			</tbody>
 					<tfoot style="background: linear-gradient(135deg, rgba(212, 165, 116, 0.1) 0%, rgba(139, 90, 43, 0.05) 100%);">
 				<tr>
-							<td colspan="4" class="text-end fw-bold border-0" style="color: #2d1b0e; font-size: 1.1rem;">Tổng cộng</td>
+							<td colspan="5" class="text-end fw-bold border-0" style="color: #2d1b0e; font-size: 1.1rem;">Tổng cộng</td>
 							<td class="text-end fw-bold border-0" style="color: #d4a574; font-size: 1.25rem;">@string.Format("{0:N0} ₫", total)</td>
 							<td class="border-0"></td>
 				</tr>
