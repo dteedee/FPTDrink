@@ -1,0 +1,24 @@
+@model List<FPTDrink.Web.ViewComponents.CategoriesMenuViewComponent.CategoryItem>
+<li class="nav-item dropdown">
+	<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+		Danh mục
+	</a>
+	<ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+		@if (Model != null && Model.Count > 0)
+		{
+			foreach (var item in Model)
+			{
+				<li>
+					<a class="dropdown-item" href="@Url.Action("ProductCategory", "Products", new { alias = item.Alias, id = item.Id })">
+						@item.Title
+					</a>
+				</li>
+			}
+		}
+		else
+		{
+			<li><span class="dropdown-item-text text-muted">Chưa có danh mục</span></li>
+		}
+	</ul>
+</li>
+

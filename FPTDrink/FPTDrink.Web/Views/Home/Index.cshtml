@@ -1,8 +1,329 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@model FPTDrink.Web.ViewModels.HomeBlocksViewModel
+@{
+    ViewData["Title"] = "Trang chủ";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<!-- ========== BODY: HERO BANNER ========== -->
+<section class="hero-banner mb-5">
+    <div class="position-relative rounded-4 overflow-hidden shadow-lg" style="height: 450px;">
+        <div id="homeCarousel" class="carousel slide carousel-fade h-100" data-bs-ride="carousel" data-bs-interval="5000">
+            <div class="carousel-inner h-100">
+                <div class="carousel-item active h-100">
+                    <img src="~/images/mot.jpg" class="d-block w-100 h-100" alt="Banner FPTDrink" style="object-fit: cover;" loading="eager" />
+                    <div class="carousel-caption d-flex flex-column justify-content-center h-100 text-start px-4">
+                        <div class="bg-dark bg-opacity-80 p-4 p-md-5 rounded-4" style="max-width: 600px;">
+                            <h1 class="display-4 fw-bold text-white mb-3">Thức uống ngon, giao nhanh!</h1>
+                            <p class="lead text-white mb-4 fs-5">Khám phá các sản phẩm nổi bật, ưu đãi và mới nhất hôm nay.</p>
+                            <a class="btn btn-light btn-lg px-4 py-3 fw-semibold" asp-controller="Menu" asp-action="Index">
+                                <i class="bx bx-shopping-bag me-2"></i>Mua ngay
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="carousel-item h-100">
+                    <img src="~/images/hai.jpg" class="d-block w-100 h-100" alt="Banner FPTDrink 2" style="object-fit: cover;" loading="lazy" />
+                    <div class="carousel-caption d-flex flex-column justify-content-center h-100 text-start px-4">
+                        <div class="bg-dark bg-opacity-80 p-4 p-md-5 rounded-4" style="max-width: 600px;">
+                            <h1 class="display-4 fw-bold text-white mb-3">Combo ưu đãi đặc biệt</h1>
+                            <p class="lead text-white mb-4 fs-5">Tiết kiệm đến 30% với các combo hấp dẫn dành cho sinh viên FPT.</p>
+                            <a class="btn btn-light btn-lg px-4 py-3 fw-semibold" asp-controller="Menu" asp-action="Index">
+                                <i class="bx bx-food-menu me-2"></i>Xem thực đơn
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#homeCarousel" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#homeCarousel" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+            </button>
+        </div>
+    </div>
+</section>
+
+<!-- ========== BODY: FEATURED PRODUCTS ========== -->
+<section class="featured-section py-5">
+    <div class="section-header mb-4">
+        <div class="d-flex align-items-center justify-content-between mb-3">
+            <h2 class="h3 fw-bold mb-0">
+                <i class="bx bx-star text-warning me-2"></i>Nổi bật
+            </h2>
+            <a class="btn btn-outline-primary btn-sm" asp-controller="Products" asp-action="Index">
+                Xem tất cả <i class="bx bx-chevron-right ms-1"></i>
+            </a>
+        </div>
+        <p class="text-muted mb-0">Các sản phẩm được yêu thích nhất</p>
+    </div>
+    <div class="row g-4">
+        @foreach (var p in Model.Featured.Take(8))
+        {
+            <div class="col-6 col-md-3">
+                <div class="product-card-home card h-100 shadow-sm position-relative overflow-hidden border-0">
+                    @if (p.HasDiscount)
+                    {
+                        <span class="badge bg-danger position-absolute top-0 start-0 m-2 px-3 py-2 fw-bold" style="z-index: 10;">-@p.DiscountPercent%</span>
+                    }
+                    <a asp-controller="Products" asp-action="Detail" asp-route-id="@p.Id" class="text-decoration-none">
+                        <img class="card-img-top object-fit-cover" style="height:200px" 
+                             src="@(string.IsNullOrWhiteSpace(p.Image) ? Url.Content("~/images/placeholder.png") : p.Image)" 
+                             alt="@p.Title"
+                             loading="lazy"
+                             width="300"
+                             height="200" />
+                    </a>
+                    <div class="card-body d-flex flex-column p-3">
+                        <h3 class="h6 card-title fw-semibold mb-2 text-truncate-2" style="min-height: 2.5rem;">@p.Title</h3>
+                        <div class="mt-auto">
+                            @if (p.HasDiscount)
+                            {
+                                <div class="mb-2">
+                                    <span class="text-danger fw-bold fs-5">@string.Format("{0:N0} ₫", p.GiaHienThi)</span>
+                                    <small class="text-muted text-decoration-line-through ms-2">@string.Format("{0:N0} ₫", p.OriginalPrice)</small>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="fw-bold fs-5 text-primary mb-2">@string.Format("{0:N0} ₫", p.GiaHienThi)</div>
+                            }
+                            <a class="btn btn-primary w-100 fw-semibold" asp-controller="Products" asp-action="Detail" asp-route-id="@p.Id">
+                                <i class="bx bx-show me-1"></i>Xem chi tiết
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</section>
+
+<!-- ========== BODY: NEWEST PRODUCTS ========== -->
+<section class="newest-section py-5 bg-light">
+    <div class="section-header mb-4">
+        <div class="d-flex align-items-center justify-content-between mb-3">
+            <h2 class="h3 fw-bold mb-0">
+                <i class="bx bx-time text-info me-2"></i>Mới nhất
+            </h2>
+            <a class="btn btn-outline-primary btn-sm" asp-controller="Products" asp-action="Index">
+                Xem tất cả <i class="bx bx-chevron-right ms-1"></i>
+            </a>
+        </div>
+        <p class="text-muted mb-0">Những sản phẩm vừa được thêm vào</p>
+    </div>
+    <div class="row g-4">
+        @foreach (var p in Model.Newest.Take(8))
+        {
+            <div class="col-6 col-md-3">
+                <div class="product-card-home card h-100 shadow-sm position-relative overflow-hidden border-0 bg-white">
+                    @if (p.HasDiscount)
+                    {
+                        <span class="badge bg-danger position-absolute top-0 start-0 m-2 px-3 py-2 fw-bold" style="z-index: 10;">-@p.DiscountPercent%</span>
+                    }
+                    <a asp-controller="Products" asp-action="Detail" asp-route-id="@p.Id" class="text-decoration-none">
+                        <img class="card-img-top object-fit-cover" style="height:200px" 
+                             src="@(string.IsNullOrWhiteSpace(p.Image) ? Url.Content("~/images/placeholder.png") : p.Image)" 
+                             alt="@p.Title"
+                             loading="lazy"
+                             width="300"
+                             height="200" />
+                    </a>
+                    <div class="card-body d-flex flex-column p-3">
+                        <h3 class="h6 card-title fw-semibold mb-2 text-truncate-2" style="min-height: 2.5rem;">@p.Title</h3>
+                        <div class="mt-auto">
+                            @if (p.HasDiscount)
+                            {
+                                <div class="mb-2">
+                                    <span class="text-danger fw-bold fs-5">@string.Format("{0:N0} ₫", p.GiaHienThi)</span>
+                                    <small class="text-muted text-decoration-line-through ms-2">@string.Format("{0:N0} ₫", p.OriginalPrice)</small>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="fw-bold fs-5 text-primary mb-2">@string.Format("{0:N0} ₫", p.GiaHienThi)</div>
+                            }
+                            <a class="btn btn-outline-primary w-100 fw-semibold" asp-controller="Products" asp-action="Detail" asp-route-id="@p.Id">
+                                <i class="bx bx-show me-1"></i>Xem chi tiết
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</section>
+
+<!-- ========== BODY: BEST SELLERS ========== -->
+<section class="bestseller-section py-5">
+    <div class="section-header mb-4">
+        <div class="d-flex align-items-center justify-content-between mb-3">
+            <h2 class="h3 fw-bold mb-0">
+                <i class="bx bx-trophy text-warning me-2"></i>Bán chạy
+            </h2>
+            <a class="btn btn-outline-primary btn-sm" asp-controller="Products" asp-action="Index">
+                Xem tất cả <i class="bx bx-chevron-right ms-1"></i>
+            </a>
+        </div>
+        <p class="text-muted mb-0">Sản phẩm được mua nhiều nhất</p>
+    </div>
+    <div class="row g-4">
+        @foreach (var p in Model.BestSale.Take(8))
+        {
+            <div class="col-6 col-md-3">
+                <div class="product-card-home card h-100 shadow-sm position-relative overflow-hidden border-0">
+                    @if (p.HasDiscount)
+                    {
+                        <span class="badge bg-danger position-absolute top-0 start-0 m-2 px-3 py-2 fw-bold" style="z-index: 10;">-@p.DiscountPercent%</span>
+                    }
+                    <a asp-controller="Products" asp-action="Detail" asp-route-id="@p.Id" class="text-decoration-none">
+                        <img class="card-img-top object-fit-cover" style="height:200px" 
+                             src="@(string.IsNullOrWhiteSpace(p.Image) ? Url.Content("~/images/placeholder.png") : p.Image)" 
+                             alt="@p.Title"
+                             loading="lazy"
+                             width="300"
+                             height="200" />
+                    </a>
+                    <div class="card-body d-flex flex-column p-3">
+                        <h3 class="h6 card-title fw-semibold mb-2 text-truncate-2" style="min-height: 2.5rem;">@p.Title</h3>
+                        <div class="mt-auto">
+                            @if (p.HasDiscount)
+                            {
+                                <div class="mb-2">
+                                    <span class="text-danger fw-bold fs-5">@string.Format("{0:N0} ₫", p.GiaHienThi)</span>
+                                    <small class="text-muted text-decoration-line-through ms-2">@string.Format("{0:N0} ₫", p.OriginalPrice)</small>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="fw-bold fs-5 text-primary mb-2">@string.Format("{0:N0} ₫", p.GiaHienThi)</div>
+                            }
+                            <a class="btn btn-outline-primary w-100 fw-semibold" asp-controller="Products" asp-action="Detail" asp-route-id="@p.Id">
+                                <i class="bx bx-show me-1"></i>Xem chi tiết
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</section>
+
+@section Styles {
+    <style>
+        /* Hero Banner */
+        .hero-banner {
+            margin-top: -1rem;
+        }
+        
+        .hero-banner .carousel-caption {
+            padding: 2rem;
+        }
+        
+        .hero-banner .carousel-caption .bg-dark {
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        /* Section Headers */
+        .section-header {
+            border-bottom: 3px solid #0d6efd;
+            padding-bottom: 1rem;
+        }
+        
+        .section-header h2 {
+            color: #212529;
+            font-size: 1.75rem;
+        }
+        
+        /* Product Cards */
+        .product-card-home {
+            transition: all 0.3s ease;
+            border-radius: 12px !important;
+        }
+        
+        .product-card-home:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15) !important;
+        }
+        
+        .product-card-home .card-img-top {
+            border-radius: 12px 12px 0 0;
+            transition: transform 0.3s ease;
+        }
+        
+        .product-card-home:hover .card-img-top {
+            transform: scale(1.08);
+        }
+        
+        .product-card-home .badge {
+            font-size: 0.85rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(220, 53, 69, 0.4);
+        }
+        
+        .product-card-home .card-title {
+            color: #212529;
+            font-size: 1rem;
+            line-height: 1.4;
+        }
+        
+        .product-card-home .btn {
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .product-card-home .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(13, 110, 253, 0.3);
+        }
+        
+        /* Section Backgrounds */
+        .featured-section {
+            background: #ffffff;
+        }
+        
+        .newest-section {
+            background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+        }
+        
+        .bestseller-section {
+            background: #ffffff;
+        }
+        
+        /* Responsive */
+        @@media (max-width: 768px) {
+            .hero-banner {
+                margin-top: 0;
+            }
+            
+            .hero-banner .carousel-caption h1 {
+                font-size: 1.5rem !important;
+            }
+            
+            .hero-banner .carousel-caption .lead {
+                font-size: 0.9rem !important;
+            }
+            
+            .section-header h2 {
+                font-size: 1.5rem;
+            }
+            
+            .product-card-home .card-img-top {
+                height: 160px !important;
+            }
+        }
+        
+        .object-fit-cover { 
+            object-fit: cover; 
+        }
+        
+        .text-truncate-2 {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+    </style>
+}

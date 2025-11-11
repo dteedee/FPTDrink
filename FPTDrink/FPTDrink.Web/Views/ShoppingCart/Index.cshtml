@@ -1,0 +1,74 @@
+@model FPTDrink.Web.ViewModels.CartViewModel
+@{
+	ViewData["Title"] = "Giỏ hàng";
+	var total = Model.Items.Sum(i => i.TotalPrice);
+}
+
+<h1 class="h4 mb-3">Giỏ hàng</h1>
+
+@if (Model.Items.Count == 0)
+{
+	<div class="alert alert-info">Giỏ hàng của bạn đang trống.</div>
+}
+else
+{
+	<div class="table-responsive">
+		<table class="table align-middle">
+			<thead>
+				<tr>
+					<th style="width:72px"></th>
+					<th>Sản phẩm</th>
+					<th style="width:120px" class="text-end">Giá</th>
+					<th style="width:160px" class="text-center">Số lượng</th>
+					<th style="width:140px" class="text-end">Thành tiền</th>
+					<th style="width:80px"></th>
+				</tr>
+			</thead>
+			<tbody>
+				@foreach (var item in Model.Items)
+				{
+					<tr>
+						<td>
+							<img src="@(string.IsNullOrWhiteSpace(item.ProductImg) ? Url.Content("~/images/placeholder.png") : item.ProductImg)" class="rounded" style="height:48px;width:48px;object-fit:cover" />
+						</td>
+						<td>
+							<div class="fw-semibold">@item.ProductName</div>
+						</td>
+						<td class="text-end">@string.Format("{0:N0} ₫", item.Price)</td>
+						<td class="text-center">
+							<form class="d-inline-block" method="post" asp-action="Update">
+								<input type="hidden" name="productId" value="@item.ProductId" />
+								<div class="input-group input-group-sm" style="max-width: 140px;">
+									<input class="form-control text-center" name="quantity" type="number" min="0" value="@item.Quantity" />
+									<button class="btn btn-outline-secondary" type="submit">Cập nhật</button>
+								</div>
+							</form>
+						</td>
+						<td class="text-end">@string.Format("{0:N0} ₫", item.TotalPrice)</td>
+						<td class="text-end">
+							<form method="post" asp-action="Remove">
+								<input type="hidden" name="productId" value="@item.ProductId" />
+								<button class="btn btn-sm btn-outline-danger" type="submit">Xoá</button>
+							</form>
+						</td>
+					</tr>
+				}
+			</tbody>
+			<tfoot>
+				<tr>
+					<td colspan="4" class="text-end fw-bold">Tổng</td>
+					<td class="text-end fw-bold">@string.Format("{0:N0} ₫", total)</td>
+					<td></td>
+				</tr>
+			</tfoot>
+		</table>
+	</div>
+	<div class="d-flex gap-2">
+		<form method="post" asp-action="Clear">
+			<button class="btn btn-outline-secondary" type="submit">Xoá giỏ hàng</button>
+		</form>
+		<a class="btn btn-primary ms-auto" asp-controller="Checkout" asp-action="Index">Thanh toán</a>
+	</div>
+}
+*** End Patch
+

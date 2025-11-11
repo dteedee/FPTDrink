@@ -1,0 +1,82 @@
+@model FPTDrink.Web.ViewModels.CheckoutViewModel
+@{
+	ViewData["Title"] = "Thanh toán";
+	var cart = (FPTDrink.Web.ViewModels.CartViewModel)ViewBag.Cart;
+	var total = cart.Items.Sum(i => i.TotalPrice);
+}
+
+<h1 class="h4 mb-3">Thanh toán</h1>
+
+<div class="row g-4">
+	<div class="col-12 col-lg-7">
+		<form method="post" class="card shadow-sm">
+			<div class="card-body">
+				<div class="row g-3">
+					<div class="col-md-6">
+						<label class="form-label">Họ tên</label>
+						<input asp-for="TenKhachHang" class="form-control" />
+						<span asp-validation-for="TenKhachHang" class="text-danger small"></span>
+					</div>
+					<div class="col-md-6">
+						<label class="form-label">Số điện thoại</label>
+						<input asp-for="SoDienThoai" class="form-control" />
+						<span asp-validation-for="SoDienThoai" class="text-danger small"></span>
+					</div>
+					<div class="col-md-12">
+						<label class="form-label">Email</label>
+						<input asp-for="Email" class="form-control" />
+						<span asp-validation-for="Email" class="text-danger small"></span>
+					</div>
+					<div class="col-md-12">
+						<label class="form-label">Địa chỉ</label>
+						<input asp-for="DiaChi" class="form-control" />
+					</div>
+					<div class="col-md-6">
+						<label class="form-label">CCCD</label>
+						<input asp-for="CCCD" class="form-control" />
+					</div>
+					<div class="col-md-6">
+						<label class="form-label">Hình thức thanh toán</label>
+						<select asp-for="TypePayment" class="form-select">
+							<option value="1">COD (Thanh toán khi nhận hàng)</option>
+							<option value="2">VNPay (Trực tuyến)</option>
+							<option value="3">Trực tiếp</option>
+						</select>
+					</div>
+				</div>
+				<div class="mt-3 text-end">
+					<button type="submit" class="btn btn-primary btn-lg">Đặt hàng</button>
+				</div>
+			</div>
+		</form>
+	</div>
+	<div class="col-12 col-lg-5">
+		<div class="card shadow-sm">
+			<div class="card-header fw-semibold">Đơn hàng</div>
+			<div class="card-body">
+				@foreach (var item in cart.Items)
+				{
+					<div class="d-flex align-items-center justify-content-between py-2 border-bottom">
+						<div class="d-flex align-items-center gap-2">
+							<img src="@(string.IsNullOrWhiteSpace(item.ProductImg) ? Url.Content("~/images/placeholder.png") : item.ProductImg)" class="rounded" style="height:40px;width:40px;object-fit:cover" />
+							<div>
+								<div class="small fw-semibold">@item.ProductName</div>
+								<div class="small text-muted">x @item.Quantity</div>
+							</div>
+						</div>
+						<div class="small fw-semibold">@string.Format("{0:N0} ₫", item.TotalPrice)</div>
+					</div>
+				}
+			</div>
+			<div class="card-footer d-flex justify-content-between">
+				<div class="fw-semibold">Tổng</div>
+				<div class="fw-bold">@string.Format("{0:N0} ₫", total)</div>
+			</div>
+		</div>
+	</div>
+}
+
+@section Scripts {
+	<partial name="_ValidationScriptsPartial" />
+}
+

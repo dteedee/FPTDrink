@@ -1,49 +1,88 @@
 ﻿<!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - FPTDrink.Web</title>
+    <meta name="description" content="@(ViewData["Description"] ?? "FPTDrink - Thức uống tươi mát, giao nhanh trong 10 phút. Đặt hàng online, nhận ngay tại ký túc xá FPT University Hòa Lạc.")" />
+    <meta name="keywords" content="đồ uống, thức uống, trà sữa, cà phê, nước ép, FPT University, Hòa Lạc" />
+    <meta name="author" content="FPTDrink" />
+    <meta name="robots" content="index, follow" />
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="@ViewData["Title"] - FPTDrink" />
+    <meta property="og:description" content="@(ViewData["Description"] ?? "Thức uống tươi mát, giao nhanh trong 10 phút")" />
+    <meta property="og:image" content="@Url.Content("~/images/og-image.jpg")" />
+    
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="@ViewData["Title"] - FPTDrink" />
+    <meta name="twitter:description" content="@(ViewData["Description"] ?? "Thức uống tươi mát, giao nhanh trong 10 phút")" />
+    
+    <title>@ViewData["Title"] - FPTDrink</title>
+    
+    <!-- Preload Critical Resources -->
+    <link rel="preload" href="~/lib/bootstrap/dist/css/bootstrap.min.css" as="style" />
+    <link rel="preload" href="~/css/site.css" as="style" />
+    
+    <!-- Stylesheets -->
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/FPTDrink.Web.styles.css" asp-append-version="true" />
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="~/favicon.ico" />
+    
+    @await RenderSectionAsync("Styles", required: false)
 </head>
 <body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">FPTDrink.Web</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
-                    </ul>
-                </div>
+    <!-- ========== HEADER ========== -->
+    @await Html.PartialAsync("_Header")
+    
+    <!-- ========== MAIN CONTENT ========== -->
+    <main id="main-content" role="main">
+        @if (ViewData["FullWidthLayout"] as bool? != true)
+        {
+            <div class="container my-4">
+                @RenderBody()
             </div>
-        </nav>
-    </header>
-    <div class="container">
-        <main role="main" class="pb-3">
+        }
+        else
+        {
             @RenderBody()
-        </main>
-    </div>
-
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2025 - FPTDrink.Web - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-        </div>
-    </footer>
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
+        }
+    </main>
+    
+    <!-- ========== FOOTER ========== -->
+    @await Html.PartialAsync("_Footer")
+    <!-- Scripts - Defer for Performance -->
+    <script src="~/lib/jquery/dist/jquery.min.js" defer></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js" defer></script>
+    <script src="~/js/site.js" asp-append-version="true" defer></script>
+    
+    <!-- Toast Notifications from TempData -->
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                if (window.FPTDrink && window.FPTDrink.Toast) {
+                    window.FPTDrink.Toast.show('@Html.Raw(TempData["SuccessMessage"])', 'success');
+                }
+            });
+        </script>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                if (window.FPTDrink && window.FPTDrink.Toast) {
+                    window.FPTDrink.Toast.show('@Html.Raw(TempData["ErrorMessage"])', 'error');
+                }
+            });
+        </script>
+    }
+    
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

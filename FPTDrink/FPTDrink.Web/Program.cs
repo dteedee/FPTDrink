@@ -3,6 +3,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore;
 using FPTDrink.Infrastructure.Extensions;
+using System.Net.Http;
+using System;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -17,6 +19,21 @@ builder.Services.AddDbContext<FPTDrink.Infrastructure.Data.FptdrinkContext>(opti
 	options.UseSqlServer(builder.Configuration.GetConnectionString("MyCnn")));
 builder.Services.AddSingleton<FPTDrink.Core.Interfaces.Services.IVisitorsOnlineTracker, FPTDrink.Infrastructure.Services.VisitorsOnlineTracker>();
 builder.Services.AddScoped<FPTDrink.Core.Interfaces.Services.IVisitorStatsService, FPTDrink.Infrastructure.Services.VisitorStatsService>();
+
+// HttpClient for calling FPTDrink.API from Web
+var apiBaseUrl = builder.Configuration.GetValue<string>("ApiBaseUrl");
+builder.Services.AddHttpClient("FPTDrinkApi", client =>
+{
+	var baseAddress = string.IsNullOrWhiteSpace(apiBaseUrl) ? "https://localhost:5001" : apiBaseUrl!;
+	client.BaseAddress = new Uri(baseAddress);
+	client.DefaultRequestHeaders.Accept.Clear();
+	client.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
+	client.Timeout = TimeSpan.FromSeconds(30); // Timeout 30 giây
+}).ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler
+{
+	ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true // Bỏ qua SSL validation cho localhost
+});
+builder.Services.AddScoped<FPTDrink.Web.Services.ApiClient>();
 
 var app = builder.Build();
 
@@ -58,7 +75,7 @@ app.MapControllerRoute(
 
 app.MapControllerRoute(
 	name: "CategoryProduct",
-	pattern: "danh-muc-san-pham/{alias}-{id?}",
+	pattern: "danh-muc-san-pham/{alias}-{id}",
 	defaults: new { controller = "Products", action = "ProductCategory" });
 
 app.MapControllerRoute(
@@ -68,7 +85,7 @@ app.MapControllerRoute(
 
 app.MapControllerRoute(
 	name: "SupplierProduct",
-	pattern: "nha-cung-cap/{alias}-{id?}",
+	pattern: "nha-cung-cap/{alias}-{id}",
 	defaults: new { controller = "Products", action = "Supplier" });
 
 app.MapControllerRoute(

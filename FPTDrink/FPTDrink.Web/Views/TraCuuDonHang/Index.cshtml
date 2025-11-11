@@ -1,0 +1,53 @@
+@{
+	ViewData["Title"] = "Tra cứu đơn hàng";
+	var by = (string?)ViewBag.By;
+}
+
+<h1 class="h4 mb-3">Tra cứu đơn hàng</h1>
+
+<div class="row g-4">
+	<div class="col-12 col-lg-6">
+		<div class="card shadow-sm">
+			<div class="card-header">Theo mã đơn</div>
+			<div class="card-body">
+				<form method="get" asp-action="ByCode">
+					<div class="input-group">
+						<input class="form-control" name="code" placeholder="Nhập mã đơn (VD: HD123456)" />
+						<button class="btn btn-primary" type="submit">Tra cứu</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	<div class="col-12 col-lg-6">
+		<div class="card shadow-sm">
+			<div class="card-header">Theo khách hàng</div>
+			<div class="card-body">
+				<form method="get" asp-action="ByCustomer">
+					<div class="row g-2">
+						<div class="col-md-6">
+							<input class="form-control" name="tenKhachHang" placeholder="Họ tên" />
+						</div>
+						<div class="col-md-6">
+							<input class="form-control" name="cccd" placeholder="CCCD" />
+						</div>
+					</div>
+					<div class="text-end mt-2">
+						<button class="btn btn-primary" type="submit">Tra cứu</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+@if (Model != null)
+{
+	<div class="card shadow-sm mt-4">
+		<div class="card-header">Kết quả</div>
+		<div class="card-body">
+			<pre class="mb-0 bg-light p-3 rounded small">@System.Text.Json.JsonSerializer.Serialize(Model, new System.Text.Json.JsonSerializerOptions { WriteIndented = true })</pre>
+		</div>
+	</div>
+}
+

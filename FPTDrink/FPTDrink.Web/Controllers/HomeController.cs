@@ -2,6 +2,9 @@ using FPTDrink.Web.Models;
 using FPTDrink.Core.Interfaces.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
+using FPTDrink.Web.Services;
+using FPTDrink.Web.ViewModels;
+using System.Text.Json;
 
 namespace FPTDrink.Web.Controllers
 {
@@ -9,16 +12,19 @@ namespace FPTDrink.Web.Controllers
     {
         private readonly ILogger<HomeController> _logger;
 		private readonly IVisitorStatsService _visitorStatsService;
+		private readonly ApiClient _apiClient;
 
-		public HomeController(ILogger<HomeController> logger, IVisitorStatsService visitorStatsService)
+		public HomeController(ILogger<HomeController> logger, IVisitorStatsService visitorStatsService, ApiClient apiClient)
         {
             _logger = logger;
 			_visitorStatsService = visitorStatsService;
+			_apiClient = apiClient;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View();
+			var blocks = await _apiClient.GetAsync<HomeBlocksViewModel>("api/public/Home/blocks?limit=8") ?? new HomeBlocksViewModel();
+            return View(blocks);
         }
 
         public IActionResult Privacy()

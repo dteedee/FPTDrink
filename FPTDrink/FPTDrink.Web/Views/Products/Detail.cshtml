@@ -1,0 +1,99 @@
+@model FPTDrink.Web.Controllers.ProductsController.ProductDetailDto
+@{
+	ViewData["Title"] = Model.Detail?.Title ?? "Chi tiết sản phẩm";
+	var p = Model.Detail;
+	var returnUrl = Url.Action("Detail", new { id = p?.Id }) ?? Url.Action("Index", "Products");
+}
+
+<div class="row g-4">
+	<div class="col-12 col-md-5">
+		<img class="w-100 rounded shadow-sm object-fit-cover" style="max-height:420px" src="@(string.IsNullOrWhiteSpace(p?.Image) ? Url.Content("~/images/placeholder.png") : p!.Image)" alt="@p?.Title" />
+	</div>
+	<div class="col-12 col-md-7">
+		<h1 class="h3">@p?.Title</h1>
+		<div class="mb-3">
+			@if (p?.HasDiscount == true)
+			{
+				<div>
+					<span class="text-danger fw-bold fs-4">@string.Format("{0:N0} ₫", p.DisplayPrice)</span>
+					<small class="text-muted text-decoration-line-through ms-2">@string.Format("{0:N0} ₫", p.ListPrice)</small>
+					<span class="badge bg-danger-subtle text-danger ms-2">-@p.DiscountPercent%</span>
+				</div>
+			}
+			else
+			{
+				<div class="fw-bold fs-4">@string.Format("{0:N0} ₫", p?.DisplayPrice)</div>
+			}
+		</div>
+		<p class="text-muted">@p?.Description</p>
+		<div class="mb-3 small text-secondary">
+			@if (!string.IsNullOrWhiteSpace(p?.CategoryTitle))
+			{
+				<div><strong>Danh mục:</strong> @p.CategoryTitle</div>
+			}
+			@if (!string.IsNullOrWhiteSpace(p?.SupplierTitle))
+			{
+				<div><strong>Nhà cung cấp:</strong> @p.SupplierTitle</div>
+			}
+		</div>
+		<form method="post" asp-controller="ShoppingCart" asp-action="Add">
+			@Html.AntiForgeryToken()
+			<input type="hidden" name="productId" value="@p?.Id" />
+			<input type="hidden" name="returnUrl" value="@returnUrl" />
+			<div class="input-group mb-3" style="max-width: 260px;">
+				<input type="number" class="form-control" name="quantity" value="1" min="1" />
+				<button type="submit" class="btn btn-primary">Thêm vào giỏ</button>
+			</div>
+		</form>
+	</div>
+</div>
+
+@if (!string.IsNullOrWhiteSpace(p?.Content))
+{
+	<section class="mt-4">
+		<h2 class="h5 mb-3">Mô tả chi tiết</h2>
+		<div class="card shadow-sm">
+			<div class="card-body">
+				@Html.Raw(p.Content)
+			</div>
+		</div>
+	</section>
+}
+
+<section class="py-4">
+	<h2 class="h5 mb-3">Sản phẩm liên quan</h2>
+	<div class="row g-3">
+		@foreach (var r in Model.Related.Take(8))
+		{
+			<div class="col-6 col-md-3">
+				<div class="card h-100 shadow-sm">
+					<img class="card-img-top object-fit-cover" style="height:180px" src="@(string.IsNullOrWhiteSpace(r.Image) ? Url.Content("~/images/placeholder.png") : r.Image)" alt="@r.Title" />
+					<div class="card-body d-flex flex-column">
+						<h3 class="h6 card-title">@r.Title</h3>
+						<div class="mt-auto">
+							@if (r.HasDiscount)
+							{
+								<div>
+									<span class="text-danger fw-bold">@string.Format("{0:N0} ₫", r.GiaHienThi)</span>
+									<small class="text-muted text-decoration-line-through ms-2">@string.Format("{0:N0} ₫", r.OriginalPrice)</small>
+								</div>
+							}
+							else
+							{
+								<div class="fw-bold">@string.Format("{0:N0} ₫", r.GiaHienThi)</div>
+							}
+							<a class="btn btn-outline-primary btn-sm w-100 mt-2" asp-action="Detail" asp-route-id="@r.Id">Xem chi tiết</a>
+						</div>
+					</div>
+				</div>
+			</div>
+		}
+	</div>
+</section>
+
+@section Scripts {
+	<style>
+		.object-fit-cover { object-fit: cover; }
+	</style>
+}
+
