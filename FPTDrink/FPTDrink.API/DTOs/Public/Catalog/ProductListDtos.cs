@@ -12,6 +12,7 @@ namespace FPTDrink.API.DTOs.Public.Catalog
 		[Range(0, double.MaxValue)] public decimal? PriceFrom { get; set; }
 		[Range(0, double.MaxValue)] public decimal? PriceTo { get; set; }
 		[StringLength(20)] public string? Sort { get; set; }
+		public string? CartId { get; set; }
 	}
 
 	public class ProductListItemDto

@@ -489,12 +489,12 @@
         <div class="subscribe-section text-center">
             <div class="container">
                 <h3><i class="bx bx-gift"></i>Khách hàng mới</h3>
-                <p>Đăng ký ngay để nhận voucher giảm giá lên đến 30%</p>
+            <p>Đăng ký ngay để nhận voucher giảm giá lên đến 30%</p>
                 <form asp-action="Subscribe" method="post" class="subscribe-form">
-                    @Html.AntiForgeryToken()
-                    <input type="email" name="email" class="form-control" placeholder="Nhập email của bạn" required>
-                    <button type="submit" class="btn">Đăng ký</button>
-                </form>
+                @Html.AntiForgeryToken()
+                <input type="email" name="email" class="form-control" placeholder="Nhập email của bạn" required>
+                <button type="submit" class="btn">Đăng ký</button>
+            </form>
             </div>
         </div>
     </div>

@@ -24,6 +24,8 @@ namespace FPTDrink.Web.Controllers
             var suppliersResponse = await _api.GetAsync<List<SupplierResponse>>("api/public/Suppliers") ?? new List<SupplierResponse>();
             var suppliers = suppliersResponse.Select(x => new MenuSupplierItemViewModel { Id = x.MaNhaCungCap, Title = x.Title }).ToList();
 
+            var cartId = Request.Cookies["cart_id"];
+            
             var queryParts = new List<string>
             {
                 $"page={page}",
@@ -36,6 +38,7 @@ namespace FPTDrink.Web.Controllers
             if (priceTo.HasValue) queryParts.Add($"priceTo={priceTo}");
             if (!string.IsNullOrWhiteSpace(sort)) queryParts.Add($"sort={WebUtility.UrlEncode(sort)}");
             if (!string.IsNullOrWhiteSpace(q)) queryParts.Add($"q={WebUtility.UrlEncode(q)}");
+            if (!string.IsNullOrWhiteSpace(cartId)) queryParts.Add($"cartId={WebUtility.UrlEncode(cartId)}");
 
             string productsUrl = "api/public/Catalog/products";
             if (queryParts.Count > 0)

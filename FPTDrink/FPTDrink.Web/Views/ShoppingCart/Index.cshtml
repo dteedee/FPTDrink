@@ -98,47 +98,47 @@
 		<p class="mb-0">Kiểm tra và chỉnh sửa các sản phẩm trong giỏ hàng</p>
 	</div>
 
-	@if (Model.Items.Count == 0)
-	{
+@if (Model.Items.Count == 0)
+{
 		<div class="alert alert-info text-center">
 			<i class="bx bx-cart me-2"></i>Giỏ hàng của bạn đang trống. 
 			<a asp-controller="Menu" asp-action="Index" class="alert-link">Tiếp tục mua sắm</a>
 		</div>
-	}
-	else
-	{
+}
+else
+{
 		<div class="card border-0 shadow-sm" style="background: linear-gradient(135deg, #faf8f5 0%, #f5f0e8 100%); border: 2px solid rgba(212, 165, 116, 0.25) !important; border-radius: 16px; overflow: hidden;">
-			<div class="table-responsive">
+	<div class="table-responsive">
 				<table class="table align-middle mb-0">
 					<thead style="background: linear-gradient(135deg, rgba(212, 165, 116, 0.1) 0%, rgba(139, 90, 43, 0.05) 100%);">
-						<tr>
+				<tr>
 							<th style="width:72px" class="border-0"></th>
 							<th class="border-0" style="color: #2d1b0e; font-weight: 700;">Sản phẩm</th>
 							<th style="width:120px" class="text-end border-0" style="color: #2d1b0e; font-weight: 700;">Giá</th>
 							<th style="width:160px" class="text-center border-0" style="color: #2d1b0e; font-weight: 700;">Số lượng</th>
 							<th style="width:140px" class="text-end border-0" style="color: #2d1b0e; font-weight: 700;">Thành tiền</th>
 							<th style="width:80px" class="border-0"></th>
-						</tr>
-					</thead>
-					<tbody>
-						@foreach (var item in Model.Items)
-						{
+				</tr>
+			</thead>
+			<tbody>
+				@foreach (var item in Model.Items)
+				{
 							<tr style="border-bottom: 1px solid rgba(212, 165, 116, 0.2);">
-								<td>
+						<td>
 									<img src="@(string.IsNullOrWhiteSpace(item.ProductImg) ? Url.Content("~/images/placeholder.png") : item.ProductImg)" 
 									     class="rounded object-fit-cover" 
 									     style="height:64px;width:64px;object-fit:cover; border: 2px solid rgba(212, 165, 116, 0.3);" />
-								</td>
-								<td>
+						</td>
+						<td>
 									<div class="fw-bold" style="color: #2d1b0e;">@item.ProductName</div>
 								</td>
 								<td class="text-end">
 									<span class="text-primary fw-bold">@string.Format("{0:N0} ₫", item.Price)</span>
-								</td>
-								<td class="text-center">
-									<form class="d-inline-block" method="post" asp-action="Update">
-										<input type="hidden" name="productId" value="@item.ProductId" />
-										<div class="input-group input-group-sm" style="max-width: 140px;">
+						</td>
+						<td class="text-center">
+							<form class="d-inline-block" method="post" asp-action="Update">
+								<input type="hidden" name="productId" value="@item.ProductId" />
+								<div class="input-group input-group-sm" style="max-width: 140px;">
 											<input class="form-control text-center" 
 											       name="quantity" 
 											       type="number" 
@@ -150,43 +150,43 @@
 											        style="border-radius: 0 8px 8px 0; border-left: none;">
 												<i class="bx bx-check"></i>
 											</button>
-										</div>
-									</form>
-								</td>
+								</div>
+							</form>
+						</td>
 								<td class="text-end">
 									<span class="text-primary fw-bold">@string.Format("{0:N0} ₫", item.TotalPrice)</span>
 								</td>
-								<td class="text-end">
-									<form method="post" asp-action="Remove">
-										<input type="hidden" name="productId" value="@item.ProductId" />
+						<td class="text-end">
+							<form method="post" asp-action="Remove">
+								<input type="hidden" name="productId" value="@item.ProductId" />
 										<button class="btn btn-sm btn-outline-danger" type="submit">
 											<i class="bx bx-trash"></i>
 										</button>
-									</form>
-								</td>
-							</tr>
-						}
-					</tbody>
+							</form>
+						</td>
+					</tr>
+				}
+			</tbody>
 					<tfoot style="background: linear-gradient(135deg, rgba(212, 165, 116, 0.1) 0%, rgba(139, 90, 43, 0.05) 100%);">
-						<tr>
+				<tr>
 							<td colspan="4" class="text-end fw-bold border-0" style="color: #2d1b0e; font-size: 1.1rem;">Tổng cộng</td>
 							<td class="text-end fw-bold border-0" style="color: #d4a574; font-size: 1.25rem;">@string.Format("{0:N0} ₫", total)</td>
 							<td class="border-0"></td>
-						</tr>
-					</tfoot>
-				</table>
-			</div>
+				</tr>
+			</tfoot>
+		</table>
+	</div>
 		</div>
 		
 		<div class="d-flex gap-2 mt-4 flex-wrap">
-			<form method="post" asp-action="Clear">
+		<form method="post" asp-action="Clear">
 				<button class="btn btn-outline-secondary" type="submit">
 					<i class="bx bx-x me-1"></i>Xoá giỏ hàng
 				</button>
-			</form>
+		</form>
 			<a class="btn btn-primary ms-auto" asp-controller="Checkout" asp-action="Index">
 				<i class="bx bx-credit-card me-1"></i>Thanh toán
 			</a>
-		</div>
-	}
+	</div>
+}
 </section>

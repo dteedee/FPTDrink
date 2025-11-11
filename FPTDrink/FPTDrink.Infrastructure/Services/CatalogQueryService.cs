@@ -9,11 +9,13 @@ namespace FPTDrink.Infrastructure.Services
 	{
 		private readonly IProductRepository _productRepo;
 		private readonly IProductCategoryRepository _categoryRepo;
+		private readonly ICartService _cartService;
 
-		public CatalogQueryService(IProductRepository productRepo, IProductCategoryRepository categoryRepo)
+		public CatalogQueryService(IProductRepository productRepo, IProductCategoryRepository categoryRepo, ICartService cartService)
 		{
 			_productRepo = productRepo;
 			_categoryRepo = categoryRepo;
+			_cartService = cartService;
 		}
 
 		public async Task<IReadOnlyList<Category>> GetActiveCategoriesAsync(CancellationToken cancellationToken = default)
@@ -29,7 +31,7 @@ namespace FPTDrink.Infrastructure.Services
 			return cats!;
 		}
 
-		public async Task<(IReadOnlyList<Product> items, int total)> GetProductsAsync(int page, int pageSize, string? categoryId, string? supplierId, string? q, decimal? priceFrom, decimal? priceTo, string? sort, CancellationToken cancellationToken = default)
+		public async Task<(IReadOnlyList<Product> items, int total)> GetProductsAsync(int page, int pageSize, string? categoryId, string? supplierId, string? q, decimal? priceFrom, decimal? priceTo, string? sort, string? cartId, CancellationToken cancellationToken = default)
 		{
 			IQueryable<Product> qy = _productRepo.Query()
 				.Where(p => p.Status != 0 && p.IsActive)
@@ -62,6 +64,21 @@ namespace FPTDrink.Infrastructure.Services
 
 			int total = await qy.CountAsync(cancellationToken);
 			var items = await qy.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync(cancellationToken);
+			
+			if (!string.IsNullOrWhiteSpace(cartId))
+			{
+				var cart = _cartService.GetCart(cartId);
+				var cartQuantities = cart.Items.ToDictionary(x => x.ProductId, x => x.Quantity);
+				
+				foreach (var product in items)
+				{
+					if (cartQuantities.TryGetValue(product.MaSanPham, out var cartQuantity))
+					{
+						product.SoLuong = Math.Max(0, product.SoLuong - cartQuantity);
+					}
+				}
+			}
+			
 			return (items, total);
 		}
 

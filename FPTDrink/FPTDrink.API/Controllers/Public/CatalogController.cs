@@ -28,7 +28,7 @@ namespace FPTDrink.API.Controllers.Public
 		[HttpGet("products")]
 		public async Task<IActionResult> Products([FromQuery] ProductListQuery query, CancellationToken ct)
 		{
-			var (items, total) = await _service.GetProductsAsync(query.Page, query.PageSize, query.CategoryId, query.SupplierId, query.Q, query.PriceFrom, query.PriceTo, query.Sort, ct);
+			var (items, total) = await _service.GetProductsAsync(query.Page, query.PageSize, query.CategoryId, query.SupplierId, query.Q, query.PriceFrom, query.PriceTo, query.Sort, query.CartId, ct);
 			var dto = new PagedResultDto<ProductListItemDto>
 			{
 				Page = query.Page,

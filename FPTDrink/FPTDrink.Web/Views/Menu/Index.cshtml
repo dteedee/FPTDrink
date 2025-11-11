@@ -502,7 +502,7 @@
             const quantityContainers = document.querySelectorAll('[data-quantity]');
             
             quantityContainers.forEach(function (container) {
-                const input = container.querySelector('input[name="quantity"]');
+            const input = container.querySelector('input[name="quantity"]');
                 if (!input) return;
                 
                 const btnMinus = container.querySelector('.btn-minus');
@@ -554,7 +554,7 @@
                     
                     if (input.disabled || stock === 0) return;
                     
-                    const current = parseInt(input.value || '1', 10);
+                const current = parseInt(input.value || '1', 10);
                     const newValue = Math.min(maxQuantity, current + 1);
                     input.value = newValue;
                 }, true);
@@ -575,8 +575,8 @@
                     const val = parseInt(this.value || '1', 10);
                     if (val < 1) this.value = 1;
                     if (val > maxQuantity) this.value = maxQuantity;
-                });
             });
+        });
         })();
     </script>
 }

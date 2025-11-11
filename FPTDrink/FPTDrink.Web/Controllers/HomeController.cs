@@ -23,7 +23,9 @@ namespace FPTDrink.Web.Controllers
 
         public async Task<IActionResult> Index()
         {
-			var blocks = await _apiClient.GetAsync<HomeBlocksViewModel>("api/public/Home/blocks?limit=8") ?? new HomeBlocksViewModel();
+			var cartId = Request.Cookies["cart_id"];
+			var cartIdParam = !string.IsNullOrWhiteSpace(cartId) ? $"&cartId={System.Net.WebUtility.UrlEncode(cartId)}" : "";
+			var blocks = await _apiClient.GetAsync<HomeBlocksViewModel>($"api/public/Home/blocks?limit=8{cartIdParam}") ?? new HomeBlocksViewModel();
             return View(blocks);
         }
 
