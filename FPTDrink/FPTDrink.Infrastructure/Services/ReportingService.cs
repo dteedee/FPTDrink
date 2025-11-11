@@ -14,6 +14,141 @@ namespace FPTDrink.Infrastructure.Services
 			_db = db;
 		}
 
+		public async Task<IReadOnlyList<FPTDrink.Core.Models.Reports.RevenuePoint>> GetStatisticalAsync(DateTime fromDay, DateTime toDay, CancellationToken cancellationToken = default)
+		{
+			var query = from o in _db.HoaDons
+						join od in _db.ChiTietHoaDons on o.MaHoaDon equals od.OrderId
+						join p in _db.Products on od.ProductId equals p.MaSanPham
+						where o.TrangThai == 2
+						select new
+						{
+							CreatedDate = o.CreatedDate,
+							Quantity = od.SoLuong,
+							Price = od.GiaBan,
+							OriginalPrice = p.GiaNhap
+						};
+			query = query.Where(x => x.CreatedDate >= fromDay && x.CreatedDate < toDay);
+
+			var result = await query
+				.GroupBy(x => x.CreatedDate.Date)
+				.Select(x => new FPTDrink.Core.Models.Reports.RevenuePoint
+				{
+					Date = x.Key,
+					DoanhThu = x.Sum(y => y.Quantity * y.Price),
+					LoiNhuan = x.Sum(y => y.Quantity * (y.Price - y.OriginalPrice))
+				}).ToListAsync(cancellationToken);
+			return result;
+		}
+
+		public async Task<IReadOnlyList<FPTDrink.Core.Models.Reports.ProductSalesPoint>> GetProductSalesAsync(DateTime fromDay, DateTime toDay, CancellationToken cancellationToken = default)
+		{
+			var query = from o in _db.HoaDons
+						join od in _db.ChiTietHoaDons on o.MaHoaDon equals od.OrderId
+						where o.TrangThai == 2
+						select new
+						{
+							CreatedDate = o.CreatedDate,
+							Quantity = od.SoLuong,
+							ProductName = od.Product != null ? od.Product.Title : ""
+						};
+			query = query.Where(x => x.CreatedDate >= fromDay && x.CreatedDate < toDay);
+
+			var list = await query
+				.GroupBy(x => x.CreatedDate.Date)
+				.Select(x => new
+				{
+					Date = x.Key,
+					TotalProducts = x.Sum(y => y.Quantity),
+					Products = x.GroupBy(y => y.ProductName)
+								.Select(y => new FPTDrink.Core.Models.Reports.ProductQuantity
+								{
+									ProductName = y.Key,
+									Quantity = y.Sum(z => z.Quantity)
+								})
+								.OrderByDescending(y => y.Quantity)
+								.ThenBy(y => y.ProductName)
+								.Take(5)
+								.ToList(),
+					BestOrdered = x.GroupBy(y => y.ProductName)
+								   .Select(y => new
+								   {
+									   ProductName = y.Key,
+									   Quantity = y.Sum(z => z.Quantity)
+								   })
+								   .OrderByDescending(y => y.Quantity)
+								   .ThenBy(y => y.ProductName)
+								   .ToList()
+				}).ToListAsync(cancellationToken);
+
+			var shaped = list.Select(x => new FPTDrink.Core.Models.Reports.ProductSalesPoint
+			{
+				x.Date,
+				x.TotalProducts,
+				x.Products,
+				BestSellingProduct = (x.BestOrdered.Count > 1 && x.BestOrdered[0].Quantity == x.BestOrdered[1].Quantity)
+					? "Chưa xác định" : x.BestOrdered[0].ProductName
+			}).ToList();
+
+			return shaped;
+		}
+
+		public async Task<IReadOnlyList<FPTDrink.Core.Models.Reports.ProductSalesDetailItem>> GetProductSalesDetailAsync(DateTime date, CancellationToken cancellationToken = default)
+		{
+			var productSales = await _db.ChiTietHoaDons
+				.Where(x => x.Order != null && x.Order.CreatedDate.Date == date.Date && x.Order.TrangThai == 2)
+				.GroupBy(x => x.Product!.Title)
+				.Select(group => new FPTDrink.Core.Models.Reports.ProductSalesDetailItem
+				{
+					ProductID = group.FirstOrDefault()!.ProductId,
+					ProductName = group.Key,
+					Quantity = group.Sum(x => x.SoLuong),
+					UnitPrice = group.FirstOrDefault()!.GiaBan,
+					GiaNhap = group.FirstOrDefault()!.Product!.GiaNhap
+				}).ToListAsync(cancellationToken);
+
+			return productSales;
+		}
+
+		public async Task<IReadOnlyList<FPTDrink.Core.Models.Reports.PaymentMethodStatPoint>> GetPaymentMethodsStatisticalAsync(DateTime fromDay, DateTime toDay, CancellationToken cancellationToken = default)
+		{
+			var query = _db.HoaDons.Select(o => new
+			{
+				o.CreatedDate,
+				PaymentMethod = o.PhuongThucThanhToan
+			});
+			query = query.Where(x => x.CreatedDate >= fromDay && x.CreatedDate < toDay);
+
+			var result = await query
+				.GroupBy(x => x.CreatedDate.Date)
+				.Select(g => new FPTDrink.Core.Models.Reports.PaymentMethodStatPoint
+				{
+					Date = g.Key,
+					OnlineCount = g.Count(x => x.PaymentMethod == 1 || x.PaymentMethod == 2),
+					OfflineCount = g.Count(x => x.PaymentMethod == 3)
+				}).ToListAsync(cancellationToken);
+
+			return result;
+		}
+
+		public async Task<IReadOnlyList<FPTDrink.Core.Models.Reports.InvoiceBrief>> GetPaymentMethodDetailAsync(DateTime date, CancellationToken cancellationToken = default)
+		{
+			var invoices = await _db.HoaDons
+				.Where(x => x.CreatedDate.Date == date.Date && x.TrangThai == 2)
+				.Select(x => new FPTDrink.Core.Models.Reports.InvoiceBrief
+				{
+					MaHoaDon = x.MaHoaDon,
+					CreatedDate = x.CreatedDate,
+					ID_KhachHang = x.IdKhachHang,
+					TenKhachHang = x.TenKhachHang,
+					PhuongThucThanhToan = x.PhuongThucThanhToan,
+					TrangThai = x.TrangThai,
+					TongHoaDon = x.ChiTietHoaDons.Sum(ct => (decimal?)ct.SoLuong * ct.GiaBan) ?? 0m
+				})
+				.ToListAsync(cancellationToken);
+
+			return invoices;
+		}
+
 		public async Task<object> GetOverviewStatsAsync(CancellationToken cancellationToken = default)
 		{
 			var today = DateTime.Now.Date;
