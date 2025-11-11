@@ -4,6 +4,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using FPTDrink.API.Authorization;
+using Microsoft.AspNetCore.Authorization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -49,6 +51,8 @@ builder.Services.AddAuthorization(options =>
 {
 	options.AddPolicy("Admin", p => p.RequireRole("Admin"));
 	options.AddPolicy("Employee", p => p.RequireRole("Employee", "Admin"));
+	options.AddPolicy("ThuNgan", p => p.RequireRole("Thu ngân", "Admin"));
+	options.AddPolicy("KeToan", p => p.RequireRole("Kế toán", "Admin"));
 });
 builder.Services.AddControllers(options =>
 {
@@ -63,6 +67,10 @@ builder.Services.AddInfrastructure(builder.Configuration);
 // AutoMapper
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
 
+// Permission provider + handler
+builder.Services.AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>();
+builder.Services.AddScoped<IAuthorizationHandler, PermissionHandler>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -76,6 +84,13 @@ app.UseCors("AllowWeb");
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+// Seed permissions (idempotent)
+using (var scope = app.Services.CreateScope())
+{
+	var db = scope.ServiceProvider.GetRequiredService<FptdrinkContext>();
+	await FPTDrink.Infrastructure.Data.Seed.PermissionSeeder.SeedAsync(db);
+}
 
 app.MapControllers();
 
