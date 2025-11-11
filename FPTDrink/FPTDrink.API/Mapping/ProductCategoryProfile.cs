@@ -10,10 +10,11 @@ namespace FPTDrink.API.Mapping
 		{
 			CreateMap<ProductCategory, ProductCategoryDto>();
 			CreateMap<ProductCategoryCreateRequest, ProductCategory>();
-			CreateMap(ProductCategoryUpdateRequest, ProductCategory>()
+            CreateMap<ProductCategoryUpdateRequest, ProductCategory>()
 				.ForMember(d => d.MaLoaiSanPham, o => o.MapFrom(s => s.MaLoaiSanPham));
-		}
-	}
+
+        }
+    }
 }
 
 

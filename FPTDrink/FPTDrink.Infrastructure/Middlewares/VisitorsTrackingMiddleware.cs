@@ -1,6 +1,7 @@
 using System.Security.Cryptography;
 using System.Text;
 using FPTDrink.Core.Interfaces.Services;
+using Microsoft.AspNetCore.Http;
 
 namespace FPTDrink.Infrastructure.Middlewares
 {

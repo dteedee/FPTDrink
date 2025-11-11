@@ -60,7 +60,6 @@ namespace FPTDrink.Infrastructure.Services
 			existing.ModifiedDate = DateTime.Now;
 			existing.Alias = SlugGenerator.GenerateSlug(model.Title);
 			existing.Title = model.Title;
-			existing.MoTa = model.MoTa;
 			existing.SoDienThoai = model.SoDienThoai;
 			existing.Email = model.Email;
 			_repo.Update(existing);

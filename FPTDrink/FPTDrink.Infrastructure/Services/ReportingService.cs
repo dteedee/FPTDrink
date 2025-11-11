@@ -82,9 +82,9 @@ namespace FPTDrink.Infrastructure.Services
 
 			var shaped = list.Select(x => new FPTDrink.Core.Models.Reports.ProductSalesPoint
 			{
-				x.Date,
-				x.TotalProducts,
-				x.Products,
+				Date = x.Date,
+				TotalProducts = x.TotalProducts,
+				Products = x.Products,
 				BestSellingProduct = (x.BestOrdered.Count > 1 && x.BestOrdered[0].Quantity == x.BestOrdered[1].Quantity)
 					? "Chưa xác định" : x.BestOrdered[0].ProductName
 			}).ToList();

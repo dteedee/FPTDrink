@@ -1,4 +1,5 @@
 using FPTDrink.Infrastructure.Middlewares;
+using Microsoft.AspNetCore.Builder;
 
 namespace FPTDrink.Infrastructure.Extensions
 {
