@@ -30,6 +30,7 @@ namespace FPTDrink.API.Extensions
 			services.AddScoped<IChiTietHoaDonRepository, ChiTietHoaDonRepository>();
 			services.AddScoped<IProductRepository, ProductRepository>();
 			services.AddScoped<IProductCategoryRepository, ProductCategoryRepository>();
+			services.AddScoped<INhaCungCapRepository, NhaCungCapRepository>();
 			services.AddScoped<IUnitOfWork, UnitOfWork>();
 			services.AddScoped<ICategoryService, CategoryService>();
 			services.AddScoped<IChucVuService, ChucVuService>();
@@ -39,6 +40,7 @@ namespace FPTDrink.API.Extensions
 			services.AddScoped<IProductCategoryService, ProductCategoryService>();
 			services.AddScoped<INhanVienService, NhanVienService>();
 			services.AddScoped<IProductService, ProductService>();
+			services.AddScoped<INhaCungCapService, NhaCungCapService>();
 
 			return services;
 		}
