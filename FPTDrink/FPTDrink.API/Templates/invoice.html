@@ -1,0 +1,106 @@
+<table border="0" cellpadding="0" cellspacing="0" width="600" style="background-color:#ffffff;border:1px solid black;border-radius:3px">
+	<thead>
+		<tr>
+			<td align="center" valign="top">
+				<table border="0" cellpadding="0" cellspacing="0" width="100%" style="color:black;border-bottom:0;line-height:100%;vertical-align:middle;font-family:'Helvetica Neue',Helvetica,Roboto,Arial,sans-serif;border-radius:3px 3px 0 0">
+					<tbody>
+						<tr>
+							<td style="padding:36px 48px;display:block;text-align: center;">
+								<h1 style="font-weight:bold;font-family:'Helvetica Neue',Helvetica,Roboto,Arial,sans-serif;font-size:30px;font-weight:300;line-height:150%;margin:0;text-align:center;color:black;background-color:inherit">
+									HOÁ ĐƠN BÁN HÀNG
+								</h1>
+								<h4><i>Ngày</i> {{NgayDat}} <i>Tháng</i> {{ThangDat}} <i>Năm</i> {{NamDat}}</h4>
+								<h4>Số hóa đơn: <span style="color: #45B0E1; font-weight: bold;">{{MaDon}}</span></h4>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</td>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td>
+				<table border="0" cellpadding="10" cellspacing="0" style="width: 100%;">
+					<tr style="background-color: #45B0E1; color: #ffffff;">
+						<td style="font-size: 20px;">CỬA HÀNG THỨC UỐNG GIẢI KHÁT FPTDRINK</td>
+					</tr>
+					<tr>
+						<td>
+							Địa chỉ: FPT University, Khu Công nghệ Cao Hoà Lạc, Hà Nội<br>
+							Số điện thoại: 0969995633 <br>
+							Website: www.fptdrink.vn <br>
+							Số tài khoản: 68686868379379 <br>
+							Ngân hàng:  TMCP Ngoại thương Việt Nam - Chi nhánh Hà Nội
+						</td>
+					</tr>
+					<tr style="background-color: #45B0E1; color: #ffffff;">
+						<td style="font-size: 20px;">THÔNG TIN KHÁCH HÀNG</td>
+					</tr>
+					<tr>
+						<td>
+							Họ tên khách hàng: {{TenKhachHang}}<br>
+							CMND/CCCD: {{CCCD}}<br>
+							Địa chỉ giao: {{DiaChiNhanHang}}<br>
+							Số điện thoại: {{Phone}}<br>
+							Hình thức thanh toán: {{HinhThucThanhToan}}<br>
+						</td>
+					</tr>
+				</table>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<table cellspacing="0" border="1" style="margin-top: 10px; margin-bottom: 10px; width: 100%;">
+					<thead>
+						<tr>
+							<th style="text-align:center; width: 40px;">STT</th>
+							<th style="text-align:center;width: 150px;">Tên sản phẩm</th>
+							<th style="text-align:center;width: 80px;">Số lượng</th>
+							<th scope="col" style="text-align:center;">Đơn giá</th>
+							<th scope="col" style="text-align:center;">Thành tiền</th>
+						</tr>
+					</thead>
+					<tbody>
+						{{SanPham}}
+					</tbody>
+				</table>
+			</td>
+		</tr>
+	</tbody>
+	<tfoot>
+		<tr>
+			<td>
+				<table cellspacing="0" border="1" style="width: 100%;">
+					<tr style="text-align: right;">
+						<td>Tổng tiền hàng</td>
+						<td><b>{{ThanhTien}} VNĐ</b></td>
+					</tr>
+					<tr style="text-align: right;">
+						<td>Tổng cộng tiền thanh toán</td>
+						<td><b>{{TongTien}} VNĐ</b></td>
+					</tr>
+				</table>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<table style="width: 100%;">
+					<tr style="text-align: center;">
+						<td><b>Khách hàng</b></td>
+						<td><b>Người bán hàng</b></td>
+					</tr>
+					<tr style="text-align: center;">
+						<td><i>(Ký, họ tên)</i></td>
+						<td><i>(Ký, họ tên)</i></td>
+					</tr>
+					<tr style="text-align: center;">
+						<td style="padding-top: 20px; padding-bottom: 20px;"><i>{{TenKhachHang}}</i></td>
+						<td style="padding-top: 20px; padding-bottom: 20px;"><i>FPTDrink STORE</i></td>
+					</tr>
+				</table>
+			</td>
+		</tr>
+	</tfoot>
+</table>
+

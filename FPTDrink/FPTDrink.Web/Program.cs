@@ -7,6 +7,12 @@ builder.Services.AddControllersWithViews();
 builder.Services.Configure<FPTDrink.Web.Extensions.EmailOptions>(builder.Configuration.GetSection("Email"));
 builder.Services.Configure<FPTDrink.Web.Extensions.VnPayOptions>(builder.Configuration.GetSection("VNPay"));
 
+// Register DbContext & visitor stats services for direct service calls
+builder.Services.AddDbContext<FPTDrink.Infrastructure.Data.FptdrinkContext>(options =>
+	options.UseSqlServer(builder.Configuration.GetConnectionString("MyCnn")));
+builder.Services.AddSingleton<FPTDrink.Core.Interfaces.Services.IVisitorsOnlineTracker, FPTDrink.Infrastructure.Services.VisitorsOnlineTracker>();
+builder.Services.AddScoped<FPTDrink.Core.Interfaces.Services.IVisitorStatsService, FPTDrink.Infrastructure.Services.VisitorStatsService>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -20,6 +26,9 @@ app.UseStaticFiles();
 app.UseRouting();
 
 app.UseAuthorization();
+
+// Track visitors for online count
+app.UseVisitorsTracking();
 
 // Legacy routes ported from MVC 5
 app.MapControllerRoute(

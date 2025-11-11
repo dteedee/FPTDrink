@@ -12,8 +12,7 @@ namespace FPTDrink.API.Extensions
 	{
 		public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
 		{
-			// Đăng ký DbContext (đọc chuỗi kết nối từ appsettings: ConnectionStrings:DefaultConnection)
-			var connectionString = configuration.GetConnectionString("DefaultConnection");
+			var connectionString = configuration.GetConnectionString("MyCnn");
 			if (!string.IsNullOrWhiteSpace(connectionString))
 			{
 				services.AddDbContext<FptdrinkContext>(options =>
@@ -41,6 +40,19 @@ namespace FPTDrink.API.Extensions
 			services.AddScoped<INhanVienService, NhanVienService>();
 			services.AddScoped<IProductService, ProductService>();
 			services.AddScoped<INhaCungCapService, NhaCungCapService>();
+			services.AddSingleton<IVisitorsOnlineTracker, VisitorsOnlineTracker>();
+			services.AddScoped<IVisitorStatsService, VisitorStatsService>();
+			services.AddScoped<ICatalogQueryService, CatalogQueryService>();
+			services.AddScoped<IHomePageService, HomePageService>();
+			services.AddScoped<IProductPublicService, ProductPublicService>();
+			services.AddScoped<IMenuQueryService, MenuQueryService>();
+			services.AddScoped<ISearchService, SearchService>();
+			services.AddScoped<IOrderPublicQueryService, OrderPublicQueryService>();
+			services.AddSingleton<ICartStore, InMemoryCartStore>();
+			services.AddScoped<ICartService, CartService>();
+			services.AddScoped<ICheckoutService, CheckoutService>();
+			services.AddScoped<IPaymentService, VnPayService>();
+			services.AddScoped<IEmailService, SmtpEmailService>();
 
 			return services;
 		}
