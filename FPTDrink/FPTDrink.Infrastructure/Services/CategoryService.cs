@@ -3,15 +3,16 @@ using FPTDrink.Core.Utils;
 using FPTDrink.Core.Models;
 using FPTDrink.Core.Interfaces.Repositories;
 using Microsoft.EntityFrameworkCore;
+using FPTDrink.Infrastructure.Data;
 
 namespace FPTDrink.Infrastructure.Services
 {
 	public class CategoryService : ICategoryService
 	{
 		private readonly ICategoryRepository _repo;
-		private readonly DbContext _dbContext;
+		private readonly FptdrinkContext _dbContext;
 
-		public CategoryService(ICategoryRepository repo, DbContext db)
+		public CategoryService(ICategoryRepository repo, FptdrinkContext db)
 		{
 			_repo = repo;
 			_dbContext = db;
