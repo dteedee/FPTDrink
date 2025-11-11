@@ -16,6 +16,8 @@ namespace FPTDrink.Infrastructure.Repositories
 			_set = _db.Set<Product>();
 		}
 
+		public IQueryable<Product> Query() => _set.AsQueryable();
+
 		public Task<Product?> GetByIdAsync(string id, CancellationToken cancellationToken = default)
 		{
 			return _set.FirstOrDefaultAsync(x => x.MaSanPham == id, cancellationToken);
