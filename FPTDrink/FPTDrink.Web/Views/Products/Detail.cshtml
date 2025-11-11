@@ -5,95 +5,232 @@
 	var returnUrl = Url.Action("Detail", new { id = p?.Id }) ?? Url.Action("Index", "Products");
 }
 
-<div class="row g-4">
-	<div class="col-12 col-md-5">
-		<img class="w-100 rounded shadow-sm object-fit-cover" style="max-height:420px" src="@(string.IsNullOrWhiteSpace(p?.Image) ? Url.Content("~/images/placeholder.png") : p!.Image)" alt="@p?.Title" />
-	</div>
-	<div class="col-12 col-md-7">
-		<h1 class="h3">@p?.Title</h1>
-		<div class="mb-3">
-			@if (p?.HasDiscount == true)
-			{
-				<div>
-					<span class="text-danger fw-bold fs-4">@string.Format("{0:N0} ₫", p.DisplayPrice)</span>
-					<small class="text-muted text-decoration-line-through ms-2">@string.Format("{0:N0} ₫", p.ListPrice)</small>
-					<span class="badge bg-danger-subtle text-danger ms-2">-@p.DiscountPercent%</span>
-				</div>
-			}
-			else
-			{
-				<div class="fw-bold fs-4">@string.Format("{0:N0} ₫", p?.DisplayPrice)</div>
-			}
-		</div>
-		<p class="text-muted">@p?.Description</p>
-		<div class="mb-3 small text-secondary">
-			@if (!string.IsNullOrWhiteSpace(p?.CategoryTitle))
-			{
-				<div><strong>Danh mục:</strong> @p.CategoryTitle</div>
-			}
-			@if (!string.IsNullOrWhiteSpace(p?.SupplierTitle))
-			{
-				<div><strong>Nhà cung cấp:</strong> @p.SupplierTitle</div>
-			}
-		</div>
-		<form method="post" asp-controller="ShoppingCart" asp-action="Add">
-			@Html.AntiForgeryToken()
-			<input type="hidden" name="productId" value="@p?.Id" />
-			<input type="hidden" name="returnUrl" value="@returnUrl" />
-			<div class="input-group mb-3" style="max-width: 260px;">
-				<input type="number" class="form-control" name="quantity" value="1" min="1" />
-				<button type="submit" class="btn btn-primary">Thêm vào giỏ</button>
-			</div>
-		</form>
-	</div>
-</div>
+<section class="product-detail-section">
+    <div class="row g-4">
+        <div class="col-12 col-md-5">
+            <div class="product-image-wrapper">
+                <img class="w-100 rounded object-fit-cover product-detail-image" 
+                     src="@(string.IsNullOrWhiteSpace(p?.Image) ? Url.Content("~/images/placeholder.png") : p!.Image)" 
+                     alt="@p?.Title" 
+                     loading="eager" />
+            </div>
+        </div>
+        <div class="col-12 col-md-7">
+            <div class="product-info-card">
+                <h1 class="product-title">@p?.Title</h1>
+                
+                <div class="mb-3">
+                    @if (p?.HasDiscount == true)
+                    {
+                        <div class="d-flex align-items-center flex-wrap gap-2">
+                            <span class="product-price">@string.Format("{0:N0} ₫", p.DisplayPrice)</span>
+                            <span class="product-price-original">@string.Format("{0:N0} ₫", p.ListPrice)</span>
+                            <span class="product-discount-badge">-@p.DiscountPercent%</span>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="product-price">@string.Format("{0:N0} ₫", p?.DisplayPrice)</div>
+                    }
+                </div>
+
+                @if (!string.IsNullOrWhiteSpace(p?.Description))
+                {
+                    <p class="product-description">@p.Description</p>
+                }
+
+                <div class="product-meta">
+                    @if (!string.IsNullOrWhiteSpace(p?.CategoryTitle))
+                    {
+                        <div class="product-meta-item">
+                            <strong><i class="bx bx-category me-1"></i>Danh mục:</strong>@p.CategoryTitle
+                        </div>
+                    }
+                    @if (!string.IsNullOrWhiteSpace(p?.SupplierTitle))
+                    {
+                        <div class="product-meta-item">
+                            <strong><i class="bx bx-store me-1"></i>Nhà cung cấp:</strong>@p.SupplierTitle
+                        </div>
+                    }
+                    @if (p != null)
+                    {
+                        <div class="product-stock @(p.Quantity == 0 ? "out-of-stock" : "")">
+                            <strong><i class="bx bx-package me-1"></i>Số lượng còn lại:</strong> @p.Quantity
+                        </div>
+                    }
+                </div>
+
+                <form method="post" asp-controller="ShoppingCart" asp-action="Add">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="productId" value="@p?.Id" />
+                    <input type="hidden" name="returnUrl" value="@returnUrl" />
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="quantity-control" data-quantity data-max="@(p?.Quantity ?? 0)" data-stock="@(p?.Quantity ?? 0)">
+                            <button type="button" class="btn-minus" aria-label="Giảm" @(p?.Quantity == 0 ? "disabled" : "")><i class="bx bx-minus"></i></button>
+                            <input type="number" 
+                                   name="quantity" 
+                                   value="@(p?.Quantity > 0 ? 1 : 0)" 
+                                   min="0" 
+                                   max="@(p?.Quantity ?? 0)"
+                                   @(p?.Quantity == 0 ? "disabled" : "") />
+                            <button type="button" class="btn-plus" aria-label="Tăng" @(p?.Quantity == 0 ? "disabled" : "")><i class="bx bx-plus"></i></button>
+                        </div>
+                        <button type="submit" 
+                                class="btn btn-primary btn-add-cart" 
+                                @(p?.Quantity == 0 ? "disabled" : "")>
+                            <i class="bx bx-cart-add me-1"></i>Thêm vào giỏ
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
 
 @if (!string.IsNullOrWhiteSpace(p?.Content))
 {
-	<section class="mt-4">
-		<h2 class="h5 mb-3">Mô tả chi tiết</h2>
-		<div class="card shadow-sm">
-			<div class="card-body">
-				@Html.Raw(p.Content)
-			</div>
-		</div>
-	</section>
+    <section class="description-section">
+        <div class="section-header">
+            <h2><i class="bx bx-file-blank"></i>Mô tả chi tiết</h2>
+        </div>
+        <div class="description-card card border-0 shadow-sm">
+            <div class="card-body">
+                @Html.Raw(p.Content)
+            </div>
+        </div>
+    </section>
 }
 
-<section class="py-4">
-	<h2 class="h5 mb-3">Sản phẩm liên quan</h2>
-	<div class="row g-3">
-		@foreach (var r in Model.Related.Take(8))
-		{
-			<div class="col-6 col-md-3">
-				<div class="card h-100 shadow-sm">
-					<img class="card-img-top object-fit-cover" style="height:180px" src="@(string.IsNullOrWhiteSpace(r.Image) ? Url.Content("~/images/placeholder.png") : r.Image)" alt="@r.Title" />
-					<div class="card-body d-flex flex-column">
-						<h3 class="h6 card-title">@r.Title</h3>
-						<div class="mt-auto">
-							@if (r.HasDiscount)
-							{
-								<div>
-									<span class="text-danger fw-bold">@string.Format("{0:N0} ₫", r.GiaHienThi)</span>
-									<small class="text-muted text-decoration-line-through ms-2">@string.Format("{0:N0} ₫", r.OriginalPrice)</small>
-								</div>
-							}
-							else
-							{
-								<div class="fw-bold">@string.Format("{0:N0} ₫", r.GiaHienThi)</div>
-							}
-							<a class="btn btn-outline-primary btn-sm w-100 mt-2" asp-action="Detail" asp-route-id="@r.Id">Xem chi tiết</a>
-						</div>
-					</div>
-				</div>
-			</div>
-		}
-	</div>
+<section class="related-section">
+    <div class="section-header">
+        <h2><i class="bx bx-grid-alt"></i>Sản phẩm liên quan</h2>
+        <p class="mb-0">Các sản phẩm tương tự bạn có thể quan tâm</p>
+    </div>
+    <div class="row g-4">
+        @if (Model.Related != null && Model.Related.Any())
+        {
+            @foreach (var r in Model.Related.Take(8))
+            {
+                <div class="col-6 col-md-3">
+                    <div class="product-card card h-100 shadow-sm position-relative overflow-hidden border-0">
+                        @if (r.HasDiscount)
+                        {
+                            <span class="badge bg-danger position-absolute top-0 start-0 m-2 px-2 py-1 fw-bold product-discount-badge-small">-@r.DiscountPercent%</span>
+                        }
+                        <a asp-action="Detail" asp-route-id="@r.Id" class="text-decoration-none">
+                            <img class="card-img-top object-fit-cover" 
+                                 src="@(string.IsNullOrWhiteSpace(r.Image) ? Url.Content("~/images/placeholder.png") : r.Image)" 
+                                 alt="@r.Title"
+                                 loading="lazy" />
+                        </a>
+                        <div class="card-body d-flex flex-column">
+                            <h3 class="card-title text-truncate-2">@r.Title</h3>
+                            <div class="mt-auto">
+                                @if (r.HasDiscount)
+                                {
+                                    <div>
+                                        <span class="text-primary fw-bold">@string.Format("{0:N0} ₫", r.GiaHienThi)</span>
+                                        <small class="text-muted text-decoration-line-through ms-2">@string.Format("{0:N0} ₫", r.OriginalPrice)</small>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="text-primary fw-bold">@string.Format("{0:N0} ₫", r.GiaHienThi)</div>
+                                }
+                                <a class="btn btn-primary btn-sm w-100 mt-2" asp-action="Detail" asp-route-id="@r.Id">
+                                    <i class="bx bx-show me-1"></i>Xem chi tiết
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="col-12">
+                <div class="alert alert-info text-center">
+                    <i class="bx bx-info-circle me-2"></i>Không có sản phẩm liên quan.
+                </div>
+            </div>
+        }
+    </div>
 </section>
 
 @section Scripts {
-	<style>
-		.object-fit-cover { object-fit: cover; }
-	</style>
+    <script>
+        (function() {
+            const quantityContainers = document.querySelectorAll('[data-quantity]');
+            
+            quantityContainers.forEach(function (container) {
+                const input = container.querySelector('input[name="quantity"]');
+                if (!input) return;
+                
+                const btnMinus = container.querySelector('.btn-minus');
+                const btnPlus = container.querySelector('.btn-plus');
+                
+                if (!btnMinus || !btnPlus) return;
+                
+                const maxQuantity = parseInt(container.getAttribute('data-max') || '0', 10);
+                const stock = parseInt(container.getAttribute('data-stock') || '0', 10);
+                
+                if (stock === 0) {
+                    input.value = 0;
+                    input.disabled = true;
+                    btnMinus.disabled = true;
+                    btnPlus.disabled = true;
+                    return;
+                }
+                
+                if (parseInt(input.value || '0', 10) === 0 && stock > 0) {
+                    input.value = 1;
+                }
+                
+                const newBtnMinus = btnMinus.cloneNode(true);
+                const newBtnPlus = btnPlus.cloneNode(true);
+                btnMinus.parentNode.replaceChild(newBtnMinus, btnMinus);
+                btnPlus.parentNode.replaceChild(newBtnPlus, btnPlus);
+                
+                newBtnMinus.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    e.stopImmediatePropagation();
+                    
+                    if (input.disabled || stock === 0) return;
+                    
+                    const current = parseInt(input.value || '1', 10);
+                    const newValue = Math.max(1, current - 1);
+                    input.value = newValue;
+                }, true);
+                
+                newBtnPlus.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    e.stopImmediatePropagation();
+                    
+                    if (input.disabled || stock === 0) return;
+                    
+                    const current = parseInt(input.value || '1', 10);
+                    const newValue = Math.min(maxQuantity, current + 1);
+                    input.value = newValue;
+                }, true);
+                
+                input.addEventListener('keydown', function (e) {
+                    if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+                        e.preventDefault();
+                    }
+                });
+                
+                input.addEventListener('change', function() {
+                    if (stock === 0) {
+                        this.value = 0;
+                        return;
+                    }
+                    const val = parseInt(this.value || '1', 10);
+                    if (val < 1) this.value = 1;
+                    if (val > maxQuantity) this.value = maxQuantity;
+                });
+            });
+        })();
+    </script>
 }
-

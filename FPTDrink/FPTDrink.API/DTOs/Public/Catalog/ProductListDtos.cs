@@ -24,6 +24,7 @@ namespace FPTDrink.API.DTOs.Public.Catalog
 		public bool IsSale { get; set; }
 		public string? ProductCategoryTitle { get; set; }
 		public string? SupplierTitle { get; set; }
+		public int SoLuong { get; set; }
 	}
 
 	public class PagedResultDto<T>

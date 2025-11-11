@@ -4,7 +4,95 @@
 	var total = Model.Items.Sum(i => i.TotalPrice);
 }
 
-<section class="products-section">
+@section Styles {
+    <style>
+        .cart-section .form-control {
+            border: 2px solid rgba(212, 165, 116, 0.3);
+            border-radius: 8px;
+            background: #ffffff;
+            color: #2d1b0e;
+            transition: all 0.3s ease;
+        }
+
+        .cart-section .form-control:focus {
+            border-color: #d4a574;
+            box-shadow: 0 0 0 0.2rem rgba(212, 165, 116, 0.25);
+            background: #ffffff;
+        }
+
+        .cart-section .input-group .form-control {
+            border-right: none;
+            border-radius: 8px 0 0 8px;
+        }
+
+        .cart-section .btn-outline-primary {
+            background: linear-gradient(135deg, rgba(212, 165, 116, 0.1) 0%, rgba(139, 90, 43, 0.05) 100%);
+            border: 2px solid #d4a574;
+            color: #d4a574;
+            border-radius: 0 8px 8px 0;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .cart-section .btn-outline-primary:hover {
+            background: linear-gradient(135deg, #d4a574 0%, #f0c896 100%);
+            border-color: #d4a574;
+            color: #1a0f08;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(212, 165, 116, 0.3);
+        }
+
+        .cart-section .btn-outline-danger {
+            border: 2px solid rgba(220, 53, 69, 0.3);
+            color: #dc3545;
+            background: linear-gradient(135deg, rgba(220, 53, 69, 0.1) 0%, rgba(220, 53, 69, 0.05) 100%);
+            transition: all 0.3s ease;
+        }
+
+        .cart-section .btn-outline-danger:hover {
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+            border-color: #dc3545;
+            color: #ffffff;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
+        }
+
+        .cart-section .btn-outline-secondary {
+            border: 2px solid rgba(212, 165, 116, 0.3);
+            color: #2d1b0e;
+            background: linear-gradient(135deg, rgba(212, 165, 116, 0.1) 0%, rgba(139, 90, 43, 0.05) 100%);
+            border-radius: 10px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .cart-section .btn-outline-secondary:hover {
+            background: linear-gradient(135deg, #d4a574 0%, #f0c896 100%);
+            border-color: #d4a574;
+            color: #1a0f08;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(212, 165, 116, 0.3);
+        }
+
+        .cart-section .btn-primary {
+            background: linear-gradient(135deg, #d4a574 0%, #f0c896 100%);
+            border: none;
+            color: #1a0f08;
+            font-weight: 700;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(212, 165, 116, 0.4);
+            transition: all 0.3s ease;
+        }
+
+        .cart-section .btn-primary:hover {
+            background: linear-gradient(135deg, #f0c896 0%, #d4a574 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(212, 165, 116, 0.5);
+        }
+    </style>
+}
+
+<section class="products-section cart-section">
 	<div class="section-header">
 		<h2><i class="bx bx-cart"></i>Giỏ hàng của bạn</h2>
 		<p class="mb-0">Kiểm tra và chỉnh sửa các sản phẩm trong giỏ hàng</p>

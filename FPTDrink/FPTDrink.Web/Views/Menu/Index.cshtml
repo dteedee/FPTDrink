@@ -120,12 +120,6 @@
             box-shadow: 0 4px 12px rgba(212, 165, 116, 0.2);
         }
 
-        .badge-discount {
-            position: absolute;
-            top: 16px;
-            left: 16px;
-            z-index: 10;
-        }
 
         .price-block {
             display: flex;
@@ -137,59 +131,6 @@
             font-size: 0.95rem;
             color: #8b7a66;
             text-decoration: line-through;
-        }
-
-        .quantity-control {
-            display: inline-flex;
-            align-items: center;
-            border-radius: 999px;
-            background: rgba(212, 165, 116, 0.1);
-            border: 1px solid rgba(212, 165, 116, 0.3);
-            padding: 4px;
-            gap: 4px;
-        }
-
-        .quantity-control button {
-            border: none;
-            background: transparent;
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #2d1b0e;
-            transition: all 0.3s ease;
-        }
-
-        .quantity-control button:hover {
-            background: rgba(212, 165, 116, 0.2);
-            color: #1a0f08;
-        }
-
-        .quantity-control input {
-            width: 48px;
-            text-align: center;
-            border: none;
-            background: transparent;
-            font-weight: 600;
-            color: #2d1b0e;
-            -moz-appearance: textfield;
-        }
-
-        .quantity-control input::-webkit-outer-spin-button,
-        .quantity-control input::-webkit-inner-spin-button {
-            -webkit-appearance: none;
-            margin: 0;
-        }
-
-        .btn-add-cart {
-            border-radius: 10px;
-            padding: 10px 20px;
-            font-weight: 700;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
         }
 
         .filter-chip {
@@ -216,21 +157,97 @@
             transform: scale(1.2);
         }
 
+        .form-control,
+        .form-select {
+            border: 2px solid rgba(212, 165, 116, 0.3);
+            border-radius: 10px;
+            background: #ffffff;
+            color: #2d1b0e;
+            transition: all 0.3s ease;
+        }
+
         .form-control:focus,
         .form-select:focus {
             border-color: #d4a574;
             box-shadow: 0 0 0 0.2rem rgba(212, 165, 116, 0.25);
+            background: #ffffff;
+        }
+
+        .input-group-text {
+            background: linear-gradient(135deg, rgba(212, 165, 116, 0.1) 0%, rgba(139, 90, 43, 0.05) 100%);
+            border: 2px solid rgba(212, 165, 116, 0.3);
+            border-right: none;
+            border-radius: 10px 0 0 10px;
+            color: #2d1b0e;
+        }
+
+        .input-group .form-control {
+            border-left: none;
+            border-radius: 0;
+        }
+
+        .input-group .form-control:focus {
+            border-left: none;
+        }
+
+        .input-group .btn-primary {
+            background: linear-gradient(135deg, #d4a574 0%, #f0c896 100%);
+            border: 2px solid #d4a574;
+            border-left: none;
+            border-radius: 0 10px 10px 0;
+            color: #1a0f08;
+            font-weight: 700;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(212, 165, 116, 0.3);
+        }
+
+        .input-group .btn-primary:hover {
+            background: linear-gradient(135deg, #f0c896 0%, #d4a574 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(212, 165, 116, 0.4);
         }
 
         .btn-outline-secondary {
-            border-color: rgba(212, 165, 116, 0.3);
+            border: 2px solid rgba(212, 165, 116, 0.3);
             color: #2d1b0e;
+            background: linear-gradient(135deg, rgba(212, 165, 116, 0.1) 0%, rgba(139, 90, 43, 0.05) 100%);
+            border-radius: 10px;
+            font-weight: 600;
+            transition: all 0.3s ease;
         }
 
         .btn-outline-secondary:hover {
             background: linear-gradient(135deg, #d4a574 0%, #f0c896 100%);
             border-color: #d4a574;
             color: #1a0f08;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(212, 165, 116, 0.3);
+        }
+
+        .dropdown-menu {
+            background: linear-gradient(135deg, #faf8f5 0%, #f5f0e8 100%);
+            border: 2px solid rgba(212, 165, 116, 0.3);
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(139, 90, 43, 0.15);
+            padding: 0.5rem;
+        }
+
+        .dropdown-item {
+            color: #2d1b0e;
+            border-radius: 8px;
+            padding: 0.5rem 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .dropdown-item:hover {
+            background: linear-gradient(135deg, rgba(212, 165, 116, 0.15) 0%, rgba(139, 90, 43, 0.1) 100%);
+            color: #1a0f08;
+        }
+
+        .dropdown-item.active {
+            background: linear-gradient(135deg, #d4a574 0%, #f0c896 100%);
+            color: #1a0f08;
+            font-weight: 700;
         }
 
         @@media (max-width: 992px) {
@@ -406,7 +423,7 @@
                             <div class="product-card card h-100 position-relative">
                                 @if (hasDiscount)
                                 {
-                                    <span class="badge badge-discount">-@discountPercent%</span>
+                                    <span class="badge bg-danger position-absolute top-0 start-0 m-2 px-2 py-1 fw-bold" style="z-index: 10; font-size: 0.75rem;">-@discountPercent%</span>
                                 }
                                 <a href="@productUrl">
                                     <img class="card-img-top" 
@@ -433,12 +450,12 @@
                                         <input type="hidden" name="productId" value="@product.Id" />
                                         <input type="hidden" name="returnUrl" value="@currentUrl" />
                                         <div class="d-flex align-items-center justify-content-between gap-2">
-                                            <div class="quantity-control" data-quantity>
-                                                <button type="button" class="btn-minus" aria-label="Giảm"><i class="bx bx-minus"></i></button>
-                                                <input type="number" name="quantity" value="1" min="1" />
-                                                <button type="button" class="btn-plus" aria-label="Tăng"><i class="bx bx-plus"></i></button>
+                                            <div class="quantity-control" data-quantity data-max="@product.SoLuong" data-stock="@product.SoLuong">
+                                                <button type="button" class="btn-minus" aria-label="Giảm" @(product.SoLuong == 0 ? "disabled" : "")><i class="bx bx-minus"></i></button>
+                                                <input type="number" name="quantity" value="@(product.SoLuong > 0 ? 1 : 0)" min="0" max="@product.SoLuong" @(product.SoLuong == 0 ? "disabled" : "") />
+                                                <button type="button" class="btn-plus" aria-label="Tăng" @(product.SoLuong == 0 ? "disabled" : "")><i class="bx bx-plus"></i></button>
                                             </div>
-                                            <button type="submit" class="btn btn-primary btn-add-cart">
+                                            <button type="submit" class="btn btn-primary btn-add-cart" @(product.SoLuong == 0 ? "disabled" : "")>
                                                 <i class="bx bx-cart-add"></i> Thêm
                                             </button>
                                         </div>
@@ -493,14 +510,22 @@
                 
                 if (!btnMinus || !btnPlus) return;
                 
-                // Get max quantity from stock (if available)
-                const stockText = container.closest('.card')?.querySelector('.text-muted small')?.textContent;
-                let maxQuantity = 999;
-                if (stockText) {
-                    const match = stockText.match(/(\d+)/);
-                    if (match) {
-                        maxQuantity = parseInt(match[1], 10);
-                    }
+                // Get max quantity from data attribute
+                const maxQuantity = parseInt(container.getAttribute('data-max') || '0', 10);
+                const stock = parseInt(container.getAttribute('data-stock') || '0', 10);
+                
+                // If out of stock, disable everything and set value to 0
+                if (stock === 0) {
+                    input.value = 0;
+                    input.disabled = true;
+                    btnMinus.disabled = true;
+                    btnPlus.disabled = true;
+                    return;
+                }
+                
+                // Set initial value if needed
+                if (parseInt(input.value || '0', 10) === 0 && stock > 0) {
+                    input.value = 1;
                 }
                 
                 // Remove any existing listeners by cloning
@@ -515,6 +540,8 @@
                     e.stopPropagation();
                     e.stopImmediatePropagation();
                     
+                    if (input.disabled || stock === 0) return;
+                    
                     const current = parseInt(input.value || '1', 10);
                     const newValue = Math.max(1, current - 1);
                     input.value = newValue;
@@ -524,6 +551,8 @@
                     e.preventDefault();
                     e.stopPropagation();
                     e.stopImmediatePropagation();
+                    
+                    if (input.disabled || stock === 0) return;
                     
                     const current = parseInt(input.value || '1', 10);
                     const newValue = Math.min(maxQuantity, current + 1);
@@ -537,8 +566,12 @@
                     }
                 });
                 
-                // Prevent form submission when clicking buttons
+                // Validate input on change
                 input.addEventListener('change', function() {
+                    if (stock === 0) {
+                        this.value = 0;
+                        return;
+                    }
                     const val = parseInt(this.value || '1', 10);
                     if (val < 1) this.value = 1;
                     if (val > maxQuantity) this.value = maxQuantity;
