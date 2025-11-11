@@ -29,6 +29,9 @@ namespace FPTDrink.Web.ViewModels
         [JsonPropertyName("supplierTitle")]
         public string? SupplierTitle { get; set; }
 
+        [JsonPropertyName("soLuong")]
+        public int SoLuong { get; set; }
+
         [JsonIgnore]
         public bool HasDiscount => GiamGia.HasValue && GiamGia.Value > 0;
 

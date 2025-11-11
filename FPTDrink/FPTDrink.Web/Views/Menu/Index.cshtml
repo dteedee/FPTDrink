@@ -28,17 +28,13 @@
 }
 
 @section Styles {
-    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
     <style>
         .menu-hero {
             border-radius: 20px;
             overflow: hidden;
-            box-shadow: 0 10px 30px rgba(13, 110, 253, 0.15);
+            box-shadow: 0 10px 30px rgba(139, 90, 43, 0.2);
             position: relative;
-        }
-
-        .menu-hero .carousel-item {
-            position: relative;
+            margin-bottom: 3rem;
         }
 
         .menu-hero .carousel-item img {
@@ -47,30 +43,36 @@
             object-fit: cover;
         }
 
-        .menu-hero .carousel-caption {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            padding: 2rem;
-            z-index: 1;
-        }
-
         .menu-hero .carousel-caption .bg-dark {
-            backdrop-filter: blur(5px);
+            background: linear-gradient(135deg, rgba(45, 27, 14, 0.95) 0%, rgba(26, 15, 8, 0.9) 100%) !important;
+            backdrop-filter: blur(12px);
+            border: 2px solid rgba(212, 165, 116, 0.4);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
         }
 
-        @@media (max-width: 768px) {
-            .menu-hero .carousel-item img {
-                height: 250px;
-            }
+        .menu-hero .carousel-caption h2 {
+            color: #f0c896 !important;
+            text-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+        }
+
+        .menu-hero .carousel-caption .lead {
+            color: #e8ddd0 !important;
+        }
+
+        .menu-hero .btn-light {
+            background: linear-gradient(135deg, #d4a574 0%, #f0c896 100%) !important;
+            color: #1a0f08 !important;
+            border: none;
+            font-weight: 700;
+            box-shadow: 0 6px 20px rgba(212, 165, 116, 0.5);
         }
 
         .menu-sidebar {
-            background: #fff;
+            background: linear-gradient(135deg, #faf8f5 0%, #f5f0e8 100%);
             border-radius: 18px;
             padding: 24px;
-            box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+            box-shadow: 0 8px 24px rgba(139, 90, 43, 0.15);
+            border: 2px solid rgba(212, 165, 116, 0.2);
             position: sticky;
             top: 96px;
         }
@@ -79,8 +81,11 @@
             font-size: 1.05rem;
             font-weight: 700;
             margin-bottom: 18px;
+            color: #2d1b0e;
             text-transform: uppercase;
             letter-spacing: 0.06em;
+            border-bottom: 2px solid rgba(212, 165, 116, 0.3);
+            padding-bottom: 10px;
         }
 
         .sidebar-list {
@@ -98,49 +103,28 @@
             justify-content: space-between;
             padding: 12px 16px;
             border-radius: 12px;
-            color: #0f172a;
+            color: #2d1b0e;
             text-decoration: none;
             font-weight: 500;
-            background: #f8fafc;
+            background: rgba(255, 255, 255, 0.6);
+            border: 1px solid rgba(212, 165, 116, 0.2);
             transition: all 0.3s ease;
         }
 
         .sidebar-list li.active a,
         .sidebar-list li a:hover {
-            background: linear-gradient(135deg, rgba(13, 110, 253, 0.12), rgba(59, 130, 246, 0.12));
-            color: #0d6efd;
-            box-shadow: inset 0 0 0 1px rgba(13, 110, 253, 0.3);
-        }
-
-        .product-card {
-            border: none;
-            border-radius: 20px;
-            box-shadow: 0 12px 32px rgba(15, 23, 42, 0.12);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            overflow: hidden;
-        }
-
-        .product-card:hover {
-            transform: translateY(-6px);
-            box-shadow: 0 16px 40px rgba(15, 23, 42, 0.18);
-        }
-
-        .product-card img {
-            height: 220px;
-            object-fit: cover;
+            background: linear-gradient(135deg, rgba(212, 165, 116, 0.15) 0%, rgba(139, 90, 43, 0.1) 100%);
+            color: #1a0f08;
+            border-color: rgba(212, 165, 116, 0.4);
+            transform: translateX(5px);
+            box-shadow: 0 4px 12px rgba(212, 165, 116, 0.2);
         }
 
         .badge-discount {
             position: absolute;
             top: 16px;
             left: 16px;
-            background: #dc3545;
-            color: #fff;
-            padding: 6px 12px;
-            border-radius: 999px;
-            font-weight: 600;
-            font-size: 0.85rem;
-            box-shadow: 0 6px 16px rgba(220, 53, 69, 0.35);
+            z-index: 10;
         }
 
         .price-block {
@@ -151,7 +135,7 @@
 
         .price-original {
             font-size: 0.95rem;
-            color: #94a3b8;
+            color: #8b7a66;
             text-decoration: line-through;
         }
 
@@ -159,7 +143,8 @@
             display: inline-flex;
             align-items: center;
             border-radius: 999px;
-            background: #f1f5f9;
+            background: rgba(212, 165, 116, 0.1);
+            border: 1px solid rgba(212, 165, 116, 0.3);
             padding: 4px;
             gap: 4px;
         }
@@ -173,7 +158,13 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            color: #0f172a;
+            color: #2d1b0e;
+            transition: all 0.3s ease;
+        }
+
+        .quantity-control button:hover {
+            background: rgba(212, 165, 116, 0.2);
+            color: #1a0f08;
         }
 
         .quantity-control input {
@@ -182,12 +173,20 @@
             border: none;
             background: transparent;
             font-weight: 600;
+            color: #2d1b0e;
+            -moz-appearance: textfield;
+        }
+
+        .quantity-control input::-webkit-outer-spin-button,
+        .quantity-control input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
         }
 
         .btn-add-cart {
-            border-radius: 999px;
+            border-radius: 10px;
             padding: 10px 20px;
-            font-weight: 600;
+            font-weight: 700;
             display: inline-flex;
             align-items: center;
             gap: 8px;
@@ -196,25 +195,54 @@
         .filter-chip {
             padding: 10px 14px;
             border-radius: 12px;
-            background: #eff6ff;
-            color: #0d6efd;
+            background: linear-gradient(135deg, rgba(212, 165, 116, 0.1) 0%, rgba(139, 90, 43, 0.05) 100%);
+            color: #2d1b0e;
+            border: 1px solid rgba(212, 165, 116, 0.3);
             display: inline-flex;
             align-items: center;
             gap: 8px;
             margin-right: 8px;
             margin-bottom: 8px;
+            font-weight: 500;
         }
 
         .filter-chip .remove {
             cursor: pointer;
+            color: #dc3545;
+            transition: transform 0.2s ease;
+        }
+
+        .filter-chip .remove:hover {
+            transform: scale(1.2);
+        }
+
+        .form-control:focus,
+        .form-select:focus {
+            border-color: #d4a574;
+            box-shadow: 0 0 0 0.2rem rgba(212, 165, 116, 0.25);
+        }
+
+        .btn-outline-secondary {
+            border-color: rgba(212, 165, 116, 0.3);
+            color: #2d1b0e;
+        }
+
+        .btn-outline-secondary:hover {
+            background: linear-gradient(135deg, #d4a574 0%, #f0c896 100%);
+            border-color: #d4a574;
+            color: #1a0f08;
         }
 
         @@media (max-width: 992px) {
             .menu-sidebar {
                 position: static;
+                margin-bottom: 2rem;
             }
-            .product-card img {
-                height: 180px;
+        }
+
+        @@media (max-width: 768px) {
+            .menu-hero .carousel-item img {
+                height: 250px;
             }
         }
     </style>
@@ -375,10 +403,10 @@
                         var discountPercent = product.DiscountPercent;
                         var productUrl = Url.Action("Detail", "Products", new { id = product.Id });
                         <div class="col-12 col-sm-6 col-md-4">
-                            <div class="card product-card h-100 position-relative">
+                            <div class="product-card card h-100 position-relative">
                                 @if (hasDiscount)
                                 {
-                                    <div class="badge-discount">-@discountPercent%</div>
+                                    <span class="badge badge-discount">-@discountPercent%</span>
                                 }
                                 <a href="@productUrl">
                                     <img class="card-img-top" 
@@ -394,10 +422,12 @@
                                         <span class="fs-5 text-primary fw-bold">@string.Format("{0:N0} ₫", product.GiaHienThi)</span>
                                         @if (hasDiscount)
                                         {
-                                            <span class="price-original">@string.Format("{0:N0} ₫", product.OriginalPrice)</span>
+                                            <span class="text-muted price-original">@string.Format("{0:N0} ₫", product.OriginalPrice)</span>
                                         }
                                     </div>
-                                    <p class="text-muted small flex-grow-1">Thức uống tươi mát, giao nhanh trong 10 phút.</p>
+                                    <p class="text-muted small flex-grow-1 mb-2">
+                                        <i class="bx bx-package me-1"></i>Số lượng còn lại: <strong>@product.SoLuong</strong>
+                                    </p>
                                     <form method="post" asp-controller="ShoppingCart" asp-action="Add" class="mt-auto">
                                         @Html.AntiForgeryToken()
                                         <input type="hidden" name="productId" value="@product.Id" />
@@ -451,16 +481,69 @@
 
 @section Scripts {
     <script>
-        document.querySelectorAll('[data-quantity]').forEach(function (container) {
-            const input = container.querySelector('input[name="quantity"]');
-            container.querySelector('.btn-minus').addEventListener('click', function () {
-                const current = parseInt(input.value || '1', 10);
-                input.value = Math.max(1, current - 1);
+        (function() {
+            const quantityContainers = document.querySelectorAll('[data-quantity]');
+            
+            quantityContainers.forEach(function (container) {
+                const input = container.querySelector('input[name="quantity"]');
+                if (!input) return;
+                
+                const btnMinus = container.querySelector('.btn-minus');
+                const btnPlus = container.querySelector('.btn-plus');
+                
+                if (!btnMinus || !btnPlus) return;
+                
+                // Get max quantity from stock (if available)
+                const stockText = container.closest('.card')?.querySelector('.text-muted small')?.textContent;
+                let maxQuantity = 999;
+                if (stockText) {
+                    const match = stockText.match(/(\d+)/);
+                    if (match) {
+                        maxQuantity = parseInt(match[1], 10);
+                    }
+                }
+                
+                // Remove any existing listeners by cloning
+                const newBtnMinus = btnMinus.cloneNode(true);
+                const newBtnPlus = btnPlus.cloneNode(true);
+                btnMinus.parentNode.replaceChild(newBtnMinus, btnMinus);
+                btnPlus.parentNode.replaceChild(newBtnPlus, btnPlus);
+                
+                // Add click handlers
+                newBtnMinus.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    e.stopImmediatePropagation();
+                    
+                    const current = parseInt(input.value || '1', 10);
+                    const newValue = Math.max(1, current - 1);
+                    input.value = newValue;
+                }, true);
+                
+                newBtnPlus.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    e.stopImmediatePropagation();
+                    
+                    const current = parseInt(input.value || '1', 10);
+                    const newValue = Math.min(maxQuantity, current + 1);
+                    input.value = newValue;
+                }, true);
+                
+                // Prevent input from being changed by spinner arrows
+                input.addEventListener('keydown', function (e) {
+                    if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+                        e.preventDefault();
+                    }
+                });
+                
+                // Prevent form submission when clicking buttons
+                input.addEventListener('change', function() {
+                    const val = parseInt(this.value || '1', 10);
+                    if (val < 1) this.value = 1;
+                    if (val > maxQuantity) this.value = maxQuantity;
+                });
             });
-            container.querySelector('.btn-plus').addEventListener('click', function () {
-                const current = parseInt(input.value || '1', 10);
-                input.value = current + 1;
-            });
-        });
+        })();
     </script>
 }

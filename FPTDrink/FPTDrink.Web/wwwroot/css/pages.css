@@ -1,0 +1,455 @@
+/* ============================================
+   FPTDrink - Pages & Components CSS
+   Reusable styles for Home, Products, and other pages
+   ============================================ */
+
+/* === HERO BANNER === */
+.hero-banner {
+    margin-top: -1rem;
+    position: relative;
+}
+
+.hero-banner .carousel-caption {
+    padding: 2rem;
+}
+
+.hero-banner .carousel-caption .bg-dark {
+    background: linear-gradient(135deg, rgba(45, 27, 14, 0.96) 0%, rgba(26, 15, 8, 0.94) 100%) !important;
+    backdrop-filter: blur(12px);
+    border: 2px solid rgba(212, 165, 116, 0.4);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(212, 165, 116, 0.2);
+}
+
+.hero-banner .carousel-caption h1 {
+    color: #f0c896 !important;
+    text-shadow: 0 4px 12px rgba(0, 0, 0, 0.6), 0 0 20px rgba(212, 165, 116, 0.3);
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+
+.hero-banner .carousel-caption .lead {
+    color: #e8ddd0 !important;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+.hero-banner .btn-light {
+    background: linear-gradient(135deg, #d4a574 0%, #f0c896 100%) !important;
+    color: #1a0f08 !important;
+    border: none;
+    font-weight: 700;
+    box-shadow: 0 6px 20px rgba(212, 165, 116, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    transition: all 0.3s ease;
+    letter-spacing: 0.5px;
+}
+
+.hero-banner .btn-light:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 28px rgba(212, 165, 116, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+    background: linear-gradient(135deg, #f0c896 0%, #d4a574 100%) !important;
+}
+
+.hero-banner .carousel-control-prev,
+.hero-banner .carousel-control-next {
+    background: linear-gradient(135deg, rgba(212, 165, 116, 0.25) 0%, rgba(139, 90, 43, 0.2) 100%);
+    border-radius: 50%;
+    width: 55px;
+    height: 55px;
+    top: 50%;
+    transform: translateY(-50%);
+    border: 2px solid rgba(212, 165, 116, 0.5);
+    backdrop-filter: blur(8px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.hero-banner .carousel-control-prev:hover,
+.hero-banner .carousel-control-next:hover {
+    background: linear-gradient(135deg, rgba(212, 165, 116, 0.4) 0%, rgba(139, 90, 43, 0.3) 100%);
+    border-color: rgba(212, 165, 116, 0.7);
+    transform: translateY(-50%) scale(1.1);
+}
+
+/* === SECTION HEADERS === */
+.section-header {
+    padding-bottom: 1.5rem;
+    margin-bottom: 2.5rem;
+    position: relative;
+}
+
+.section-header::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: linear-gradient(90deg, transparent 0%, #d4a574 20%, #f0c896 50%, #d4a574 80%, transparent 100%);
+    border-radius: 2px;
+    box-shadow: 0 2px 8px rgba(212, 165, 116, 0.4);
+}
+
+.section-header::after {
+    content: '';
+    position: absolute;
+    bottom: -3px;
+    left: 0;
+    width: 80px;
+    height: 3px;
+    background: linear-gradient(90deg, #d4a574 0%, #f0c896 100%);
+    border-radius: 2px;
+    box-shadow: 0 0 12px rgba(212, 165, 116, 0.6);
+}
+
+.section-header h2 {
+    color: #2d1b0e;
+    font-size: 1.85rem;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    letter-spacing: 0.3px;
+}
+
+.section-header h2 i {
+    color: #d4a574;
+    margin-right: 0.75rem;
+    font-size: 1.75rem;
+    filter: drop-shadow(0 2px 4px rgba(212, 165, 116, 0.4));
+}
+
+.section-header p {
+    color: #6b5d4f;
+    font-size: 0.95rem;
+    margin-top: 0.5rem;
+}
+
+/* === PRODUCT CARDS (Reusable) === */
+.product-card {
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 16px !important;
+    background: linear-gradient(135deg, #faf8f5 0%, #f5f0e8 100%) !important;
+    border: 2px solid rgba(212, 165, 116, 0.25) !important;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 4px 16px rgba(139, 90, 43, 0.15);
+}
+
+.product-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(212, 165, 116, 0.08) 0%, rgba(139, 90, 43, 0.05) 100%);
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.product-card::after {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: linear-gradient(135deg, #d4a574 0%, #f0c896 50%, #d4a574 100%);
+    border-radius: 16px;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    z-index: -1;
+}
+
+.product-card:hover::before {
+    opacity: 1;
+}
+
+.product-card:hover::after {
+    opacity: 0.3;
+}
+
+.product-card:hover {
+    transform: translateY(-10px) scale(1.02);
+    box-shadow: 0 16px 48px rgba(212, 165, 116, 0.35), 0 0 0 1px rgba(212, 165, 116, 0.2) !important;
+    border-color: rgba(212, 165, 116, 0.5) !important;
+}
+
+.product-card .card-img-top {
+    border-radius: 14px 14px 0 0;
+    transition: transform 0.5s ease;
+    position: relative;
+    z-index: 2;
+}
+
+.product-card:hover .card-img-top {
+    transform: scale(1.1);
+}
+
+.product-card .badge {
+    font-size: 0.9rem;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #dc3545 0%, #c82333 100%) !important;
+    box-shadow: 0 6px 16px rgba(220, 53, 69, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    border: 2px solid rgba(255, 255, 255, 0.4);
+    font-weight: 700;
+    z-index: 10;
+    position: relative;
+}
+
+.product-card .card-title {
+    color: #2d1b0e;
+    font-size: 1.05rem;
+    line-height: 1.5;
+    font-weight: 700;
+    position: relative;
+    z-index: 2;
+}
+
+.product-card .card-body {
+    background: transparent;
+    position: relative;
+    z-index: 2;
+}
+
+.product-card .text-primary {
+    color: #d4a574 !important;
+    font-weight: 700;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.product-card .text-danger {
+    color: #dc3545 !important;
+    font-weight: 700;
+}
+
+.product-card .text-muted {
+    color: #8b7a66 !important;
+}
+
+/* === BUTTONS (Reusable) === */
+.product-card .btn-primary {
+    background: linear-gradient(135deg, #d4a574 0%, #f0c896 100%) !important;
+    border: none !important;
+    color: #1a0f08 !important;
+    font-weight: 700;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(212, 165, 116, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    letter-spacing: 0.3px;
+    position: relative;
+    overflow: hidden;
+}
+
+.product-card .btn-primary::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    transform: translate(-50%, -50%);
+    transition: width 0.4s ease, height 0.4s ease;
+}
+
+.product-card .btn-primary:hover::before {
+    width: 300px;
+    height: 300px;
+}
+
+.product-card .btn-primary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px rgba(212, 165, 116, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+    background: linear-gradient(135deg, #f0c896 0%, #d4a574 100%) !important;
+}
+
+.product-card .btn-outline-primary {
+    background: linear-gradient(135deg, rgba(212, 165, 116, 0.1) 0%, rgba(139, 90, 43, 0.05) 100%) !important;
+    border: 2px solid #d4a574 !important;
+    color: #d4a574 !important;
+    font-weight: 700;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(212, 165, 116, 0.2);
+}
+
+.product-card .btn-outline-primary:hover {
+    background: linear-gradient(135deg, #d4a574 0%, #f0c896 100%) !important;
+    border-color: #d4a574 !important;
+    color: #1a0f08 !important;
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(212, 165, 116, 0.4);
+}
+
+.section-header .btn-outline-primary {
+    background: linear-gradient(135deg, rgba(212, 165, 116, 0.1) 0%, rgba(139, 90, 43, 0.05) 100%) !important;
+    border: 2px solid #d4a574 !important;
+    color: #d4a574 !important;
+    font-weight: 700;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(212, 165, 116, 0.2);
+}
+
+.section-header .btn-outline-primary:hover {
+    background: linear-gradient(135deg, #d4a574 0%, #f0c896 100%) !important;
+    border-color: #d4a574 !important;
+    color: #1a0f08 !important;
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(212, 165, 116, 0.4);
+}
+
+/* === SECTION BACKGROUNDS === */
+.featured-section,
+.newest-section,
+.bestseller-section,
+.products-section {
+    background: transparent;
+    padding: 4rem 0;
+    position: relative;
+}
+
+.featured-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at 30% 50%, rgba(212, 165, 116, 0.08) 0%, transparent 60%);
+    pointer-events: none;
+}
+
+.newest-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at 70% 50%, rgba(139, 90, 43, 0.08) 0%, transparent 60%);
+    pointer-events: none;
+}
+
+.bestseller-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at 50% 50%, rgba(212, 165, 116, 0.06) 0%, transparent 70%);
+    pointer-events: none;
+}
+
+.products-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at 50% 50%, rgba(212, 165, 116, 0.05) 0%, transparent 70%);
+    pointer-events: none;
+}
+
+/* === PAGINATION === */
+.pagination .page-link {
+    color: #2d1b0e;
+    border: 1px solid rgba(212, 165, 116, 0.3);
+    background: linear-gradient(135deg, #faf8f5 0%, #f5f0e8 100%);
+    transition: all 0.3s ease;
+}
+
+.pagination .page-link:hover {
+    color: #1a0f08;
+    background: linear-gradient(135deg, #d4a574 0%, #f0c896 100%);
+    border-color: #d4a574;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(212, 165, 116, 0.3);
+}
+
+.pagination .page-item.active .page-link {
+    background: linear-gradient(135deg, #d4a574 0%, #f0c896 100%);
+    border-color: #d4a574;
+    color: #1a0f08;
+    font-weight: 700;
+    box-shadow: 0 4px 12px rgba(212, 165, 116, 0.4);
+}
+
+/* === ALERTS === */
+.alert {
+    border-radius: 12px;
+    border: none;
+    box-shadow: 0 4px 16px rgba(139, 90, 43, 0.15);
+}
+
+.alert-info {
+    background: linear-gradient(135deg, rgba(212, 165, 116, 0.1) 0%, rgba(139, 90, 43, 0.05) 100%);
+    color: #2d1b0e;
+    border-left: 4px solid #d4a574;
+}
+
+.alert-success {
+    background: linear-gradient(135deg, rgba(40, 167, 69, 0.1) 0%, rgba(25, 135, 84, 0.05) 100%);
+    color: #155724;
+    border-left: 4px solid #28a745;
+}
+
+.alert-danger {
+    background: linear-gradient(135deg, rgba(220, 53, 69, 0.1) 0%, rgba(220, 53, 69, 0.05) 100%);
+    color: #721c24;
+    border-left: 4px solid #dc3545;
+}
+
+/* === UTILITY CLASSES === */
+.object-fit-cover { 
+    object-fit: cover; 
+}
+
+.text-truncate-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.text-truncate-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* === RESPONSIVE === */
+@media (max-width: 768px) {
+    .hero-banner {
+        margin-top: 0;
+    }
+    
+    .hero-banner .carousel-caption h1 {
+        font-size: 1.5rem !important;
+    }
+    
+    .hero-banner .carousel-caption .lead {
+        font-size: 0.9rem !important;
+    }
+    
+    .section-header h2 {
+        font-size: 1.5rem;
+    }
+    
+    .product-card .card-img-top {
+        height: 160px !important;
+    }
+    
+    .featured-section,
+    .newest-section,
+    .bestseller-section,
+    .products-section {
+        padding: 2.5rem 0;
+    }
+}
+
