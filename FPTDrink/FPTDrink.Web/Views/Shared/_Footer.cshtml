@@ -1,55 +1,74 @@
-<footer class="footer-modern">
+<footer class="footer">
+  <div class="footer-bg"></div>
   <div class="container">
-    <div class="footer-grid">
-      
-      <!-- 1️⃣ Thương hiệu -->
+    <div class="footer-main">
       <div class="footer-brand">
-        <div class="logo-section">
+        <div class="logo-wrapper">
           <img src="~/images/logocf.png" alt="FPTDrink Logo" class="footer-logo" />
-          <h4>FPTDrink</h4>
         </div>
-        <p>Thức uống tươi mát, giao nhanh trong 10 phút. Đồng hành cùng sinh viên FPT University Hòa Lạc.</p>
+        <p class="brand-description">
+          Thức uống tươi mát, giao nhanh trong 10 phút. Đồng hành cùng sinh viên FPT University Hòa Lạc.
+        </p>
+        <div class="social-icons-brand">
+          <a href="#" aria-label="Facebook" class="social-link"><i class="bx bxl-facebook"></i></a>
+          <a href="#" aria-label="Instagram" class="social-link"><i class="bx bxl-instagram"></i></a>
+          <a href="#" aria-label="Twitter" class="social-link"><i class="bx bxl-twitter"></i></a>
+          <a href="#" aria-label="YouTube" class="social-link"><i class="bx bxl-youtube"></i></a>
+        </div>
       </div>
 
-      <!-- 2️⃣ Liên kết nhanh -->
-      <div class="footer-links">
-        <h6>Liên kết nhanh</h6>
-        <ul>
-          <li><a asp-controller="Home" asp-action="Index">Trang chủ</a></li>
-          <li><a asp-controller="Menu" asp-action="Index">Thực đơn</a></li>
-          <li><a asp-controller="Products" asp-action="Index">Sản phẩm</a></li>
-          <li><a asp-controller="Contact" asp-action="Index">Liên hệ</a></li>
-        </ul>
-      </div>
+      <div class="footer-grid">
+        <div class="footer-col">
+          <h6 class="footer-title">
+            <span class="title-icon"><i class="bx bx-link"></i></span>
+            Liên kết nhanh
+          </h6>
+          <ul class="footer-list">
+            <li><a asp-controller="Home" asp-action="Index" class="footer-link"><span>Trang chủ</span></a></li>
+            <li><a asp-controller="Menu" asp-action="Index" class="footer-link"><span>Thực đơn</span></a></li>
+            <li><a asp-controller="Products" asp-action="Index" class="footer-link"><span>Sản phẩm</span></a></li>
+            <li><a asp-controller="Contact" asp-action="Index" class="footer-link"><span>Liên hệ</span></a></li>
+          </ul>
+        </div>
 
-      <!-- 3️⃣ Hỗ trợ khách hàng -->
-      <div class="footer-support">
-        <h6>Hỗ trợ khách hàng</h6>
-        <ul>
-          <li><a asp-controller="Home" asp-action="Privacy">Chính sách bảo mật</a></li>
-          <li><a href="#">Điều khoản dịch vụ</a></li>
-          <li><a href="#">Câu hỏi thường gặp</a></li>
-          <li><a href="#">Hướng dẫn đặt hàng</a></li>
-        </ul>
-      </div>
+        <div class="footer-col">
+          <h6 class="footer-title">
+            <span class="title-icon"><i class="bx bx-support"></i></span>
+            Hỗ trợ khách hàng
+          </h6>
+          <ul class="footer-list">
+            <li><a asp-controller="Home" asp-action="Privacy" class="footer-link"><span>Chính sách bảo mật</span></a></li>
+            <li><a href="#" class="footer-link"><span>Điều khoản dịch vụ</span></a></li>
+            <li><a href="#" class="footer-link"><span>Câu hỏi thường gặp</span></a></li>
+            <li><a href="#" class="footer-link"><span>Hướng dẫn đặt hàng</span></a></li>
+          </ul>
+        </div>
 
-      <!-- 4️⃣ Thông tin & MXH -->
-      <div class="footer-contact">
-        <h6>Liên hệ</h6>
-        <p><i class="bx bx-map"></i> FPT University, Hòa Lạc, Hà Nội</p>
-        <p><i class="bx bx-phone"></i> <a href="tel:0969995633">0969 995 633</a></p>
-        <p><i class="bx bx-envelope"></i> <a href="mailto:fptdrink@fpt.edu.vn">fptdrink@fpt.edu.vn</a></p>
-        <div class="social-icons">
-          <a href="#"><i class="bx bxl-facebook"></i></a>
-          <a href="#"><i class="bx bxl-instagram"></i></a>
-          <a href="#"><i class="bx bxl-twitter"></i></a>
-          <a href="#"><i class="bx bxl-youtube"></i></a>
+        <div class="footer-col">
+          <h6 class="footer-title">
+            <span class="title-icon"><i class="bx bx-phone"></i></span>
+            Liên hệ
+          </h6>
+          <ul class="footer-list">
+            <li class="contact-item">
+              <i class="bx bx-map contact-icon"></i>
+              <span>FPT University, Hòa Lạc, Hà Nội</span>
+            </li>
+            <li class="contact-item">
+              <i class="bx bx-phone contact-icon"></i>
+              <a href="tel:0969995633" class="footer-link">0969 995 633</a>
+            </li>
+            <li class="contact-item">
+              <i class="bx bx-envelope contact-icon"></i>
+              <a href="mailto:fptdrink@fpt.edu.vn" class="footer-link">fptdrink@fpt.edu.vn</a>
+            </li>
+          </ul>
         </div>
       </div>
     </div>
 
-    <!-- Dòng bản quyền -->
     <div class="footer-bottom">
+      <div class="footer-divider"></div>
       <p>&copy; 2025 <strong>FPTDrink</strong>. Tất cả quyền được bảo lưu.</p>
     </div>
   </div>
