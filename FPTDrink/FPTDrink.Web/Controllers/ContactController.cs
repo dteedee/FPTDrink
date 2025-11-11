@@ -20,9 +20,6 @@ namespace FPTDrink.Web.Controllers
                 return View("Index", model);
             }
 
-            // TODO: Gửi email hoặc lưu vào database
-            // Có thể tích hợp với EmailService từ Infrastructure
-
             TempData["SuccessMessage"] = "Cảm ơn bạn đã liên hệ! Chúng tôi sẽ phản hồi sớm nhất có thể.";
             return RedirectToAction("Index");
         }
@@ -37,7 +34,6 @@ namespace FPTDrink.Web.Controllers
                 return RedirectToAction("Index");
             }
 
-            // TODO: Lưu email đăng ký nhận voucher
             TempData["SubscribeSuccess"] = "Đăng ký thành công! Bạn sẽ nhận được voucher giảm giá 30% qua email.";
             return RedirectToAction("Index");
         }

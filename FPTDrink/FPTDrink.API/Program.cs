@@ -9,11 +9,9 @@ using Microsoft.AspNetCore.Authorization;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 builder.Services.AddDbContext<FptdrinkContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("MyCnn")));
 
-// CORS
 builder.Services.AddCors(options =>
 {
 	options.AddPolicy("AllowWeb", policy =>
@@ -25,8 +23,6 @@ builder.Services.AddCors(options =>
 			  .AllowCredentials();
 	});
 });
-
-// AuthN/AuthZ (JWT)
 var jwtKey = builder.Configuration["Jwt:Key"] ?? "dev-key-change-in-production-please";
 var jwtIssuer = builder.Configuration["Jwt:Issuer"] ?? "FPTDrink";
 var jwtAudience = builder.Configuration["Jwt:Audience"] ?? "FPTDrinkClients";
@@ -58,22 +54,15 @@ builder.Services.AddControllers(options =>
 {
 	options.Filters.Add(new FPTDrink.API.Filters.ValidationFilter());
 });
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
-// Infrastructure registrations (DbContext, Repository, UnitOfWork)
 builder.Services.AddInfrastructure(builder.Configuration);
-// AutoMapper
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
-
-// Permission provider + handler
 builder.Services.AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>();
 builder.Services.AddScoped<IAuthorizationHandler, PermissionHandler>();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -81,11 +70,9 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseCors("AllowWeb");
-
 app.UseAuthentication();
 app.UseAuthorization();
 
-// Seed permissions (idempotent)
 using (var scope = app.Services.CreateScope())
 {
 	var db = scope.ServiceProvider.GetRequiredService<FptdrinkContext>();

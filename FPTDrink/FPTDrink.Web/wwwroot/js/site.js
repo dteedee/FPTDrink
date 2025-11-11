@@ -1,12 +1,6 @@
-﻿// ============================================
-// FPTDrink Website - Main JavaScript
-// Optimized for Performance & UX
-// ============================================
-
-(function () {
+﻿(function () {
     'use strict';
 
-    // === Toast Notification System ===
     const Toast = {
         show: function (message, type = 'info', duration = 3000) {
             const toastContainer = this.getOrCreateContainer();
@@ -54,7 +48,6 @@
         }
     };
 
-    // === Lazy Loading Images ===
     function initLazyLoading() {
         if ('loading' in HTMLImageElement.prototype) {
             // Native lazy loading supported
@@ -87,7 +80,6 @@
         }
     }
 
-    // === Form Validation Enhancement ===
     function enhanceFormValidation() {
         const forms = document.querySelectorAll('form[method="post"]');
         forms.forEach(form => {
@@ -101,7 +93,6 @@
         });
     }
 
-    // === Quantity Control ===
     function initQuantityControls() {
         document.querySelectorAll('[data-quantity]').forEach(function (container) {
             const input = container.querySelector('input[type="number"]');
@@ -128,7 +119,6 @@
         });
     }
 
-    // === Add to Cart with Loading State ===
     function enhanceAddToCart() {
         document.querySelectorAll('form[action*="ShoppingCart/Add"]').forEach(form => {
             form.addEventListener('submit', function (e) {
@@ -138,7 +128,6 @@
                     btn.disabled = true;
                     btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Đang thêm...';
 
-                    // Re-enable after 3 seconds if no redirect happens
                     setTimeout(() => {
                         btn.disabled = false;
                         btn.innerHTML = originalText;
@@ -148,7 +137,6 @@
         });
     }
 
-    // === Loading Overlay ===
     const LoadingOverlay = {
         show: function () {
             let overlay = document.querySelector('.loading-overlay');
@@ -168,7 +156,6 @@
         }
     };
 
-    // === Smooth Scroll to Anchor ===
     function initSmoothScroll() {
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
@@ -187,7 +174,6 @@
         });
     }
 
-    // === Debounce Function ===
     function debounce(func, wait) {
         let timeout;
         return function executedFunction(...args) {
@@ -200,15 +186,12 @@
         };
     }
 
-    // === Search Enhancement ===
     function enhanceSearch() {
         const searchInputs = document.querySelectorAll('input[type="search"], input[name="q"]');
         searchInputs.forEach(input => {
             const form = input.closest('form');
             if (form) {
                 const debouncedSubmit = debounce(() => {
-                    // Optional: Auto-submit after typing stops (uncomment if needed)
-                    // form.submit();
                 }, 500);
 
                 input.addEventListener('input', debouncedSubmit);
@@ -216,7 +199,6 @@
         });
     }
 
-    // === Initialize on DOM Ready ===
     function init() {
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', init);
@@ -231,12 +213,10 @@
         enhanceSearch();
     }
 
-    // === Expose to Global Scope ===
     window.FPTDrink = {
         Toast: Toast,
         LoadingOverlay: LoadingOverlay
     };
 
-    // Start initialization
     init();
 })();

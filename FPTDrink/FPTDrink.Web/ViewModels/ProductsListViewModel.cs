@@ -17,7 +17,6 @@ namespace FPTDrink.Web.ViewModels
 		[JsonPropertyName("items")]
 		public List<ProductListItemViewModel> Items { get; set; } = new();
 
-		// Filters
 		public int? CategoryId { get; set; }
 		public int? SupplierId { get; set; }
 		public string? Q { get; set; }

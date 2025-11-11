@@ -7,20 +7,14 @@ using System.Net.Http;
 using System;
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 builder.Services.AddControllersWithViews();
-
-// Bind configuration options (Email, VNPay) nếu dùng trong Web layer
 builder.Services.Configure<FPTDrink.Web.Extensions.EmailOptions>(builder.Configuration.GetSection("Email"));
 builder.Services.Configure<FPTDrink.Web.Extensions.VnPayOptions>(builder.Configuration.GetSection("VNPay"));
-
-// Register DbContext & visitor stats services for direct service calls
 builder.Services.AddDbContext<FPTDrink.Infrastructure.Data.FptdrinkContext>(options =>
 	options.UseSqlServer(builder.Configuration.GetConnectionString("MyCnn")));
 builder.Services.AddSingleton<FPTDrink.Core.Interfaces.Services.IVisitorsOnlineTracker, FPTDrink.Infrastructure.Services.VisitorsOnlineTracker>();
 builder.Services.AddScoped<FPTDrink.Core.Interfaces.Services.IVisitorStatsService, FPTDrink.Infrastructure.Services.VisitorStatsService>();
 
-// HttpClient for calling FPTDrink.API from Web
 var apiBaseUrl = builder.Configuration.GetValue<string>("ApiBaseUrl");
 builder.Services.AddHttpClient("FPTDrinkApi", client =>
 {
@@ -28,31 +22,24 @@ builder.Services.AddHttpClient("FPTDrinkApi", client =>
 	client.BaseAddress = new Uri(baseAddress);
 	client.DefaultRequestHeaders.Accept.Clear();
 	client.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
-	client.Timeout = TimeSpan.FromSeconds(30); // Timeout 30 giây
+	client.Timeout = TimeSpan.FromSeconds(30);
 }).ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler
 {
-	ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true // Bỏ qua SSL validation cho localhost
+	ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true
 });
 builder.Services.AddScoped<FPTDrink.Web.Services.ApiClient>();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
 }
 app.UseStatusCodePagesWithReExecute("/Home/Error");
 app.UseStaticFiles();
-
 app.UseRouting();
-
 app.UseAuthorization();
-
-// Track visitors for online count
 app.UseVisitorsTracking();
-
-// Legacy routes ported from MVC 5
 app.MapControllerRoute(
 	name: "Contact",
 	pattern: "lien-he",

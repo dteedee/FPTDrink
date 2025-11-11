@@ -68,7 +68,6 @@ namespace FPTDrink.Web.Controllers
 
 			if (model.TypePayment == 2)
 			{
-				// VNPay
 				var vnpay = await _api.PostAsync("api/public/Checkout/payment/vnpay", new
 				{
 					OrderCode = orderCode,
@@ -85,7 +84,6 @@ namespace FPTDrink.Web.Controllers
 				}
 			}
 
-			// COD / fallback
 			return RedirectToAction("Success", new { orderCode });
 		}
 
@@ -99,7 +97,6 @@ namespace FPTDrink.Web.Controllers
 		[HttpGet]
 		public IActionResult VnpayReturn(string? vnp_TxnRef, string? vnp_ResponseCode, string? vnp_TransactionStatus)
 		{
-			// Dẫn tới trang success và client sẽ tra cứu đơn mã
 			return RedirectToAction("Success", new { orderCode = vnp_TxnRef });
 		}
 	}

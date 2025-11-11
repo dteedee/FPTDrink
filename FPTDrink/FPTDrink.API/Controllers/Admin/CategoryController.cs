@@ -21,7 +21,6 @@ namespace FPTDrink.API.Controllers.Admin
 			_mapper = mapper;
 		}
 
-		// GET: api/admin/category?status=Index|Trash|All
 		[HttpGet]
 		[PermissionAuthorize("FPTDrink_XemDanhSach", "Quản lý", "Kế toán", "Thu ngân")]
 		public async Task<IActionResult> GetList([FromQuery] string status = "All", CancellationToken ct = default)
@@ -31,7 +30,6 @@ namespace FPTDrink.API.Controllers.Admin
 			return Ok(result);
 		}
 
-		// GET: api/admin/category/5
 		[HttpGet("{id:int}")]
 		[PermissionAuthorize("FPTDrink_XemChiTiet", "Quản lý", "Kế toán", "Thu ngân")]
 		public async Task<IActionResult> Get(int id, CancellationToken ct = default)
@@ -41,7 +39,6 @@ namespace FPTDrink.API.Controllers.Admin
 			return Ok(_mapper.Map<CategoryDto>(item));
 		}
 
-		// POST: api/admin/category
 		[HttpPost]
 		[PermissionAuthorize("FPTDrink_ThemMoi", "Quản lý")]
 		public async Task<IActionResult> Create([FromBody] CategoryCreateRequest request, CancellationToken ct = default)
@@ -52,7 +49,6 @@ namespace FPTDrink.API.Controllers.Admin
 			return CreatedAtAction(nameof(Get), new { id = created.Id }, _mapper.Map<CategoryDto>(created));
 		}
 
-		// PUT: api/admin/category/5
 		[HttpPut("{id:int}")]
 		[PermissionAuthorize("FPTDrink_ChinhSua", "Quản lý")]
 		public async Task<IActionResult> Update(int id, [FromBody] CategoryUpdateRequest request, CancellationToken ct = default)
@@ -63,7 +59,6 @@ namespace FPTDrink.API.Controllers.Admin
 			return ok ? NoContent() : NotFound();
 		}
 
-		// POST: api/admin/category/5/trash
 		[HttpPost("{id:int}/trash")]
 		[PermissionAuthorize("FPTDrink_Xoa", "Quản lý")]
 		public async Task<IActionResult> Trash(int id, CancellationToken ct = default)
@@ -72,7 +67,6 @@ namespace FPTDrink.API.Controllers.Admin
 			return ok ? Ok(new { success = true }) : NotFound();
 		}
 
-		// POST: api/admin/category/trash-bulk
 		[HttpPost("trash-bulk")]
 		[PermissionAuthorize("FPTDrink_Xoa", "Quản lý")]
 		public async Task<IActionResult> TrashBulk([FromBody] IdsRequest req, CancellationToken ct = default)
@@ -81,7 +75,6 @@ namespace FPTDrink.API.Controllers.Admin
 			return Ok(new { success = true, affected });
 		}
 
-		// POST: api/admin/category/5/undo
 		[HttpPost("{id:int}/undo")]
 		[PermissionAuthorize("FPTDrink_ChinhSua", "Quản lý")]
 		public async Task<IActionResult> Undo(int id, CancellationToken ct = default)
@@ -90,7 +83,6 @@ namespace FPTDrink.API.Controllers.Admin
 			return ok ? Ok(new { success = true }) : NotFound();
 		}
 
-		// POST: api/admin/category/undo-bulk
 		[HttpPost("undo-bulk")]
 		[PermissionAuthorize("FPTDrink_ChinhSua", "Quản lý")]
 		public async Task<IActionResult> UndoBulk([FromBody] IdsRequest req, CancellationToken ct = default)
@@ -99,7 +91,6 @@ namespace FPTDrink.API.Controllers.Admin
 			return Ok(new { success = true, affected });
 		}
 
-		// POST: api/admin/category/5/toggle-active
 		[HttpPost("{id:int}/toggle-active")]
 		[PermissionAuthorize("FPTDrink_ChinhSua", "Quản lý")]
 		public async Task<IActionResult> ToggleActive(int id, CancellationToken ct = default)

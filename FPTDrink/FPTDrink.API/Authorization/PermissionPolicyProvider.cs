@@ -11,7 +11,6 @@ namespace FPTDrink.API.Authorization
 		{
 			if (policyName.StartsWith("perm:", StringComparison.OrdinalIgnoreCase))
 			{
-				// perm:{feature}|{role1,role2}
 				var rule = policyName.Substring("perm:".Length);
 				var parts = rule.Split('|');
 				var feature = parts.Length > 0 ? parts[0] : string.Empty;

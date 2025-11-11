@@ -104,7 +104,6 @@ namespace FPTDrink.Infrastructure.Services
 			existing.IsActive = category.IsActive;
 			existing.Modifiedby = category.Modifiedby;
 
-			// Nếu tắt IsActive của category, tắt cascade các liên quan đang active
 			if (category.IsActive == false && existing.IsActive == true)
 			{
 				var activeProductCategories = await _dbContext.Set<ProductCategory>()
@@ -142,7 +141,6 @@ namespace FPTDrink.Infrastructure.Services
 			item.Modifiedby = "System";
 			item.ModifiedDate = DateTime.Now;
 
-			// Cascade tắt
 			var activeProductCategories = await _dbContext.Set<ProductCategory>()
 				.Where(pc => pc.IsActive == true && pc.CategoryId == item.Id)
 				.ToListAsync(cancellationToken);

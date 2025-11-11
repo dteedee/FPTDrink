@@ -21,7 +21,6 @@ namespace FPTDrink.API.Controllers.Admin
 			_mapper = mapper;
 		}
 
-		// GET: api/admin/chucvu?status=Index|Trash|All&search=...
 		[HttpGet]
 		[PermissionAuthorize("FPTDrink_XemDanhSach", "Quản lý", "Kế toán", "Thu ngân")]
 		public async Task<IActionResult> GetList([FromQuery] string status = "All", [FromQuery] string? search = null, CancellationToken ct = default)

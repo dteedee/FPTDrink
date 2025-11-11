@@ -40,7 +40,6 @@ namespace FPTDrink.Infrastructure.Services
 				CreatedBy = req.TenKhachHang
 			};
 
-			// Tạo mã đơn
 			const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 			var random = new Random();
 			string currentYear = DateTime.Now.ToString("yy");
@@ -49,7 +48,6 @@ namespace FPTDrink.Infrastructure.Services
 			string randomString = new string(Enumerable.Repeat(chars, 8).Select(s => s[random.Next(s.Length)]).ToArray());
 			order.MaHoaDon = currentYear + currentMonth + currentDay + randomString;
 
-			// Gán chi tiết
 			foreach (var it in req.Items)
 			{
 				var p = await _productRepo.GetByIdAsync(it.ProductId, cancellationToken);
@@ -63,7 +61,6 @@ namespace FPTDrink.Infrastructure.Services
 				});
 			}
 
-			// Cập nhật tồn kho (theo logic cũ)
 			foreach (var it in req.Items)
 			{
 				var p = await _productRepo.GetByIdAsync(it.ProductId, cancellationToken);
@@ -72,9 +69,8 @@ namespace FPTDrink.Infrastructure.Services
 			}
 			await _productRepo.SaveChangesAsync(cancellationToken);
 
-			// Lưu đơn
-			await _orderRepo.SaveChangesAsync(cancellationToken); // ensure context
-			_orderRepo.Update(order); // dùng Update để attach rồi save
+			await _orderRepo.SaveChangesAsync(cancellationToken);
+			_orderRepo.Update(order);
 			await _orderRepo.SaveChangesAsync(cancellationToken);
 			return order;
 		}

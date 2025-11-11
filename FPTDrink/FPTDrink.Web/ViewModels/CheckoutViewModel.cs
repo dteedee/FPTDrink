@@ -10,7 +10,6 @@ namespace FPTDrink.Web.ViewModels
 		public string? DiaChi { get; set; }
 		[EmailAddress] public string? Email { get; set; }
 		public string? CCCD { get; set; }
-		// 1: COD, 2: Chuyển khoản (VNPay), 3: Trực tiếp
 		[Range(1, 3)] public int TypePayment { get; set; } = 1;
 
 		public List<CartItem> Items { get; set; } = new();
