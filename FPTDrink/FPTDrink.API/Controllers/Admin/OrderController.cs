@@ -1,0 +1,68 @@
+using AutoMapper;
+using FPTDrink.API.DTOs.Admin.Order;
+using FPTDrink.Core.Interfaces.Services;
+using Microsoft.AspNetCore.Mvc;
+
+namespace FPTDrink.API.Controllers.Admin
+{
+	[ApiController]
+	[Route("api/admin/[controller]")]
+	public class OrderController : ControllerBase
+	{
+		private readonly IOrderService _service;
+		private readonly IMapper _mapper;
+
+		public OrderController(IOrderService service, IMapper mapper)
+		{
+			_service = service;
+			_mapper = mapper;
+		}
+
+		[HttpGet]
+		public async Task<IActionResult> GetList([FromQuery] string? search = null, CancellationToken ct = default)
+		{
+			var data = await _service.GetListAsync(search, ct);
+			return Ok(_mapper.Map<IReadOnlyList<OrderDto>>(data));
+		}
+
+		[HttpGet("{id}")]
+		public async Task<IActionResult> Get(string id, CancellationToken ct = default)
+		{
+			var item = await _service.GetByIdAsync(id, ct);
+			if (item == null) return NotFound();
+			return Ok(_mapper.Map<OrderDto>(item));
+		}
+
+		[HttpGet("{id}/items")]
+		public async Task<IActionResult> GetItems(string id, CancellationToken ct = default)
+		{
+			var items = await _service.GetItemsAsync(id, ct);
+			return Ok(_mapper.Map<IReadOnlyList<OrderItemDto>>(items));
+		}
+
+		[HttpPost("{id}/status")]
+		public async Task<IActionResult> UpdateStatus(string id, [FromBody] UpdateStatusRequest request, CancellationToken ct = default)
+		{
+			var (success, message) = await _service.UpdateStatusAsync(id, request.TrangThai, request.Confirmed, ct);
+			if (!success) return BadRequest(new { success, message });
+			return Ok(new { success, message });
+		}
+
+		[HttpGet("customers")]
+		public async Task<IActionResult> Customers([FromQuery] string? search = null, CancellationToken ct = default)
+		{
+			var data = await _service.GetCustomersAsync(search, ct);
+			return Ok(_mapper.Map<IReadOnlyList<CustomerSummaryDto>>(data));
+		}
+
+		[HttpGet("customers/{id}")]
+		public async Task<IActionResult> CustomerDetails(string id, CancellationToken ct = default)
+		{
+			var data = await _service.GetCustomerDetailsAsync(id, ct);
+			if (data == null) return NotFound();
+			return Ok(_mapper.Map<CustomerDetailsDto>(data));
+		}
+	}
+}
+
+

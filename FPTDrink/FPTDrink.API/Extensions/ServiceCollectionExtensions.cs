@@ -26,11 +26,15 @@ namespace FPTDrink.API.Extensions
 			services.AddScoped<IChucVuRepository, ChucVuRepository>();
 			services.AddScoped<IPhanQuyenRepository, PhanQuyenRepository>();
 			services.AddScoped<INhanVienRepository, NhanVienRepository>();
+			services.AddScoped<IHoaDonRepository, HoaDonRepository>();
+			services.AddScoped<IChiTietHoaDonRepository, ChiTietHoaDonRepository>();
+			services.AddScoped<IProductRepository, ProductRepository>();
 			services.AddScoped<IUnitOfWork, UnitOfWork>();
 			services.AddScoped<ICategoryService, CategoryService>();
 			services.AddScoped<IChucVuService, ChucVuService>();
 			services.AddScoped<IReportingService, ReportingService>();
 			services.AddScoped<IAuthService, AuthService>();
+			services.AddScoped<IOrderService, OrderService>();
 			services.AddScoped<INhanVienService, NhanVienService>();
 
 			return services;
