@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace FPTDrink.Infrastructure.Models;
-
+namespace FPTDrink.Core.Models;
 public partial class HoaDon
 {
     public string MaHoaDon { get; set; } = null!;

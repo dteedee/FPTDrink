@@ -1,3 +1,7 @@
+using FPTDrink.API.Extensions;
+using FPTDrink.Infrastructure.Data;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -13,6 +17,8 @@ builder.Services.AddSwaggerGen();
 
 // Infrastructure registrations (DbContext, Repository, UnitOfWork)
 builder.Services.AddInfrastructure(builder.Configuration);
+// AutoMapper
+builder.Services.AddAutoMapper(typeof(Program).Assembly);
 
 var app = builder.Build();
 

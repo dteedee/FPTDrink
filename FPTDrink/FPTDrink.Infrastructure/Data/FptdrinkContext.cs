@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using FPTDrink.Infrastructure.Models;
+using FPTDrink.Core.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace FPTDrink.Infrastructure.Data;

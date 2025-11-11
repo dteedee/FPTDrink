@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace FPTDrink.Infrastructure.Models;
-
+namespace FPTDrink.Core.Models;
 public partial class ChucNangQuyen
 {
     public string MaChucNang { get; set; } = null!;

@@ -1,6 +1,9 @@
 using FPTDrink.Core.Interfaces;
+using FPTDrink.Core.Interfaces.Repositories;
+using FPTDrink.Core.Interfaces.Services;
 using FPTDrink.Infrastructure.Data;
 using FPTDrink.Infrastructure.Repositories;
+using FPTDrink.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace FPTDrink.API.Extensions
@@ -19,7 +22,12 @@ namespace FPTDrink.API.Extensions
 
 			// Đăng ký repository/unit of work
 			services.AddScoped(typeof(IRepository<>), typeof(GenericRepository<>));
+			services.AddScoped<ICategoryRepository, CategoryRepository>();
+			services.AddScoped<IChucVuRepository, ChucVuRepository>();
+			services.AddScoped<IPhanQuyenRepository, PhanQuyenRepository>();
 			services.AddScoped<IUnitOfWork, UnitOfWork>();
+			services.AddScoped<ICategoryService, CategoryService>();
+			services.AddScoped<IChucVuService, ChucVuService>();
 
 			return services;
 		}
