@@ -38,6 +38,7 @@ namespace FPTDrink.API.Extensions
 			services.AddScoped<IOrderService, OrderService>();
 			services.AddScoped<IProductCategoryService, ProductCategoryService>();
 			services.AddScoped<INhanVienService, NhanVienService>();
+			services.AddScoped<IProductService, ProductService>();
 
 			return services;
 		}

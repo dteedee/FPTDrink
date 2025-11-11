@@ -23,6 +23,11 @@ namespace FPTDrink.Infrastructure.Repositories
 			return _set.FirstOrDefaultAsync(x => x.MaSanPham == id, cancellationToken);
 		}
 
+		public Task AddAsync(Product product, CancellationToken cancellationToken = default)
+		{
+			return _set.AddAsync(product, cancellationToken).AsTask();
+		}
+
 		public void Update(Product product) => _set.Update(product);
 
 		public Task SaveChangesAsync(CancellationToken cancellationToken = default) => _db.SaveChangesAsync(cancellationToken);
