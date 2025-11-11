@@ -51,7 +51,6 @@ namespace FPTDrink.Web.Controllers
 				model.SoDienThoai,
 				model.DiaChi,
 				model.Email,
-				CCCD = (string?)null,
 				model.TypePayment,
 				Items = model.Items
 			});
