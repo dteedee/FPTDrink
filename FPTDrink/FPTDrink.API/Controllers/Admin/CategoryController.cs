@@ -1,4 +1,5 @@
 using AutoMapper;
+using FPTDrink.API.Authorization;
 using FPTDrink.API.DTOs.Admin.Category;
 using FPTDrink.API.DTOs.Common;
 using FPTDrink.Core.Interfaces.Services;
@@ -22,6 +23,7 @@ namespace FPTDrink.API.Controllers.Admin
 
 		// GET: api/admin/category?status=Index|Trash|All
 		[HttpGet]
+		[PermissionAuthorize("FPTDrink_XemDanhSach", "Quản lý", "Kế toán", "Thu ngân")]
 		public async Task<IActionResult> GetList([FromQuery] string status = "All", CancellationToken ct = default)
 		{
 			var data = await _service.GetListAsync(status, ct);
@@ -31,6 +33,7 @@ namespace FPTDrink.API.Controllers.Admin
 
 		// GET: api/admin/category/5
 		[HttpGet("{id:int}")]
+		[PermissionAuthorize("FPTDrink_XemChiTiet", "Quản lý", "Kế toán", "Thu ngân")]
 		public async Task<IActionResult> Get(int id, CancellationToken ct = default)
 		{
 			var item = await _service.GetByIdAsync(id, ct);
@@ -40,6 +43,7 @@ namespace FPTDrink.API.Controllers.Admin
 
 		// POST: api/admin/category
 		[HttpPost]
+		[PermissionAuthorize("FPTDrink_ThemMoi", "Quản lý")]
 		public async Task<IActionResult> Create([FromBody] CategoryCreateRequest request, CancellationToken ct = default)
 		{
 			if (!ModelState.IsValid) return ValidationProblem(ModelState);
@@ -50,6 +54,7 @@ namespace FPTDrink.API.Controllers.Admin
 
 		// PUT: api/admin/category/5
 		[HttpPut("{id:int}")]
+		[PermissionAuthorize("FPTDrink_ChinhSua", "Quản lý")]
 		public async Task<IActionResult> Update(int id, [FromBody] CategoryUpdateRequest request, CancellationToken ct = default)
 		{
 			if (id != request.Id) return BadRequest("Id không khớp");
@@ -60,6 +65,7 @@ namespace FPTDrink.API.Controllers.Admin
 
 		// POST: api/admin/category/5/trash
 		[HttpPost("{id:int}/trash")]
+		[PermissionAuthorize("FPTDrink_Xoa", "Quản lý")]
 		public async Task<IActionResult> Trash(int id, CancellationToken ct = default)
 		{
 			var ok = await _service.MoveToTrashAsync(id, ct);
@@ -68,6 +74,7 @@ namespace FPTDrink.API.Controllers.Admin
 
 		// POST: api/admin/category/trash-bulk
 		[HttpPost("trash-bulk")]
+		[PermissionAuthorize("FPTDrink_Xoa", "Quản lý")]
 		public async Task<IActionResult> TrashBulk([FromBody] IdsRequest req, CancellationToken ct = default)
 		{
 			var affected = await _service.MoveToTrashBulkAsync(req.Ids, ct);
@@ -76,6 +83,7 @@ namespace FPTDrink.API.Controllers.Admin
 
 		// POST: api/admin/category/5/undo
 		[HttpPost("{id:int}/undo")]
+		[PermissionAuthorize("FPTDrink_ChinhSua", "Quản lý")]
 		public async Task<IActionResult> Undo(int id, CancellationToken ct = default)
 		{
 			var ok = await _service.UndoAsync(id, ct);
@@ -84,6 +92,7 @@ namespace FPTDrink.API.Controllers.Admin
 
 		// POST: api/admin/category/undo-bulk
 		[HttpPost("undo-bulk")]
+		[PermissionAuthorize("FPTDrink_ChinhSua", "Quản lý")]
 		public async Task<IActionResult> UndoBulk([FromBody] IdsRequest req, CancellationToken ct = default)
 		{
 			var affected = await _service.UndoBulkAsync(req.Ids, ct);
@@ -92,6 +101,7 @@ namespace FPTDrink.API.Controllers.Admin
 
 		// POST: api/admin/category/5/toggle-active
 		[HttpPost("{id:int}/toggle-active")]
+		[PermissionAuthorize("FPTDrink_ChinhSua", "Quản lý")]
 		public async Task<IActionResult> ToggleActive(int id, CancellationToken ct = default)
 		{
 			var result = await _service.ToggleActiveAsync(id, ct);

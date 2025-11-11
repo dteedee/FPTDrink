@@ -5,26 +5,43 @@ namespace FPTDrink.Infrastructure.Services
 {
 	public class InMemoryCartStore : ICartStore
 	{
-		private readonly ConcurrentDictionary<string, CartDto> _store = new();
+		private readonly ConcurrentDictionary<string, (CartDto Cart, DateTime LastUpdated)> _store = new();
+		private static readonly TimeSpan Ttl = TimeSpan.FromMinutes(30);
 
 		public CartDto Get(string cartId)
 		{
-			if (!_store.TryGetValue(cartId, out var cart))
+			CleanupExpired();
+			if (!_store.TryGetValue(cartId, out var entry) || IsExpired(entry.LastUpdated))
 			{
-				cart = new CartDto { CartId = cartId };
-				_store[cartId] = cart;
+				var newCart = new CartDto { CartId = cartId };
+				_store[cartId] = (newCart, DateTime.UtcNow);
+				return newCart;
 			}
-			return cart;
+			_store[cartId] = (entry.Cart, DateTime.UtcNow);
+			return entry.Cart;
 		}
 
 		public void Save(CartDto cart)
 		{
-			_store[cart.CartId] = cart;
+			_store[cart.CartId] = (cart, DateTime.UtcNow);
 		}
 
 		public void Remove(string cartId)
 		{
 			_store.TryRemove(cartId, out _);
+		}
+
+		private static bool IsExpired(DateTime lastUpdated) => (DateTime.UtcNow - lastUpdated) > Ttl;
+
+		private void CleanupExpired()
+		{
+			foreach (var kv in _store.ToArray())
+			{
+				if (IsExpired(kv.Value.LastUpdated))
+				{
+					_store.TryRemove(kv.Key, out _);
+				}
+			}
 		}
 	}
 }

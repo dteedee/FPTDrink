@@ -1,4 +1,5 @@
 using AutoMapper;
+using FPTDrink.API.Authorization;
 using FPTDrink.API.DTOs.Admin.Order;
 using FPTDrink.Core.Interfaces.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -19,6 +20,7 @@ namespace FPTDrink.API.Controllers.Admin
 		}
 
 		[HttpGet]
+		[PermissionAuthorize("FPTDrink_XemDanhSach", "Quản lý", "Kế toán", "Thu ngân")]
 		public async Task<IActionResult> GetList([FromQuery] string? search = null, CancellationToken ct = default)
 		{
 			var data = await _service.GetListAsync(search, ct);
@@ -26,6 +28,7 @@ namespace FPTDrink.API.Controllers.Admin
 		}
 
 		[HttpGet("{id}")]
+		[PermissionAuthorize("FPTDrink_XemChiTiet", "Quản lý", "Kế toán", "Thu ngân")]
 		public async Task<IActionResult> Get(string id, CancellationToken ct = default)
 		{
 			var item = await _service.GetByIdAsync(id, ct);
@@ -34,6 +37,7 @@ namespace FPTDrink.API.Controllers.Admin
 		}
 
 		[HttpGet("{id}/items")]
+		[PermissionAuthorize("FPTDrink_XemChiTiet", "Quản lý", "Kế toán", "Thu ngân")]
 		public async Task<IActionResult> GetItems(string id, CancellationToken ct = default)
 		{
 			var items = await _service.GetItemsAsync(id, ct);
@@ -41,6 +45,7 @@ namespace FPTDrink.API.Controllers.Admin
 		}
 
 		[HttpPost("{id}/status")]
+		[PermissionAuthorize("FPTDrink_ChinhSua", "Quản lý", "Thu ngân")]
 		public async Task<IActionResult> UpdateStatus(string id, [FromBody] UpdateStatusRequest request, CancellationToken ct = default)
 		{
 			var (success, message) = await _service.UpdateStatusAsync(id, request.TrangThai, request.Confirmed, ct);
@@ -49,6 +54,7 @@ namespace FPTDrink.API.Controllers.Admin
 		}
 
 		[HttpGet("customers")]
+		[PermissionAuthorize("FPTDrink_XemDanhSach", "Quản lý", "Kế toán", "Thu ngân")]
 		public async Task<IActionResult> Customers([FromQuery] string? search = null, CancellationToken ct = default)
 		{
 			var data = await _service.GetCustomersAsync(search, ct);
@@ -56,6 +62,7 @@ namespace FPTDrink.API.Controllers.Admin
 		}
 
 		[HttpGet("customers/{id}")]
+		[PermissionAuthorize("FPTDrink_XemChiTiet", "Quản lý", "Kế toán", "Thu ngân")]
 		public async Task<IActionResult> CustomerDetails(string id, CancellationToken ct = default)
 		{
 			var data = await _service.GetCustomerDetailsAsync(id, ct);

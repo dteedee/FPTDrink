@@ -1,4 +1,5 @@
 using AutoMapper;
+using FPTDrink.API.Authorization;
 using FPTDrink.API.DTOs.Admin.ChucVu;
 using FPTDrink.API.DTOs.Common;
 using FPTDrink.Core.Interfaces.Services;
@@ -22,6 +23,7 @@ namespace FPTDrink.API.Controllers.Admin
 
 		// GET: api/admin/chucvu?status=Index|Trash|All&search=...
 		[HttpGet]
+		[PermissionAuthorize("FPTDrink_XemDanhSach", "Quản lý", "Kế toán", "Thu ngân")]
 		public async Task<IActionResult> GetList([FromQuery] string status = "All", [FromQuery] string? search = null, CancellationToken ct = default)
 		{
 			var data = await _service.GetListAsync(status, search, ct);
@@ -29,6 +31,7 @@ namespace FPTDrink.API.Controllers.Admin
 		}
 
 		[HttpGet("{id:int}")]
+		[PermissionAuthorize("FPTDrink_XemChiTiet", "Quản lý", "Kế toán", "Thu ngân")]
 		public async Task<IActionResult> Get(int id, CancellationToken ct = default)
 		{
 			var item = await _service.GetByIdAsync(id, ct);
@@ -37,6 +40,7 @@ namespace FPTDrink.API.Controllers.Admin
 		}
 
 		[HttpPost]
+		[PermissionAuthorize("FPTDrink_ThemMoi", "Quản lý")]
 		public async Task<IActionResult> Create([FromBody] ChucVuCreateRequest request, CancellationToken ct = default)
 		{
 			if (!ModelState.IsValid) return ValidationProblem(ModelState);
@@ -46,6 +50,7 @@ namespace FPTDrink.API.Controllers.Admin
 		}
 
 		[HttpPut("{id:int}")]
+		[PermissionAuthorize("FPTDrink_ChinhSua", "Quản lý")]
 		public async Task<IActionResult> Update(int id, [FromBody] ChucVuUpdateRequest request, CancellationToken ct = default)
 		{
 			if (id != request.Id) return BadRequest("Id không khớp");
@@ -55,6 +60,7 @@ namespace FPTDrink.API.Controllers.Admin
 		}
 
 		[HttpPost("{id:int}/trash")]
+		[PermissionAuthorize("FPTDrink_Xoa", "Quản lý")]
 		public async Task<IActionResult> Trash(int id, CancellationToken ct = default)
 		{
 			var ok = await _service.MoveToTrashAsync(id, ct);
@@ -62,6 +68,7 @@ namespace FPTDrink.API.Controllers.Admin
 		}
 
 		[HttpPost("trash-bulk")]
+		[PermissionAuthorize("FPTDrink_Xoa", "Quản lý")]
 		public async Task<IActionResult> TrashBulk([FromBody] IdsRequest req, CancellationToken ct = default)
 		{
 			var affected = await _service.MoveToTrashBulkAsync(req.Ids, ct);
@@ -69,6 +76,7 @@ namespace FPTDrink.API.Controllers.Admin
 		}
 
 		[HttpPost("{id:int}/delete")]
+		[PermissionAuthorize("FPTDrink_Xoa", "Quản lý")]
 		public async Task<IActionResult> Delete(int id, CancellationToken ct = default)
 		{
 			var ok = await _service.DeleteAsync(id, ct);
@@ -76,6 +84,7 @@ namespace FPTDrink.API.Controllers.Admin
 		}
 
 		[HttpPost("delete-bulk")]
+		[PermissionAuthorize("FPTDrink_Xoa", "Quản lý")]
 		public async Task<IActionResult> DeleteBulk([FromBody] IdsRequest req, CancellationToken ct = default)
 		{
 			var affected = await _service.DeleteBulkAsync(req.Ids, ct);
@@ -83,6 +92,7 @@ namespace FPTDrink.API.Controllers.Admin
 		}
 
 		[HttpPost("{id:int}/undo")]
+		[PermissionAuthorize("FPTDrink_ChinhSua", "Quản lý")]
 		public async Task<IActionResult> Undo(int id, CancellationToken ct = default)
 		{
 			var ok = await _service.UndoAsync(id, ct);
@@ -90,6 +100,7 @@ namespace FPTDrink.API.Controllers.Admin
 		}
 
 		[HttpPost("undo-bulk")]
+		[PermissionAuthorize("FPTDrink_ChinhSua", "Quản lý")]
 		public async Task<IActionResult> UndoBulk([FromBody] IdsRequest req, CancellationToken ct = default)
 		{
 			var affected = await _service.UndoBulkAsync(req.Ids, ct);
@@ -97,6 +108,7 @@ namespace FPTDrink.API.Controllers.Admin
 		}
 
 		[HttpPost("{id:int}/permissions/toggle")]
+		[PermissionAuthorize("FPTDrink_ChinhSua", "Quản lý")]
 		public async Task<IActionResult> TogglePermission(int id, [FromBody] TogglePermissionRequest req, CancellationToken ct = default)
 		{
 			if (string.IsNullOrWhiteSpace(req.MaChucNang)) return BadRequest("Mã chức năng rỗng");

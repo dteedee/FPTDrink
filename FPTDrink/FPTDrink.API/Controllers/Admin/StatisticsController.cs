@@ -1,4 +1,5 @@
 using System.Globalization;
+using FPTDrink.API.Authorization;
 using FPTDrink.API.DTOs.Admin.Statistics;
 using FPTDrink.Core.Interfaces.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -17,6 +18,7 @@ namespace FPTDrink.API.Controllers.Admin
 		}
 
 		[HttpGet("revenue")]
+		[PermissionAuthorize("FPTDrink_ThongKe", "Quản lý", "Kế toán")]
 		public async Task<IActionResult> Revenue([FromQuery] DateRangeRequest req, CancellationToken ct)
 		{
 			if (!ModelState.IsValid) return ValidationProblem(ModelState);
@@ -27,6 +29,7 @@ namespace FPTDrink.API.Controllers.Admin
 		}
 
 		[HttpGet("product-sales")]
+		[PermissionAuthorize("FPTDrink_ThongKe", "Quản lý", "Kế toán")]
 		public async Task<IActionResult> ProductSales([FromQuery] DateRangeRequest req, CancellationToken ct)
 		{
 			if (!ModelState.IsValid) return ValidationProblem(ModelState);
@@ -37,6 +40,7 @@ namespace FPTDrink.API.Controllers.Admin
 		}
 
 		[HttpGet("product-sales/{date}")]
+		[PermissionAuthorize("FPTDrink_ThongKe", "Quản lý", "Kế toán")]
 		public async Task<IActionResult> ProductSalesDetail([FromRoute] string date, CancellationToken ct)
 		{
 			var d = DateTime.ParseExact(date, "dd/MM/yyyy", CultureInfo.InvariantCulture);
@@ -45,6 +49,7 @@ namespace FPTDrink.API.Controllers.Admin
 		}
 
 		[HttpGet("payment-methods")]
+		[PermissionAuthorize("FPTDrink_ThongKe", "Quản lý", "Kế toán")]
 		public async Task<IActionResult> PaymentMethods([FromQuery] DateRangeRequest req, CancellationToken ct)
 		{
 			if (!ModelState.IsValid) return ValidationProblem(ModelState);
@@ -55,6 +60,7 @@ namespace FPTDrink.API.Controllers.Admin
 		}
 
 		[HttpGet("payment-methods/{date}")]
+		[PermissionAuthorize("FPTDrink_ThongKe", "Quản lý", "Kế toán")]
 		public async Task<IActionResult> PaymentMethodDetail([FromRoute] string date, CancellationToken ct)
 		{
 			var d = DateTime.ParseExact(date, "dd/MM/yyyy", CultureInfo.InvariantCulture);
