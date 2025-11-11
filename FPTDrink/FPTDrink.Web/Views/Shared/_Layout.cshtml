@@ -41,7 +41,7 @@
     @await Html.PartialAsync("_Header")
     
     <!-- ========== MAIN CONTENT ========== -->
-    <main id="main-content" role="main">
+    <main id="main-content" role="main" class="main-content-wrapper">
         @if (ViewData["FullWidthLayout"] as bool? != true)
         {
             <div class="container my-4">

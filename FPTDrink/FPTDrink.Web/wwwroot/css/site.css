@@ -252,6 +252,31 @@ main#main-content {
   flex: 1 0 auto !important;
 }
 
+.main-content-wrapper {
+  background: linear-gradient(180deg, #f5ede5 0%, #ede4d8 50%, #e8ddd0 100%);
+  min-height: calc(100vh - 200px);
+  position: relative;
+}
+
+.main-content-wrapper::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    radial-gradient(circle at 10% 20%, rgba(139, 90, 43, 0.05) 0%, transparent 50%),
+    radial-gradient(circle at 90% 80%, rgba(101, 67, 33, 0.05) 0%, transparent 50%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.main-content-wrapper .container {
+  position: relative;
+  z-index: 1;
+}
+
 /* Đảm bảo container trong main hoạt động đúng */
 main#main-content .container {
   margin-top: var(--spacing-lg);
