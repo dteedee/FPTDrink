@@ -107,14 +107,18 @@ namespace FPTDrink.Infrastructure.Services
 			// Nếu tắt IsActive của category, tắt cascade các liên quan đang active
 			if (category.IsActive == false && existing.IsActive == true)
 			{
-				var activeProductCategories = await _dbContext.Set<ProductCategory>().Where(pc => pc.IsActive == true).ToListAsync(cancellationToken);
+				var activeProductCategories = await _dbContext.Set<ProductCategory>()
+					.Where(pc => pc.IsActive == true && pc.CategoryId == existing.Id)
+					.ToListAsync(cancellationToken);
 				foreach (var pc in activeProductCategories)
 				{
 					pc.IsActive = false;
 					pc.Modifiedby = "System";
 					pc.ModifiedDate = DateTime.Now;
 
-					var relatedProducts = await _dbContext.Set<Product>().Where(p => p.ProductCategoryId == pc.MaLoaiSanPham && p.IsActive == true).ToListAsync(cancellationToken);
+					var relatedProducts = await _dbContext.Set<Product>()
+						.Where(p => p.ProductCategoryId == pc.MaLoaiSanPham && p.IsActive == true)
+						.ToListAsync(cancellationToken);
 					foreach (var product in relatedProducts)
 					{
 						product.IsActive = false;
@@ -139,14 +143,18 @@ namespace FPTDrink.Infrastructure.Services
 			item.ModifiedDate = DateTime.Now;
 
 			// Cascade tắt
-			var activeProductCategories = await _dbContext.Set<ProductCategory>().Where(pc => pc.IsActive == true).ToListAsync(cancellationToken);
+			var activeProductCategories = await _dbContext.Set<ProductCategory>()
+				.Where(pc => pc.IsActive == true && pc.CategoryId == item.Id)
+				.ToListAsync(cancellationToken);
 			foreach (var pc in activeProductCategories)
 			{
 				pc.IsActive = false;
 				pc.Modifiedby = "System";
 				pc.ModifiedDate = DateTime.Now;
 
-				var relatedProducts = await _dbContext.Set<Product>().Where(p => p.ProductCategoryId == pc.MaLoaiSanPham && p.IsActive == true).ToListAsync(cancellationToken);
+				var relatedProducts = await _dbContext.Set<Product>()
+					.Where(p => p.ProductCategoryId == pc.MaLoaiSanPham && p.IsActive == true)
+					.ToListAsync(cancellationToken);
 				foreach (var product in relatedProducts)
 				{
 					product.IsActive = false;
@@ -202,14 +210,18 @@ namespace FPTDrink.Infrastructure.Services
 			{
 				item.IsActive = false;
 
-				var activeProductCategories = await _dbContext.Set<ProductCategory>().Where(pc => pc.IsActive == true).ToListAsync(cancellationToken);
+				var activeProductCategories = await _dbContext.Set<ProductCategory>()
+					.Where(pc => pc.IsActive == true && pc.CategoryId == item.Id)
+					.ToListAsync(cancellationToken);
 				foreach (var pc in activeProductCategories)
 				{
 					pc.IsActive = false;
 					pc.Modifiedby = "System";
 					pc.ModifiedDate = DateTime.Now;
 
-					var relatedProducts = await _dbContext.Set<Product>().Where(p => p.ProductCategoryId == pc.MaLoaiSanPham && p.IsActive == true).ToListAsync(cancellationToken);
+					var relatedProducts = await _dbContext.Set<Product>()
+						.Where(p => p.ProductCategoryId == pc.MaLoaiSanPham && p.IsActive == true)
+						.ToListAsync(cancellationToken);
 					foreach (var product in relatedProducts)
 					{
 						product.IsActive = false;

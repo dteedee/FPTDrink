@@ -2,6 +2,7 @@ using FPTDrink.Core.Interfaces.Repositories;
 using FPTDrink.Core.Interfaces.Services;
 using FPTDrink.Core.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace FPTDrink.Infrastructure.Services
 {
@@ -81,13 +82,18 @@ namespace FPTDrink.Infrastructure.Services
 
 	public class VnPayService : IPaymentService
 	{
+		private readonly Microsoft.Extensions.Logging.ILogger<VnPayService> _logger;
+
+		public VnPayService(Microsoft.Extensions.Logging.ILogger<VnPayService> logger)
+		{
+			_logger = logger;
+		}
+
 		public string CreateVnPayUrl(HoaDon order, int typePaymentVN, string returnUrl, string vnpUrl, string tmnCode, string hashSecret)
 		{
-			// Đơn giản hoá: ghép query theo chuẩn VNPay (không dùng SDK)
-			// vnp_Amount cần *100
 			decimal tong = order.ChiTietHoaDons.Sum(x => x.SoLuong * x.GiaBan);
 			long amount = (long)(tong * 100);
-			var dict = new SortedDictionary<string, string>
+			var dict = new SortedDictionary<string, string>(StringComparer.Ordinal)
 			{
 				["vnp_Version"] = "2.1.0",
 				["vnp_Command"] = "pay",
@@ -106,11 +112,20 @@ namespace FPTDrink.Infrastructure.Services
 			else if (typePaymentVN == 2) dict["vnp_BankCode"] = "VNBANK";
 			else if (typePaymentVN == 3) dict["vnp_BankCode"] = "INTCARD";
 
-			// Tạo chuỗi ký
-			var query = string.Join("&", dict.Select(kv => $"{kv.Key}={Uri.EscapeDataString(kv.Value)}"));
-			// Bỏ qua ký chữ ký để đơn giản (có thể thêm HMAC SHA512 với hashSecret)
+			var rawData = string.Join("&", dict.Select(kv => $"{kv.Key}={Uri.EscapeDataString(kv.Value)}"));
+			string secureHash = ComputeHmacSha512(hashSecret ?? string.Empty, rawData);
+			var query = rawData + "&vnp_SecureHashType=HMACSHA512&vnp_SecureHash=" + secureHash;
 			var url = $"{vnpUrl}?{query}";
+			_logger.LogInformation("VNPay URL created for {Order}: {Url}", order.MaHoaDon, url);
 			return url;
+		}
+
+		private static string ComputeHmacSha512(string secret, string data)
+		{
+			if (string.IsNullOrWhiteSpace(secret)) return string.Empty;
+			using var h = new System.Security.Cryptography.HMACSHA512(System.Text.Encoding.UTF8.GetBytes(secret));
+			var bytes = h.ComputeHash(System.Text.Encoding.UTF8.GetBytes(data));
+			return BitConverter.ToString(bytes).Replace("-", "").ToUpperInvariant();
 		}
 	}
 }

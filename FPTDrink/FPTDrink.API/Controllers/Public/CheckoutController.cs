@@ -2,6 +2,7 @@ using FPTDrink.API.DTOs.Public.Checkout;
 using FPTDrink.Core.Interfaces.Repositories;
 using FPTDrink.Core.Interfaces.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
 namespace FPTDrink.API.Controllers.Public
 {
@@ -14,17 +15,21 @@ namespace FPTDrink.API.Controllers.Public
 		private readonly IHoaDonRepository _orderRepo;
 		private readonly IConfiguration _config;
 		private readonly IEmailService _emailService;
+		private readonly ILogger<CheckoutController> _logger;
 
-		public CheckoutController(ICheckoutService checkoutService, IPaymentService paymentService, IHoaDonRepository orderRepo, IConfiguration config, IEmailService emailService)
+		public CheckoutController(ICheckoutService checkoutService, IPaymentService paymentService, IHoaDonRepository orderRepo, IConfiguration config, IEmailService emailService, ILogger<CheckoutController> logger)
 		{
 			_checkoutService = checkoutService;
 			_paymentService = paymentService;
 			_orderRepo = orderRepo;
 			_config = config;
 			_emailService = emailService;
+			_logger = logger;
 		}
 
 		[HttpPost("order")]
+		[ProducesResponseType(typeof(object), StatusCodes.Status201Created)]
+		[ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
 		public async Task<IActionResult> CreateOrder([FromBody] CreateOrderRequestDto req, CancellationToken ct)
 		{
 			if (!ModelState.IsValid) return ValidationProblem(ModelState);
@@ -39,15 +44,29 @@ namespace FPTDrink.API.Controllers.Public
 				Items = req.Items.Select(i => new FPTDrink.Core.Interfaces.Services.CreateOrderItemRequest { ProductId = i.ProductId, Quantity = i.Quantity }).ToList()
 			};
 			var order = await _checkoutService.CreateOrderAsync(coreReq, ct);
-			_ = SendOrderEmailAsync(order, admin: true, ct);
-			if (!string.IsNullOrWhiteSpace(order.Email))
+			_ = Task.Run(async () =>
 			{
-				_ = SendOrderEmailAsync(order, admin: false, ct);
-			}
-			return Ok(new { orderCode = order.MaHoaDon });
+				try
+				{
+					await SendOrderEmailAsync(order, admin: true, ct);
+					if (!string.IsNullOrWhiteSpace(order.Email))
+					{
+						await SendOrderEmailAsync(order, admin: false, ct);
+					}
+				}
+				catch (Exception ex)
+				{
+					_logger.LogError(ex, "Send order email failed for {OrderCode}", order.MaHoaDon);
+				}
+			});
+			var location = Url.ActionLink(action: "VnPayReturn", controller: "Checkout", values: null, protocol: Request.Scheme);
+			return Created(location ?? string.Empty, new { orderCode = order.MaHoaDon });
 		}
 
 		[HttpPost("payment/vnpay")]
+		[ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
+		[ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+		[ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
 		public async Task<IActionResult> InitVnPay([FromBody] VnPayInitRequest req, CancellationToken ct)
 		{
 			if (!ModelState.IsValid) return ValidationProblem(ModelState);
@@ -62,6 +81,7 @@ namespace FPTDrink.API.Controllers.Public
 		}
 
 		[HttpGet("payment/vnpay-return")]
+		[ProducesResponseType(typeof(VnPayReturnDto), StatusCodes.Status200OK)]
 		public async Task<IActionResult> VnPayReturn(CancellationToken ct)
 		{
 			var qs = HttpContext.Request.Query;
@@ -96,7 +116,14 @@ namespace FPTDrink.API.Controllers.Public
 				}
 				else if (order != null && !success && !string.IsNullOrWhiteSpace(order.Email))
 				{
-					await SendFailedEmailAsync(order, responseCode, ct);
+					try
+					{
+						await SendFailedEmailAsync(order, responseCode, ct);
+					}
+					catch (Exception ex)
+					{
+						_logger.LogError(ex, "Send failed-payment email failed for {OrderCode}", order.MaHoaDon);
+					}
 				}
 			}
 			return Ok(new VnPayReturnDto

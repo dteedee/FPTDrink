@@ -16,6 +16,8 @@ namespace FPTDrink.API.Controllers.Public
 		}
 
 		[HttpGet("{maHoaDon}")]
+		[ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status404NotFound)]
 		public async Task<IActionResult> GetByCode([FromRoute] string maHoaDon, CancellationToken ct = default)
 		{
 			var order = await _service.GetByCodeAsync(maHoaDon, ct);
@@ -24,6 +26,8 @@ namespace FPTDrink.API.Controllers.Public
 		}
 
 		[HttpGet("by-customer")]
+		[ProducesResponseType(typeof(IEnumerable<object>), StatusCodes.Status200OK)]
+		[ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
 		public async Task<IActionResult> GetByCustomer([FromQuery] OrderNameCccdQuery query, CancellationToken ct = default)
 		{
 			if (!ModelState.IsValid) return ValidationProblem(ModelState);
