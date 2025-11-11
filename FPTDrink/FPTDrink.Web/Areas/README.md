@@ -1,0 +1,3 @@
+Thư mục chứa các Area theo module (nếu dùng): Admin, Sales, Inventory...
+
+

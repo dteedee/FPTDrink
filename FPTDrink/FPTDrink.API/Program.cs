@@ -1,11 +1,18 @@
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
-builder.Services.AddControllers();
+builder.Services.AddDbContext<FptdrinkContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("MyCnn")));
+builder.Services.AddControllers(options =>
+{
+	options.Filters.Add(new FPTDrink.API.Filters.ValidationFilter());
+});
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+// Infrastructure registrations (DbContext, Repository, UnitOfWork)
+builder.Services.AddInfrastructure(builder.Configuration);
 
 var app = builder.Build();
 

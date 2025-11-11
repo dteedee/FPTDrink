@@ -16,4 +16,10 @@
     <ProjectReference Include="..\FPTDrink.Infrastructure\FPTDrink.Infrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Update="appsettings.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
 </Project>
