@@ -6,6 +6,10 @@ namespace FPTDrink.Core.Interfaces.Repositories
 	{
 		IQueryable<NhanVien> Query();
 		Task<NhanVien?> FindByUsernameAsync(string username, CancellationToken cancellationToken = default);
+		Task<NhanVien?> GetByIdAsync(string id, CancellationToken cancellationToken = default);
+		Task AddAsync(NhanVien entity, CancellationToken cancellationToken = default);
+		void Update(NhanVien entity);
+		Task SaveChangesAsync(CancellationToken cancellationToken = default);
 	}
 }
 

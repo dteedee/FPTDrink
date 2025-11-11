@@ -31,6 +31,7 @@ namespace FPTDrink.API.Extensions
 			services.AddScoped<IChucVuService, ChucVuService>();
 			services.AddScoped<IReportingService, ReportingService>();
 			services.AddScoped<IAuthService, AuthService>();
+			services.AddScoped<INhanVienService, NhanVienService>();
 
 			return services;
 		}

@@ -26,7 +26,7 @@ namespace FPTDrink.Infrastructure.Services
 				.SumAsync(x => (decimal?)x.SoLuong * x.GiaBan, cancellationToken) ?? 0;
 
 			decimal todayRevenue = await _db.HoaDons
-				.Where(x => x.TrangThai == 2 && x.CreatedDate.HasValue && x.CreatedDate.Value.Date == today)
+				.Where(x => x.TrangThai == 2 && x.CreatedDate.Date == today)
 				.SelectMany(x => x.ChiTietHoaDons)
 				.SumAsync(x => (decimal?)x.SoLuong * x.GiaBan, cancellationToken) ?? 0;
 
@@ -41,12 +41,12 @@ namespace FPTDrink.Infrastructure.Services
 				.SumAsync(x => (decimal?)x.SoLuong * x.GiaBan, cancellationToken) ?? 0;
 
 			int totalOrders = await _db.HoaDons.CountAsync(cancellationToken);
-			int todayOrders = await _db.HoaDons.CountAsync(x => x.CreatedDate.HasValue && x.CreatedDate.Value.Date == today, cancellationToken);
+			int todayOrders = await _db.HoaDons.CountAsync(x => x.CreatedDate.Date == today, cancellationToken);
 			int paidOrders = await _db.HoaDons.CountAsync(x => x.TrangThai == 2, cancellationToken);
 			int pendingOrders = await _db.HoaDons.CountAsync(x => x.TrangThai == 1, cancellationToken);
 
 			int totalProducts = await _db.Products.CountAsync(x => x.Status != 0 && x.IsActive == true, cancellationToken);
-			int outOfStockProducts = await _db.Products.CountAsync(x => x.Status != 0 && x.IsActive == true && (x.SoLuong ?? 0) <= 0, cancellationToken);
+			int outOfStockProducts = await _db.Products.CountAsync(x => x.Status != 0 && x.IsActive == true && x.SoLuong <= 0, cancellationToken);
 
 			int totalCustomers = await _db.HoaDons.GroupBy(x => x.IdKhachHang).CountAsync(cancellationToken);
 			int newCustomersThisMonth = await _db.HoaDons.Where(x => x.CreatedDate >= thisMonth).GroupBy(x => x.IdKhachHang).CountAsync(cancellationToken);
@@ -122,7 +122,7 @@ namespace FPTDrink.Infrastructure.Services
 				var date = startDate.AddDays(i);
 				if (string.Equals(period, "thisMonth", StringComparison.OrdinalIgnoreCase) && date > today) break;
 				decimal rev = await _db.HoaDons
-					.Where(x => x.TrangThai == 2 && x.CreatedDate.HasValue && x.CreatedDate.Value.Date == date)
+					.Where(x => x.TrangThai == 2 && x.CreatedDate.Date == date)
 					.SelectMany(x => x.ChiTietHoaDons)
 					.SumAsync(x => (decimal?)x.SoLuong * x.GiaBan, cancellationToken) ?? 0;
 				result.Add(new { Date = date.ToString("dd/MM"), Revenue = rev });
@@ -134,7 +134,7 @@ namespace FPTDrink.Infrastructure.Services
 		public async Task<IReadOnlyList<object>> GetTopProductsAsync(int top, CancellationToken cancellationToken = default)
 		{
 			var data = await _db.ChiTietHoaDons
-				.Where(x => x.HoaDon != null && x.HoaDon.TrangThai == 2)
+				.Where(x => x.Order != null && x.Order.TrangThai == 2)
 				.GroupBy(x => new { x.ProductId, x.Product!.Title, x.Product.Image })
 				.Select(g => new
 				{
