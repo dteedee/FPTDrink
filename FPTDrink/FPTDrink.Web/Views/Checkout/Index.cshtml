@@ -30,7 +30,13 @@
 									Số điện thoại <span class="text-danger">*</span>
 									<span class="field-error text-danger small ms-2" data-field="SoDienThoai"></span>
 								</label>
-								<input asp-for="SoDienThoai" class="form-control checkout-input" placeholder="Nhập số điện thoại" maxlength="10" />
+								<input asp-for="SoDienThoai" 
+								       type="tel" 
+								       inputmode="numeric" 
+								       pattern="[0-9]*" 
+								       class="form-control checkout-input" 
+								       placeholder="Nhập số điện thoại" 
+								       maxlength="10" />
 								<span asp-validation-for="SoDienThoai" class="text-danger small"></span>
 							</div>
 							<div class="col-md-12">
@@ -42,8 +48,12 @@
 								<span asp-validation-for="Email" class="text-danger small"></span>
 							</div>
 							<div class="col-md-12">
-								<label class="form-label fw-bold" style="color: #2d1b0e;">Địa chỉ</label>
+								<label class="form-label fw-bold" style="color: #2d1b0e;">
+									Địa chỉ <span class="text-danger">*</span>
+									<span class="field-error text-danger small ms-2" data-field="DiaChi"></span>
+								</label>
 								<input asp-for="DiaChi" class="form-control checkout-input" placeholder="Nhập địa chỉ" />
+								<span asp-validation-for="DiaChi" class="text-danger small"></span>
 							</div>
 							<div class="col-md-12">
 								<label class="form-label fw-bold" style="color: #2d1b0e;">Hình thức thanh toán</label>
@@ -222,6 +232,7 @@
 			const phoneInput = form.querySelector('[name="SoDienThoai"]');
 			const emailInput = form.querySelector('[name="Email"]');
 			const nameInput = form.querySelector('[name="TenKhachHang"]');
+			const addressInput = form.querySelector('[name="DiaChi"]');
 
 			function validatePhone(phone) {
 				if (!phone) {
@@ -281,7 +292,7 @@
 				}
 			}
 
-			function clearError(fieldName) {
+			function clearError(fieldName, showValid) {
 				const errorSpan = form.querySelector(`[data-field="${fieldName}"]`);
 				const input = form.querySelector(`[name="${fieldName}"]`);
 				if (errorSpan) {
@@ -290,19 +301,47 @@
 				}
 				if (input) {
 					input.classList.remove('is-invalid');
-					input.classList.add('is-valid');
+					if (showValid === true && input.value && input.value.trim() !== '') {
+						input.classList.add('is-valid');
+					} else {
+						input.classList.remove('is-valid');
+					}
+				}
+			}
+
+			function resetField(fieldName) {
+				const errorSpan = form.querySelector(`[data-field="${fieldName}"]`);
+				const input = form.querySelector(`[name="${fieldName}"]`);
+				if (errorSpan) {
+					errorSpan.textContent = '';
+					errorSpan.classList.remove('show');
+				}
+				if (input) {
+					input.classList.remove('is-invalid');
+					input.classList.remove('is-valid');
 				}
 			}
 
 			if (phoneInput) {
-				phoneInput.addEventListener('input', function() {
-					const value = this.value;
-					const error = validatePhone(value);
-					if (error) {
-						showError('SoDienThoai', error);
-					} else {
-						clearError('SoDienThoai');
+				phoneInput.addEventListener('keypress', function(e) {
+					const char = String.fromCharCode(e.which || e.keyCode);
+					if (!/[0-9]/.test(char)) {
+						e.preventDefault();
+						return false;
 					}
+				});
+
+				phoneInput.addEventListener('input', function() {
+					this.value = this.value.replace(/[^0-9]/g, '');
+					resetField('SoDienThoai');
+				});
+
+				phoneInput.addEventListener('paste', function(e) {
+					e.preventDefault();
+					const paste = (e.clipboardData || window.clipboardData).getData('text');
+					const numbersOnly = paste.replace(/[^0-9]/g, '');
+					this.value = numbersOnly;
+					resetField('SoDienThoai');
 				});
 
 				phoneInput.addEventListener('blur', function() {
@@ -310,50 +349,73 @@
 					const error = validatePhone(value);
 					if (error) {
 						showError('SoDienThoai', error);
+					} else if (value && value.trim() !== '') {
+						clearError('SoDienThoai', true);
 					} else {
-						clearError('SoDienThoai');
+						resetField('SoDienThoai');
 					}
 				});
 			}
 
 			if (emailInput) {
 				emailInput.addEventListener('input', function() {
-					const value = this.value;
-					if (value) {
-						const error = validateEmail(value);
-						if (error) {
-							showError('Email', error);
-						} else {
-							clearError('Email');
-						}
-					} else {
-						clearError('Email');
-					}
+					resetField('Email');
 				});
 
 				emailInput.addEventListener('blur', function() {
 					const value = this.value;
-					if (value) {
+					if (value && value.trim() !== '') {
 						const error = validateEmail(value);
 						if (error) {
 							showError('Email', error);
 						} else {
-							clearError('Email');
+							clearError('Email', true);
 						}
 					} else {
-						clearError('Email');
+						resetField('Email');
 					}
 				});
 			}
 
+			function validateAddress(address) {
+				if (!address || address.trim() === '') {
+					return 'Địa chỉ là bắt buộc';
+				}
+				return '';
+			}
+
 			if (nameInput) {
+				nameInput.addEventListener('input', function() {
+					resetField('TenKhachHang');
+				});
+
 				nameInput.addEventListener('blur', function() {
 					const value = this.value;
 					const error = validateName(value);
 					if (error) {
 						showError('TenKhachHang', error);
+					} else if (value && value.trim() !== '') {
+						clearError('TenKhachHang', true);
 					} else {
-						clearError('TenKhachHang');
+						resetField('TenKhachHang');
+					}
+				});
+			}
+
+			if (addressInput) {
+				addressInput.addEventListener('input', function() {
+					resetField('DiaChi');
+				});
+
+				addressInput.addEventListener('blur', function() {
+					const value = this.value;
+					const error = validateAddress(value);
+					if (error) {
+						showError('DiaChi', error);
+					} else if (value && value.trim() !== '') {
+						clearError('DiaChi', true);
+					} else {
+						resetField('DiaChi');
 					}
 				});
 			}
@@ -381,6 +443,14 @@
 					const emailError = validateEmail(emailInput.value);
 					if (emailError) {
 						showError('Email', emailError);
+						hasError = true;
+					}
+				}
+
+				if (addressInput) {
+					const addressError = validateAddress(addressInput.value);
+					if (addressError) {
+						showError('DiaChi', addressError);
 						hasError = true;
 					}
 				}
