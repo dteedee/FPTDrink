@@ -1,466 +1,736 @@
 @model FPTDrink.Web.ViewModels.CheckoutViewModel
 @{
-	ViewData["Title"] = "Thanh toán";
-	var cart = (FPTDrink.Web.ViewModels.CartViewModel)ViewBag.Cart;
-	var total = cart.Items.Sum(i => i.TotalPrice);
+    ViewData["Title"] = "Thanh toán";
+    var cart = (FPTDrink.Web.ViewModels.CartViewModel)ViewBag.Cart;
+    var total = cart.Items.Sum(i => i.TotalPrice);
 }
 
-<section class="products-section checkout-section">
-	<div class="section-header">
-		<h2><i class="bx bx-credit-card"></i>Thanh toán</h2>
-		<p class="mb-0">Vui lòng điền thông tin để hoàn tất đơn hàng</p>
-	</div>
+<section class="checkout-section">
+    <div class="container-fluid px-lg-4">
+        <div class="section-header text-center mb-4">
+            <h2 class="display-6 fw-bold text-dark">
+                <i class="bx bx-credit-card me-2"></i>Thanh toán đơn hàng
+            </h2>
+            <p class="text-muted">Vui lòng điền đầy đủ thông tin để hoàn tất đơn hàng của bạn</p>
+        </div>
 
-	<div class="row g-4">
-		<div class="col-12 col-lg-7">
-			<div class="card border-0 shadow-sm checkout-form-card">
-				<div class="card-body p-4">
-					<form method="post" id="checkout-form">
-						<div class="row g-3">
-							<div class="col-md-6">
-								<label class="form-label fw-bold" style="color: #2d1b0e;">
-									Họ tên <span class="text-danger">*</span>
-									<span class="field-error text-danger small ms-2" data-field="TenKhachHang"></span>
-								</label>
-								<input asp-for="TenKhachHang" class="form-control checkout-input" placeholder="Nhập họ tên" />
-								<span asp-validation-for="TenKhachHang" class="text-danger small"></span>
-							</div>
-							<div class="col-md-6">
-								<label class="form-label fw-bold" style="color: #2d1b0e;">
-									Số điện thoại <span class="text-danger">*</span>
-									<span class="field-error text-danger small ms-2" data-field="SoDienThoai"></span>
-								</label>
-								<input asp-for="SoDienThoai" 
-								       type="tel" 
-								       inputmode="numeric" 
-								       pattern="[0-9]*" 
-								       class="form-control checkout-input" 
-								       placeholder="Nhập số điện thoại" 
-								       maxlength="10" />
-								<span asp-validation-for="SoDienThoai" class="text-danger small"></span>
-							</div>
-							<div class="col-md-12">
-								<label class="form-label fw-bold" style="color: #2d1b0e;">
-									Email
-									<span class="field-error text-danger small ms-2" data-field="Email"></span>
-								</label>
-								<input asp-for="Email" type="email" class="form-control checkout-input" placeholder="Nhập email" />
-								<span asp-validation-for="Email" class="text-danger small"></span>
-							</div>
-							<div class="col-md-12">
-								<label class="form-label fw-bold" style="color: #2d1b0e;">
-									Địa chỉ <span class="text-danger">*</span>
-									<span class="field-error text-danger small ms-2" data-field="DiaChi"></span>
-								</label>
-								<input asp-for="DiaChi" class="form-control checkout-input" placeholder="Nhập địa chỉ" />
-								<span asp-validation-for="DiaChi" class="text-danger small"></span>
-							</div>
-							<div class="col-md-12">
-								<label class="form-label fw-bold" style="color: #2d1b0e;">Hình thức thanh toán</label>
-								<select asp-for="TypePayment" class="form-select checkout-select">
-									<option value="1">COD (Thanh toán khi nhận hàng)</option>
-									<option value="2">VNPay (Trực tuyến)</option>
-									<option value="3">Trực tiếp</option>
-								</select>
-							</div>
-						</div>
-						<div class="mt-4 text-end">
-							<button type="submit" class="btn btn-primary btn-lg checkout-submit-btn">
-								<i class="bx bx-check me-2"></i>Đặt hàng
-							</button>
-						</div>
-					</form>
-				</div>
-			</div>
-		</div>
-		<div class="col-12 col-lg-5">
-			<div class="card border-0 shadow-sm order-summary-card">
-				<div class="card-header checkout-card-header">
-					<h3 class="mb-0 fw-bold" style="color: #2d1b0e;"><i class="bx bx-cart me-2"></i>Đơn hàng</h3>
-				</div>
-				<div class="card-body">
-					@foreach (var item in cart.Items)
-					{
-						<div class="d-flex align-items-center justify-content-between py-3 border-bottom checkout-item">
-							<div class="d-flex align-items-center gap-3">
-								<img src="@(string.IsNullOrWhiteSpace(item.ProductImg) ? Url.Content("~/images/placeholder.png") : item.ProductImg)" 
-								     class="rounded object-fit-cover checkout-item-image" />
-								<div>
-									<div class="fw-bold" style="color: #2d1b0e;">@item.ProductName</div>
-									<div class="small text-muted">x @item.Quantity</div>
-								</div>
-							</div>
-							<div class="fw-bold" style="color: #2d1b0e;">@string.Format("{0:N0} ₫", item.TotalPrice)</div>
-						</div>
-					}
-				</div>
-				<div class="card-footer checkout-card-footer">
-					<div class="d-flex justify-content-between align-items-center">
-						<div class="fw-bold" style="color: #2d1b0e; font-size: 1.1rem;">Tổng cộng</div>
-						<div class="fw-bold" style="color: #d4a574; font-size: 1.5rem;">@string.Format("{0:N0} ₫", total)</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
+        <div class="row g-4">
+            <div class="col-lg-7">
+                <div class="checkout-card">
+                    <div class="card-body p-4 p-lg-5">
+                        <h4 class="fw-bold mb-4 text-brown">
+                            <i class="bx bx-user me-2"></i>Thông tin người nhận
+                        </h4>
+
+                        <form method="post" id="checkoutForm" novalidate>
+                            <div class="row g-4">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="form-label" for="fullName">
+                                            Họ và tên <span class="text-danger">*</span>
+                                        </label>
+                                        <div class="input-wrapper">
+                                            <input asp-for="TenKhachHang"
+                                                   class="form-control form-input"
+                                                   id="fullName"
+                                                   placeholder="Nguyễn Văn A"
+                                                   autocomplete="name"
+                                                   data-validate="required|name" />
+                                            <i class="bx bx-user input-prefix-icon"></i>
+                                            <i class="bx validation-icon"></i>
+                                        </div>
+                                        <div class="form-feedback"></div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="form-label" for="phoneNumber">
+                                            Số điện thoại <span class="text-danger">*</span>
+                                        </label>
+                                        <div class="input-wrapper">
+                                            <input asp-for="SoDienThoai"
+                                                   class="form-control form-input"
+                                                   id="phoneNumber"
+                                                   type="tel"
+                                                   placeholder="0912345678"
+                                                   maxlength="10"
+                                                   inputmode="numeric"
+                                                   autocomplete="tel"
+                                                   data-validate="required|phone" />
+                                            <i class="bx bx-phone input-prefix-icon"></i>
+                                            <i class="bx validation-icon"></i>
+                                        </div>
+                                        <div class="form-feedback"></div>
+                                    </div>
+                                </div>
+
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <label class="form-label" for="email">
+                                            Email <span class="text-danger">*</span>
+                                        </label>
+                                        <div class="input-wrapper">
+                                            <input asp-for="Email"
+                                                   class="form-control form-input"
+                                                   id="email"
+                                                   type="email"
+                                                   placeholder="example@email.com"
+                                                   autocomplete="email"
+                                                   data-validate="required|email" />
+                                            <i class="bx bx-envelope input-prefix-icon"></i>
+                                            <i class="bx validation-icon"></i>
+                                        </div>
+                                        <div class="form-feedback"></div>
+                                    </div>
+                                </div>
+
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <label class="form-label" for="address">
+                                            Địa chỉ giao hàng <span class="text-danger">*</span>
+                                        </label>
+                                        <div class="input-wrapper">
+                                            <input asp-for="DiaChi"
+                                                   class="form-control form-input"
+                                                   id="address"
+                                                   placeholder="Số nhà, tên đường, phường/xã, quận/huyện"
+                                                   autocomplete="street-address"
+                                                   data-validate="required|address" />
+                                            <i class="bx bx-map input-prefix-icon"></i>
+                                            <i class="bx validation-icon"></i>
+                                        </div>
+                                        <div class="form-feedback"></div>
+                                    </div>
+                                </div>
+
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <label class="form-label" for="paymentMethod">
+                                            <i class="bx bx-credit-card me-2"></i>Phương thức thanh toán
+                                        </label>
+                                        <select asp-for="TypePayment"
+                                                class="form-select form-input"
+                                                id="paymentMethod">
+                                            <option value="1" selected>COD - Thanh toán khi nhận hàng</option>
+                                            <option value="2">VNPay - Thanh toán trực tuyến</option>
+                                            <option value="3">Thanh toán trực tiếp tại cửa hàng</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="d-grid gap-2 mt-4">
+                                <button type="submit" class="btn btn-submit" id="submitBtn">
+                                    <span class="btn-text">
+                                        <i class="bx bx-check-circle me-2"></i>Xác nhận đặt hàng
+                                    </span>
+                                    <span class="btn-loading">
+                                        <span class="spinner-border spinner-border-sm me-2"></span>Đang xử lý...
+                                    </span>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-5">
+                <div class="checkout-card order-summary sticky-top">
+                    <div class="card-header">
+                        <h4 class="fw-bold mb-0">
+                            <i class="bx bx-receipt me-2"></i>Đơn hàng của bạn
+                        </h4>
+                    </div>
+                    <div class="card-body p-4">
+                        <div class="order-items">
+@foreach (var item in cart.Items)
+{
+                            <div class="order-item">
+                                <div class="item-image">
+                                    <img src="@(string.IsNullOrWhiteSpace(item.ProductImg) ? Url.Content("~/images/placeholder.png") : item.ProductImg)"
+                                         alt="@item.ProductName"
+                                         loading="lazy" />
+                                </div>
+                                <div class="item-details">
+                                    <h6 class="item-name">@item.ProductName</h6>
+                                    <p class="item-quantity">
+                                        Số lượng:
+                                        <span>@item.Quantity</span>
+                                    </p>
+                                </div>
+                                <div class="item-price">
+                                    @string.Format("{0:N0}₫", item.TotalPrice)
+                                </div>
+                            </div>
+}
+                        </div>
+
+                        <div class="order-divider"></div>
+
+                        <div class="order-total">
+                            <span class="total-label">Tổng thanh toán</span>
+                            <span class="total-amount">@string.Format("{0:N0}₫", total)</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="security-badge mt-3">
+                    <i class="bx bx-lock-alt me-2"></i>
+                    <span>Giao dịch của bạn được bảo mật và mã hóa</span>
+                </div>
+            </div>
+        </div>
+    </div>
 </section>
 
 @section Styles {
-	<style>
-		.checkout-section {
-			padding: 2rem 0;
-		}
+    <style>
+        :root {
+            --primary-color: #d4a574;
+            --primary-dark: #b8915f;
+            --text-dark: #2d1b0e;
+            --text-muted: #6c757d;
+            --success-color: #28a745;
+            --error-color: #dc3545;
+            --border-color: rgba(212, 165, 116, 0.3);
+            --bg-light: #faf8f5;
+            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
+            --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.12);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
 
-		.checkout-form-card,
-		.order-summary-card {
-			background: linear-gradient(135deg, #faf8f5 0%, #f5f0e8 100%);
-			border: 2px solid rgba(212, 165, 116, 0.25) !important;
-			border-radius: 16px;
-		}
+        .checkout-section {
+            padding: 3rem 0;
+            background: linear-gradient(135deg, #fafafa 0%, var(--bg-light) 100%);
+            min-height: 100vh;
+        }
 
-		.checkout-input,
-		.checkout-select {
-			border: 2px solid rgba(212, 165, 116, 0.3);
-			border-radius: 10px;
-			background: #ffffff;
-			color: #2d1b0e;
-			padding: 12px 16px;
-			transition: all 0.3s ease;
-		}
+        .text-brown {
+            color: var(--text-dark);
+        }
 
-		.checkout-input:focus,
-		.checkout-select:focus {
-			border-color: #d4a574;
-			box-shadow: 0 0 0 0.2rem rgba(212, 165, 116, 0.25);
-			background: #ffffff;
-			color: #2d1b0e;
-		}
+        .checkout-card {
+            background: #ffffff;
+            border: 2px solid var(--border-color);
+            border-radius: 20px;
+            box-shadow: var(--shadow-md);
+            transition: var(--transition);
+            overflow: hidden;
+        }
 
-		.checkout-input.is-invalid,
-		.checkout-select.is-invalid {
-			border-color: #dc3545;
-		}
+        .checkout-card:hover {
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+        }
 
-		.checkout-input.is-valid,
-		.checkout-select.is-valid {
-			border-color: #28a745;
-		}
+        .checkout-card .card-header {
+            background: linear-gradient(135deg, rgba(212, 165, 116, 0.12) 0%, rgba(212, 165, 116, 0.05) 100%);
+            border-bottom: 2px solid var(--border-color);
+            padding: 1.5rem;
+        }
 
-		.checkout-card-header {
-			background: linear-gradient(135deg, rgba(212, 165, 116, 0.1) 0%, rgba(139, 90, 43, 0.05) 100%);
-			border-bottom: 2px solid rgba(212, 165, 116, 0.25);
-			padding: 1.25rem;
-		}
+        .form-group {
+            margin-bottom: 0;
+        }
 
-		.checkout-card-footer {
-			background: linear-gradient(135deg, rgba(212, 165, 116, 0.1) 0%, rgba(139, 90, 43, 0.05) 100%);
-			border-top: 2px solid rgba(212, 165, 116, 0.25);
-			padding: 1.25rem;
-		}
+        .form-label {
+            color: var(--text-dark);
+            font-weight: 600;
+            font-size: 0.95rem;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
 
-		.checkout-item {
-			border-color: rgba(212, 165, 116, 0.2) !important;
-		}
+        .input-wrapper {
+            position: relative;
+        }
 
-		.checkout-item-image {
-			height: 50px;
-			width: 50px;
-			object-fit: cover;
-			border: 2px solid rgba(212, 165, 116, 0.3);
-		}
+        .form-input {
+            width: 100%;
+            padding: 0.875rem 3rem 0.875rem 3rem;
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            font-size: 1rem;
+            color: var(--text-dark);
+            background: #ffffff;
+            transition: var(--transition);
+        }
+        
+        /* Select (phương thức thanh toán) - bỏ mũi tên và nền */
+        .form-select.form-input {
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            background-image: none !important;
+            background-color: #ffffff;
+        }
 
-		.checkout-submit-btn {
-			background: linear-gradient(135deg, #d4a574 0%, #f0c896 100%) !important;
-			border: none !important;
-			color: #1a0f08 !important;
-			font-weight: 700;
-			border-radius: 10px;
-			padding: 14px 32px;
-			transition: all 0.3s ease;
-			box-shadow: 0 4px 12px rgba(212, 165, 116, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.3);
-			letter-spacing: 0.3px;
-			position: relative;
-			overflow: hidden;
-		}
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 4px rgba(212, 165, 116, 0.1);
+            background: #ffffff;
+        }
 
-		.checkout-submit-btn::before {
-			content: '';
-			position: absolute;
-			top: 50%;
-			left: 50%;
-			width: 0;
-			height: 0;
-			border-radius: 50%;
-			background: rgba(255, 255, 255, 0.3);
-			transform: translate(-50%, -50%);
-			transition: width 0.4s ease, height 0.4s ease;
-		}
+        .form-input::placeholder {
+            color: #999;
+        }
 
-		.checkout-submit-btn:hover::before {
-			width: 300px;
-			height: 300px;
-		}
+        .input-prefix-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.25rem;
+            color: var(--primary-color);
+            pointer-events: none;
+            transition: var(--transition);
+        }
 
-		.checkout-submit-btn:hover:not(:disabled) {
-			transform: translateY(-3px);
-			box-shadow: 0 8px 24px rgba(212, 165, 116, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.4);
-			background: linear-gradient(135deg, #f0c896 0%, #d4a574 100%) !important;
-		}
+        .validation-icon {
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%) scale(0.8);
+            font-size: 1.5rem;
+            opacity: 0;
+            pointer-events: none;
+            transition: var(--transition);
+            color: var(--text-muted);
+        }
 
-		.checkout-submit-btn:disabled {
-			opacity: 0.6;
-			cursor: not-allowed;
-		}
+        .validation-icon.is-visible {
+            opacity: 1;
+            transform: translateY(-50%) scale(1);
+        }
 
-		.field-error {
-			display: none;
-		}
+        .form-group.is-valid .form-input {
+            border-color: var(--success-color);
+            background: rgba(40, 167, 69, 0.03);
+        }
 
-		.field-error.show {
-			display: inline;
-		}
-	</style>
+        .form-group.is-invalid .form-input {
+            border-color: var(--error-color);
+            background: rgba(220, 53, 69, 0.03);
+            animation: shake 0.4s;
+        }
+
+        @@keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-8px); }
+            75% { transform: translateX(8px); }
+        }
+
+        .form-feedback {
+            min-height: 1.5rem;
+            padding: 0.375rem 0.75rem;
+            font-size: 0.875rem;
+            color: var(--error-color);
+            opacity: 0;
+            transform: translateY(-5px);
+            transition: var(--transition);
+        }
+
+        .form-group.is-invalid .form-feedback {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .btn-submit {
+            background: linear-gradient(135deg, var(--primary-color) 0%, #f0c896 100%);
+            border: none;
+            color: #1a0f08;
+            font-weight: 700;
+            font-size: 1.1rem;
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 16px rgba(212, 165, 116, 0.4);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-submit::before {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.5);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .btn-submit:hover:not(:disabled)::before {
+            width: 400px;
+            height: 400px;
+        }
+
+        .btn-submit:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(212, 165, 116, 0.5);
+        }
+
+        .btn-submit:active:not(:disabled) {
+            transform: translateY(0);
+        }
+
+        .btn-submit:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        .btn-text,
+        .btn-loading {
+            position: relative;
+            z-index: 1;
+        }
+
+        .btn-loading {
+            display: none;
+        }
+
+        .btn-submit.loading .btn-text {
+            display: none;
+        }
+
+        .btn-submit.loading .btn-loading {
+            display: inline-block;
+        }
+
+        .order-summary {
+            top: 2rem;
+        }
+
+        .order-items {
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 0.5rem;
+        }
+
+        .order-items::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .order-items::-webkit-scrollbar-track {
+            background: var(--bg-light);
+            border-radius: 10px;
+        }
+
+        .order-items::-webkit-scrollbar-thumb {
+            background: var(--primary-color);
+            border-radius: 10px;
+        }
+
+        .order-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            border-radius: 12px;
+            margin-bottom: 0.75rem;
+            background: var(--bg-light);
+            transition: var(--transition);
+        }
+
+        .order-item:hover {
+            background: rgba(212, 165, 116, 0.1);
+            transform: translateX(4px);
+        }
+
+        .item-image {
+            flex-shrink: 0;
+            width: 60px;
+            height: 60px;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 2px solid var(--border-color);
+        }
+
+        .item-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .item-details {
+            flex-grow: 1;
+        }
+
+        .item-name {
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 0.25rem;
+            font-size: 0.95rem;
+        }
+
+        .item-quantity {
+            font-size: 0.875rem;
+            color: var(--text-muted);
+            margin: 0;
+        }
+
+        .item-quantity span {
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        .item-price {
+            font-weight: 700;
+            color: var(--text-dark);
+            font-size: 1rem;
+        }
+
+        .order-divider {
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--border-color), transparent);
+            margin: 1.5rem 0;
+        }
+
+        .order-total {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            background: linear-gradient(135deg, rgba(212, 165, 116, 0.12) 0%, rgba(212, 165, 116, 0.05) 100%);
+            border-radius: 12px;
+        }
+
+        .total-label {
+            font-weight: 600;
+            color: var(--text-dark);
+            font-size: 1.1rem;
+        }
+
+        .total-amount {
+            font-weight: 700;
+            color: var(--primary-color);
+            font-size: 1.5rem;
+        }
+
+        .security-badge {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.75rem;
+            background: rgba(40, 167, 69, 0.1);
+            border: 1px solid rgba(40, 167, 69, 0.3);
+            border-radius: 10px;
+            color: var(--success-color);
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .security-badge i {
+            font-size: 1.25rem;
+        }
+
+        @@media (max-width: 991.98px) {
+            .order-summary {
+                position: static !important;
+            }
+
+            .checkout-section {
+                padding: 2rem 0;
+            }
+        }
+
+        @@media (max-width: 575.98px) {
+            .checkout-card .card-body {
+                padding: 1.5rem !important;
+            }
+
+            .form-input {
+                font-size: 16px;
+            }
+
+            .total-amount {
+                font-size: 1.25rem;
+            }
+        }
+    </style>
 }
 
 @section Scripts {
-	<partial name="_ValidationScriptsPartial" />
-	<script>
-		(function() {
-			const form = document.getElementById('checkout-form');
-			if (!form) return;
+    <script>
+        (function () {
+            'use strict';
 
-			const phoneInput = form.querySelector('[name="SoDienThoai"]');
-			const emailInput = form.querySelector('[name="Email"]');
-			const nameInput = form.querySelector('[name="TenKhachHang"]');
-			const addressInput = form.querySelector('[name="DiaChi"]');
+            const form = document.getElementById('checkoutForm');
+            if (!form) {
+                return;
+            }
 
-			function validatePhone(phone) {
-				if (!phone) {
-					return 'Số điện thoại là bắt buộc';
-				}
-				if (!/^\d+$/.test(phone)) {
-					return 'Số điện thoại chỉ được chứa số';
-				}
-				if (phone.length !== 10) {
-					return 'Số điện thoại phải có đúng 10 số';
-				}
-				if (phone[0] !== '0') {
-					return 'Số điện thoại phải bắt đầu bằng 0';
-				}
-				if (phone[1] === '0') {
-					return 'Số thứ 2 phải khác 0';
-				}
-				return '';
-			}
+            const submitBtn = document.getElementById('submitBtn');
 
-			function validateEmail(email) {
-				if (!email) {
-					return '';
-				}
-				var atSymbol = String.fromCharCode(64);
-				if (email.indexOf(atSymbol) === -1) {
-					return 'Email phải có ký tự @@';
-				}
-				if (/[àáảãạăắằẳẵặâấầẩẫậèéẻẽẹêếềểễệìíỉĩịòóỏõọôốồổỗộơớờởỡợùúủũụưứừửữựỳýỷỹỵđ]/.test(email)) {
-					return 'Email không được chứa dấu';
-				}
-				var emailPattern = '^[a-zA-Z0-9._%+-]+' + atSymbol + '[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$';
-				var emailRegex = new RegExp(emailPattern);
-				if (!emailRegex.test(email)) {
-					return 'Email không đúng định dạng';
-				}
-				return '';
-			}
+            const validationRules = {
+                required: (value) => value.trim() !== '' || 'Trường này không được để trống',
+                name: (value) => {
+                    const trimmed = value.trim();
+                    if (trimmed.length < 2) return 'Họ tên phải có ít nhất 2 ký tự';
+                    if (trimmed.length > 50) return 'Họ tên không được vượt quá 50 ký tự';
+                    // Hỗ trợ chữ cái Latin + tiếng Việt có dấu và khoảng trắng
+                    const nameRegex = /^[a-zA-ZÀ-ỹ\\s]+$/;
+                    if (!nameRegex.test(trimmed)) return 'Họ tên chỉ được chứa chữ cái';
+                    return true;
+                },
+                phone: (value) => {
+                    // Luôn validate trên chuỗi số tinh khiết
+                    const digits = value.replace(/\\D/g, '');
+                    if (digits.length !== 10) return 'Số điện thoại phải có 10 chữ số';
+                    if (digits[0] !== '0') return 'Số điện thoại phải bắt đầu bằng số 0';
+                    if (digits[1] === '0') return 'Số thứ 2 phải khác 0';
+                    return true;
+                },
+                email: (value) => {
+                    const trimmed = value.trim();
+                    if (!trimmed) return true;
+                    const atSymbol = String.fromCharCode(64);
+                    const emailPattern = `^[^\\s${atSymbol}]+${atSymbol}[^\\s${atSymbol}]+\\.[^\\s${atSymbol}]+$`;
+                    const emailRegex = new RegExp(emailPattern);
+                    if (!emailRegex.test(trimmed)) return 'Email không đúng định dạng';
 
-			function validateName(name) {
-				if (!name || name.trim() === '') {
-					return 'Họ tên là bắt buộc';
-				}
-				return '';
-			}
+                    if (/[àáảãạăắằẳẵặâấầẩẫậèéẻẽẹêếềểễệìíỉĩịòóỏõọôốồổỗộơớờởỡợùúủũụưứừửữựỳýỷỹỵđ]/i.test(trimmed)) {
+                        return 'Email không được chứa ký tự có dấu';
+                    }
+                    return true;
+                },
+                address: (value) => {
+                    const trimmed = value.trim();
+                    if (trimmed.length < 5) return 'Địa chỉ phải có ít nhất 5 ký tự';
+                    if (trimmed.length > 255) return 'Địa chỉ không được vượt quá 255 ký tự';
+                    return true;
+                }
+            };
 
-			function showError(fieldName, message) {
-				const errorSpan = form.querySelector(`[data-field="${fieldName}"]`);
-				const input = form.querySelector(`[name="${fieldName}"]`);
-				if (errorSpan) {
-					errorSpan.textContent = message;
-					errorSpan.classList.add('show');
-				}
-				if (input) {
-					input.classList.add('is-invalid');
-					input.classList.remove('is-valid');
-				}
-			}
+            class FieldValidator {
+                constructor(input) {
+                    this.input = input;
+                    this.formGroup = input.closest('.form-group');
+                    this.feedback = this.formGroup?.querySelector('.form-feedback');
+                    this.rules = (input.dataset.validate || '').split('|').filter(Boolean);
+                    this.isRequired = this.rules.includes('required');
+            this.icon = this.formGroup?.querySelector('.validation-icon');
+                    this.init();
+                }
 
-			function clearError(fieldName, showValid) {
-				const errorSpan = form.querySelector(`[data-field="${fieldName}"]`);
-				const input = form.querySelector(`[name="${fieldName}"]`);
-				if (errorSpan) {
-					errorSpan.textContent = '';
-					errorSpan.classList.remove('show');
-				}
-				if (input) {
-					input.classList.remove('is-invalid');
-					if (showValid === true && input.value && input.value.trim() !== '') {
-						input.classList.add('is-valid');
-					} else {
-						input.classList.remove('is-valid');
-					}
-				}
-			}
+                init() {
+                    if (this.input.id === 'phoneNumber') {
+                        // Không chặn keypress để tránh xung đột IME/bàn phím; làm sạch ở sự kiện input
+                        this.input.addEventListener('input', () => {
+                            // Cho phép nhập, sau đó làm sạch
+                            this.input.value = this.input.value.replace(/\\D/g, '').slice(0, 10);
+                        });
 
-			function resetField(fieldName) {
-				const errorSpan = form.querySelector(`[data-field="${fieldName}"]`);
-				const input = form.querySelector(`[name="${fieldName}"]`);
-				if (errorSpan) {
-					errorSpan.textContent = '';
-					errorSpan.classList.remove('show');
-				}
-				if (input) {
-					input.classList.remove('is-invalid');
-					input.classList.remove('is-valid');
-				}
-			}
+                        this.input.addEventListener('paste', (e) => {
+                            e.preventDefault();
+                            const text = (e.clipboardData || window.clipboardData).getData('text') || '';
+                            this.input.value = text.replace(/\\D/g, '').slice(0, 10);
+                        });
+                    }
 
-			if (phoneInput) {
-				phoneInput.addEventListener('keypress', function(e) {
-					const char = String.fromCharCode(e.which || e.keyCode);
-					if (!/[0-9]/.test(char)) {
-						e.preventDefault();
-						return false;
-					}
-				});
+                    this.input.addEventListener('blur', () => this.validate(true));
+                    this.input.addEventListener('input', () => this.clearValidation());
+                }
 
-				phoneInput.addEventListener('input', function() {
-					this.value = this.value.replace(/[^0-9]/g, '');
-					resetField('SoDienThoai');
-				});
+                validate(showFeedback = false) {
+                    const value = this.input.value;
 
-				phoneInput.addEventListener('paste', function(e) {
-					e.preventDefault();
-					const paste = (e.clipboardData || window.clipboardData).getData('text');
-					const numbersOnly = paste.replace(/[^0-9]/g, '');
-					this.value = numbersOnly;
-					resetField('SoDienThoai');
-				});
+                    if (!this.isRequired && !value.trim()) {
+                        this.clearValidation();
+                        return true;
+                    }
 
-				phoneInput.addEventListener('blur', function() {
-					const value = this.value;
-					const error = validatePhone(value);
-					if (error) {
-						showError('SoDienThoai', error);
-					} else if (value && value.trim() !== '') {
-						clearError('SoDienThoai', true);
-					} else {
-						resetField('SoDienThoai');
-					}
-				});
-			}
+                    for (const rule of this.rules) {
+                        const validator = validationRules[rule];
+                        if (!validator) continue;
 
-			if (emailInput) {
-				emailInput.addEventListener('input', function() {
-					resetField('Email');
-				});
+                        const result = validator(value);
+                        if (result !== true) {
+                            if (showFeedback) this.showError(result);
+                            return false;
+                        }
+                    }
 
-				emailInput.addEventListener('blur', function() {
-					const value = this.value;
-					if (value && value.trim() !== '') {
-						const error = validateEmail(value);
-						if (error) {
-							showError('Email', error);
-						} else {
-							clearError('Email', true);
-						}
-					} else {
-						resetField('Email');
-					}
-				});
-			}
+                    if (showFeedback && value.trim()) {
+                        this.showSuccess();
+                    }
+                    return true;
+                }
 
-			function validateAddress(address) {
-				if (!address || address.trim() === '') {
-					return 'Địa chỉ là bắt buộc';
-				}
-				return '';
-			}
+                showError(message) {
+                    if (!this.formGroup || !this.feedback) return;
 
-			if (nameInput) {
-				nameInput.addEventListener('input', function() {
-					resetField('TenKhachHang');
-				});
+                    this.formGroup.classList.remove('is-valid');
+                    this.formGroup.classList.add('is-invalid');
+                if (this.feedback) {
+                    this.feedback.innerHTML = `<i class="bx bx-error-circle me-1"></i>${message}`;
+                }
+                if (this.icon) {
+                    this.icon.classList.remove('bx-check-circle');
+                    this.icon.classList.add('bx', 'bx-error-circle', 'is-visible');
+                    this.icon.style.color = getComputedStyle(document.documentElement).getPropertyValue('--error-color').trim() || '#dc3545';
+                }
+                }
 
-				nameInput.addEventListener('blur', function() {
-					const value = this.value;
-					const error = validateName(value);
-					if (error) {
-						showError('TenKhachHang', error);
-					} else if (value && value.trim() !== '') {
-						clearError('TenKhachHang', true);
-					} else {
-						resetField('TenKhachHang');
-					}
-				});
-			}
+                showSuccess() {
+                    if (!this.formGroup || !this.feedback) return;
 
-			if (addressInput) {
-				addressInput.addEventListener('input', function() {
-					resetField('DiaChi');
-				});
+                    this.formGroup.classList.remove('is-invalid');
+                    this.formGroup.classList.add('is-valid');
+                this.feedback.textContent = '';
+                if (this.icon) {
+                    this.icon.classList.remove('bx-error-circle');
+                    this.icon.classList.add('bx', 'bx-check-circle', 'is-visible');
+                    this.icon.style.color = getComputedStyle(document.documentElement).getPropertyValue('--success-color').trim() || '#28a745';
+                }
+                }
 
-				addressInput.addEventListener('blur', function() {
-					const value = this.value;
-					const error = validateAddress(value);
-					if (error) {
-						showError('DiaChi', error);
-					} else if (value && value.trim() !== '') {
-						clearError('DiaChi', true);
-					} else {
-						resetField('DiaChi');
-					}
-				});
-			}
+                clearValidation() {
+                    if (!this.formGroup || !this.feedback) return;
 
-			form.addEventListener('submit', function(e) {
-				let hasError = false;
+                    this.formGroup.classList.remove('is-invalid', 'is-valid');
+                    this.feedback.textContent = '';
+                if (this.icon) {
+                    this.icon.classList.remove('bx-error-circle', 'bx-check-circle', 'is-visible');
+                }
+                }
+            }
 
-				if (nameInput) {
-					const nameError = validateName(nameInput.value);
-					if (nameError) {
-						showError('TenKhachHang', nameError);
-						hasError = true;
-					}
-				}
+            const validators = Array.from(form.querySelectorAll('[data-validate]'))
+                .map((input) => new FieldValidator(input));
 
-				if (phoneInput) {
-					const phoneError = validatePhone(phoneInput.value);
-					if (phoneError) {
-						showError('SoDienThoai', phoneError);
-						hasError = true;
-					}
-				}
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
 
-				if (emailInput && emailInput.value) {
-					const emailError = validateEmail(emailInput.value);
-					if (emailError) {
-						showError('Email', emailError);
-						hasError = true;
-					}
-				}
+                let isValid = true;
+                let firstInvalid = null;
 
-				if (addressInput) {
-					const addressError = validateAddress(addressInput.value);
-					if (addressError) {
-						showError('DiaChi', addressError);
-						hasError = true;
-					}
-				}
+                validators.forEach((validator) => {
+                    if (!validator.validate(true)) {
+                        isValid = false;
+                        if (!firstInvalid) {
+                            firstInvalid = validator.input;
+                        }
+                    }
+                });
 
-				if (hasError) {
-					e.preventDefault();
-					return false;
-				}
-			});
-		})();
-	</script>
+                if (!isValid) {
+                    firstInvalid?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    setTimeout(() => firstInvalid?.focus(), 400);
+                    return;
+                }
+
+                submitBtn?.classList.add('loading');
+                if (submitBtn) {
+                    submitBtn.disabled = true;
+                }
+
+                setTimeout(() => form.submit(), 300);
+            });
+        })();
+    </script>
 }
 

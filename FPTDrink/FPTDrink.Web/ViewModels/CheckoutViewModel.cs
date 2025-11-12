@@ -17,11 +17,11 @@ namespace FPTDrink.Web.ViewModels
         [StringLength(255, MinimumLength = 5, ErrorMessage = "Địa chỉ phải có ít nhất 5 ký tự")]
         public string DiaChi { get; set; } = string.Empty;
 
+        [Required(ErrorMessage = "Vui lòng nhập email")]
         [EmailAddress(ErrorMessage = "Email không đúng định dạng")]
         [RegularExpression(@"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$", ErrorMessage = "Email không được chứa dấu và phải có @")]
-        public string? Email { get; set; }
+        public string Email { get; set; } = string.Empty;
 
-        [Range(1, 3, ErrorMessage = "Phương thức thanh toán không hợp lệ")]
         public int TypePayment { get; set; } = 1;
 
         public List<CartItem> Items { get; set; } = new();
