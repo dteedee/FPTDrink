@@ -144,15 +144,5 @@ namespace FPTDrink.Web.Helpers
         {
             return "~/images/placeholder.png";
         }
-
-        /// <summary>
-        /// Debug: Log image path để kiểm tra
-        /// </summary>
-        public static string DebugImagePath(string? imagePath)
-        {
-            var normalized = NormalizeImagePath(imagePath);
-            System.Diagnostics.Debug.WriteLine($"[ImagePathHelper] Original: '{imagePath}' → Normalized: '{normalized}'");
-            return normalized;
-        }
     }
 }

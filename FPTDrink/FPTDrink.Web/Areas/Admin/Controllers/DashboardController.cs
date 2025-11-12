@@ -27,29 +27,7 @@ namespace FPTDrink.Web.Areas.Admin.Controllers
 			var overview = MapOverview(overviewSource);
 
 			var revenueChartSource = await _reportingService.GetRevenueChartAsync("7days", cancellationToken);
-			
-			// Debug: Log dữ liệu từ service
-			System.Diagnostics.Debug.WriteLine($"=== RevenueChart Debug ===");
-			System.Diagnostics.Debug.WriteLine($"Source count: {revenueChartSource.Count}");
-			foreach (var item in revenueChartSource)
-			{
-				try
-				{
-					var json = JsonSerializer.Serialize(item);
-					System.Diagnostics.Debug.WriteLine($"Raw item: {json}");
-				}
-				catch { }
-			}
-			
-			// Dùng cùng cách mapping như StatisticsController - dùng LINQ Select với helper methods
 			var revenueChart = revenueChartSource.Select(x => (Label: ToString(x, "Date"), Value: ToDecimal(x, "Revenue"))).ToList();
-			
-			// Debug: Log sau khi mapping
-			System.Diagnostics.Debug.WriteLine($"Mapped count: {revenueChart.Count}");
-			foreach (var item in revenueChart)
-			{
-				System.Diagnostics.Debug.WriteLine($"Mapped - Label: {item.Label}, Value: {item.Value}");
-			}
 
 			var topProductsSource = await _reportingService.GetTopProductsAsync(6, cancellationToken);
 			var topProducts = MapTopProducts(topProductsSource);
@@ -73,7 +51,6 @@ namespace FPTDrink.Web.Areas.Admin.Controllers
 			var overview = new DashboardOverviewViewModel();
 			try
 			{
-				// Sử dụng cùng cách deserialize như StatisticsController
 				var json = JsonSerializer.Serialize(source);
 				var stats = JsonSerializer.Deserialize<StatisticsOverviewSection>(json, new JsonSerializerOptions
 				{
@@ -82,7 +59,6 @@ namespace FPTDrink.Web.Areas.Admin.Controllers
 
 				if (stats != null)
 				{
-					// Map từ StatisticsOverviewSection sang DashboardOverviewViewModel
 					overview.RevenueTotal = stats.Revenue?.Total ?? 0m;
 					overview.RevenueToday = stats.Revenue?.Today ?? 0m;
 					overview.RevenueThisMonth = stats.Revenue?.ThisMonth ?? 0m;
@@ -105,16 +81,12 @@ namespace FPTDrink.Web.Areas.Admin.Controllers
 					overview.EmployeeTotal = stats.Employees;
 				}
 			}
-			catch (Exception ex)
+			catch
 			{
-				// Log exception for debugging
-				System.Diagnostics.Debug.WriteLine($"Error mapping overview: {ex.Message}");
 			}
 			return overview;
 		}
 
-
-		// Helper methods giống StatisticsController - sử dụng reflection
 		private static decimal ToDecimal(object obj, string property)
 		{
 			dynamic dynamicObj = obj;
@@ -122,9 +94,8 @@ namespace FPTDrink.Web.Areas.Admin.Controllers
 			{
 				return Convert.ToDecimal(dynamicObj.GetType().GetProperty(property)?.GetValue(dynamicObj, null) ?? 0m);
 			}
-			catch (Exception ex)
+			catch
 			{
-				System.Diagnostics.Debug.WriteLine($"Error ToDecimal for property {property}: {ex.Message}");
 				return 0m;
 			}
 		}
@@ -136,9 +107,8 @@ namespace FPTDrink.Web.Areas.Admin.Controllers
 			{
 				return Convert.ToString(dynamicObj.GetType().GetProperty(property)?.GetValue(dynamicObj, null)) ?? string.Empty;
 			}
-			catch (Exception ex)
+			catch
 			{
-				System.Diagnostics.Debug.WriteLine($"Error ToString for property {property}: {ex.Message}");
 				return string.Empty;
 			}
 		}
@@ -150,7 +120,6 @@ namespace FPTDrink.Web.Areas.Admin.Controllers
 			{
 				try
 				{
-					// Serialize và deserialize để truy cập properties an toàn
 					var json = JsonSerializer.Serialize(item);
 					var element = JsonSerializer.Deserialize<JsonElement>(json);
 					
@@ -165,7 +134,6 @@ namespace FPTDrink.Web.Areas.Admin.Controllers
 				}
 				catch
 				{
-					// ignore
 				}
 			}
 			return list;
@@ -178,7 +146,6 @@ namespace FPTDrink.Web.Areas.Admin.Controllers
 			{
 				try
 				{
-					// Serialize và deserialize để truy cập properties an toàn
 					var json = JsonSerializer.Serialize(item);
 					var element = JsonSerializer.Deserialize<JsonElement>(json);
 					
@@ -207,7 +174,6 @@ namespace FPTDrink.Web.Areas.Admin.Controllers
 				}
 				catch
 				{
-					// ignore
 				}
 			}
 			return list;

@@ -73,15 +73,6 @@ if (Directory.Exists(uploadsPath))
     });
 }
 
-// Serve static files from wwwroot/Uploads folder (primary location)
-// Files are already in wwwroot/Uploads/files, so this ensures they are served correctly
-var wwwrootUploadsPath = Path.Combine(app.Environment.WebRootPath, "Uploads", "files");
-if (Directory.Exists(wwwrootUploadsPath))
-{
-    // This is already handled by the default UseStaticFiles() above,
-    // but we can add explicit configuration if needed
-    // The default UseStaticFiles() will serve files from wwwroot, so /Uploads/files/... will work
-}
 
 app.UseRouting();
 app.UseSession();
