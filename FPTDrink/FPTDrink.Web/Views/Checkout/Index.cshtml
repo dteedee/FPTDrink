@@ -1,8 +1,8 @@
 @model FPTDrink.Web.ViewModels.CheckoutViewModel
 @{
-    ViewData["Title"] = "Thanh toán";
-    var cart = (FPTDrink.Web.ViewModels.CartViewModel)ViewBag.Cart;
-    var total = cart.Items.Sum(i => i.TotalPrice);
+	ViewData["Title"] = "Thanh toán";
+	var cart = (FPTDrink.Web.ViewModels.CartViewModel)ViewBag.Cart;
+	var total = cart.Items.Sum(i => i.TotalPrice);
 }
 
 <section class="checkout-section">
@@ -14,7 +14,7 @@
             <p class="text-muted">Vui lòng điền đầy đủ thông tin để hoàn tất đơn hàng của bạn</p>
         </div>
 
-        <div class="row g-4">
+<div class="row g-4">
             <div class="col-lg-7">
                 <div class="checkout-card">
                     <div class="card-body p-4 p-lg-5">
@@ -24,7 +24,7 @@
 
                         <form method="post" id="checkoutForm" novalidate>
                             <div class="row g-4">
-                                <div class="col-md-6">
+					<div class="col-md-6">
                                     <div class="form-group">
                                         <label class="form-label" for="fullName">
                                             Họ và tên <span class="text-danger">*</span>
@@ -41,9 +41,9 @@
                                         </div>
                                         <div class="form-feedback"></div>
                                     </div>
-                                </div>
+					</div>
 
-                                <div class="col-md-6">
+					<div class="col-md-6">
                                     <div class="form-group">
                                         <label class="form-label" for="phoneNumber">
                                             Số điện thoại <span class="text-danger">*</span>
@@ -83,7 +83,7 @@
                                         </div>
                                         <div class="form-feedback"></div>
                                     </div>
-                                </div>
+					</div>
 
                                 <div class="col-12">
                                     <div class="form-group">
@@ -99,10 +99,10 @@
                                                    data-validate="required|address" />
                                             <i class="bx bx-map input-prefix-icon"></i>
                                             <i class="bx validation-icon"></i>
-                                        </div>
+					</div>
                                         <div class="form-feedback"></div>
-                                    </div>
-                                </div>
+					</div>
+					</div>
 
                                 <div class="col-12">
                                     <div class="form-group">
@@ -115,10 +115,10 @@
                                             <option value="1" selected>COD - Thanh toán khi nhận hàng</option>
                                             <option value="2">VNPay - Thanh toán trực tuyến</option>
                                             <option value="3">Thanh toán trực tiếp tại cửa hàng</option>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
+						</select>
+					</div>
+				</div>
+				</div>
 
                             <div class="d-grid gap-2 mt-4">
                                 <button type="submit" class="btn btn-submit" id="submitBtn">
@@ -129,9 +129,9 @@
                                         <span class="spinner-border spinner-border-sm me-2"></span>Đang xử lý...
                                     </span>
                                 </button>
-                            </div>
-                        </form>
-                    </div>
+			</div>
+		</form>
+	</div>
                 </div>
             </div>
 
@@ -144,8 +144,8 @@
                     </div>
                     <div class="card-body p-4">
                         <div class="order-items">
-@foreach (var item in cart.Items)
-{
+				@foreach (var item in cart.Items)
+				{
                             <div class="order-item">
                                 <div class="item-image">
                                     <img src="@(string.IsNullOrWhiteSpace(item.ProductImg) ? Url.Content("~/images/placeholder.png") : item.ProductImg)"
@@ -161,19 +161,19 @@
                                 </div>
                                 <div class="item-price">
                                     @string.Format("{0:N0}₫", item.TotalPrice)
-                                </div>
-                            </div>
-}
-                        </div>
+							</div>
+					</div>
+				}
+			</div>
 
                         <div class="order-divider"></div>
 
                         <div class="order-total">
                             <span class="total-label">Tổng thanh toán</span>
                             <span class="total-amount">@string.Format("{0:N0}₫", total)</span>
-                        </div>
-                    </div>
-                </div>
+			</div>
+		</div>
+	</div>
 
                 <div class="security-badge mt-3">
                     <i class="bx bx-lock-alt me-2"></i>

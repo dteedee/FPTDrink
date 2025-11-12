@@ -470,16 +470,54 @@
   vertical-align: middle;
 }
 
-.admin-table-wrapper tbody td:not(:last-child) {
-  white-space: normal;
-  word-break: break-word;
-  max-width: 200px;
-}
-
+/* CSS chung cho tất cả bảng */
 .admin-table-wrapper tbody td:last-child {
   white-space: nowrap;
   width: 1%;
   min-width: fit-content;
+}
+
+/* CSS riêng cho bảng Orders - cho phép cột liên hệ xuống dòng */
+.admin-table-orders tbody td:not(:last-child) {
+  white-space: normal;
+  overflow: visible;
+  max-width: 200px;
+}
+
+.admin-table-orders tbody td .d-flex.flex-column {
+  white-space: normal;
+}
+
+.admin-table-orders tbody td .d-flex:not(.flex-column) {
+  white-space: nowrap;
+  flex-wrap: nowrap;
+}
+
+.admin-table-orders tbody td .text-nowrap {
+  white-space: nowrap;
+  flex-shrink: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
+  max-width: 100%;
+}
+
+/* CSS riêng cho bảng Products - tất cả nằm trên 1 hàng */
+.admin-table-products tbody td:not(:last-child) {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 200px;
+}
+
+.admin-table-products tbody td .d-flex {
+  white-space: nowrap;
+  flex-wrap: nowrap;
+}
+
+.admin-table-products tbody td .text-nowrap {
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 /* STT column styling */
