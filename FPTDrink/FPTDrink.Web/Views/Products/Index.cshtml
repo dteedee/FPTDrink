@@ -44,13 +44,10 @@
 						? ImagePathHelper.GetImageUrl(p.Image) 
 						: Url.Content("~/images/placeholder.png");
 				}
-				<img class="card-img-top object-fit-cover" 
-				     style="height:180px !important; width:100% !important; display:block !important; object-fit:cover !important; min-height:180px; visibility:visible !important; opacity:1 !important;" 
+				<img class="card-img-top" 
 				     src="@imageUrl" 
 				     alt="@p.Title"
 				     loading="lazy"
-				     width="300"
-				     height="180"
 				     onerror="this.onerror=null; this.src='@Url.Content("~/images/placeholder.png")';" />
 						</a>
 				<div class="card-body d-flex flex-column">

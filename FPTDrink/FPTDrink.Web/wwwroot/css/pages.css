@@ -175,23 +175,28 @@
     border-color: rgba(212, 165, 116, 0.5) !important;
 }
 
-.product-card .card-img-top {
+.product-card .card-img-top,
+.product-card .card-img-top.object-fit-cover,
+.product-card img.card-img-top {
     border-radius: 14px 14px 0 0;
-    transition: transform 0.5s ease;
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
     z-index: 2;
     width: 100% !important;
-    height: auto;
-    min-height: 180px;
+    height: 200px !important;
+    min-height: 200px !important;
+    max-height: 200px !important;
     display: block !important;
-    object-fit: cover;
-    background-color: #f5f0e8;
+    object-fit: contain !important;
+    object-position: center !important;
+    background: linear-gradient(135deg, #faf8f5 0%, #f5f0e8 100%) !important;
+    padding: 12px !important;
     visibility: visible !important;
     opacity: 1 !important;
 }
 
 .product-card:hover .card-img-top {
-    transform: scale(1.1);
+    transform: scale(1.05);
 }
 
 .product-card .badge {
@@ -802,8 +807,13 @@
         font-size: 1.5rem;
     }
     
-    .product-card .card-img-top {
+    .product-card .card-img-top,
+    .product-card .card-img-top.object-fit-cover,
+    .product-card img.card-img-top {
         height: 160px !important;
+        min-height: 160px !important;
+        max-height: 160px !important;
+        padding: 10px !important;
     }
     
     .featured-section,
@@ -827,6 +837,68 @@
 
     .product-image-wrapper {
         padding: 0.75rem;
+    }
+}
+
+/* === PRODUCT CARD IMAGE - ĐỒNG BỘ VÀ ĐẸP HƠN === */
+/* Override cho trang Products (180px) - Đảm bảo áp dụng cho tất cả card trong products-section */
+.products-section .product-card .card-img-top,
+.products-section .product-card .card-img-top.object-fit-cover,
+.products-section .product-card img.card-img-top,
+section.products-section .product-card .card-img-top,
+section.products-section .product-card img.card-img-top {
+    height: 180px !important;
+    min-height: 180px !important;
+    max-height: 180px !important;
+    object-fit: contain !important;
+    object-position: center !important;
+    background: linear-gradient(135deg, #faf8f5 0%, #f5f0e8 100%) !important;
+    padding: 12px !important;
+}
+
+/* Override cho trang Menu (220px) - Đảm bảo áp dụng cho tất cả card trong menu */
+.menu-page-card .card-img-top,
+.menu-page-card .card-img-top.object-fit-cover,
+.menu-page-card img.card-img-top,
+#menu-products .product-card .card-img-top,
+#menu-products .product-card .card-img-top.object-fit-cover,
+#menu-products .product-card img.card-img-top,
+#menu-products .menu-page-card .card-img-top,
+#menu-products .menu-page-card img.card-img-top {
+    height: 220px !important;
+    min-height: 220px !important;
+    max-height: 220px !important;
+    object-fit: contain !important;
+    object-position: center !important;
+    background: linear-gradient(135deg, #faf8f5 0%, #f5f0e8 100%) !important;
+    padding: 12px !important;
+}
+
+/* Responsive cho các trang có kích thước khác nhau */
+@media (max-width: 768px) {
+    .products-section .product-card .card-img-top,
+    .products-section .product-card .card-img-top.object-fit-cover,
+    .products-section .product-card img.card-img-top,
+    section.products-section .product-card .card-img-top,
+    section.products-section .product-card img.card-img-top {
+        height: 150px !important;
+        min-height: 150px !important;
+        max-height: 150px !important;
+        padding: 10px !important;
+    }
+    
+    .menu-page-card .card-img-top,
+    .menu-page-card .card-img-top.object-fit-cover,
+    .menu-page-card img.card-img-top,
+    #menu-products .product-card .card-img-top,
+    #menu-products .product-card .card-img-top.object-fit-cover,
+    #menu-products .product-card img.card-img-top,
+    #menu-products .menu-page-card .card-img-top,
+    #menu-products .menu-page-card img.card-img-top {
+        height: 180px !important;
+        min-height: 180px !important;
+        max-height: 180px !important;
+        padding: 10px !important;
     }
 }
 

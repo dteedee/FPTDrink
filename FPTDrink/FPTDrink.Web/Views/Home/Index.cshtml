@@ -73,13 +73,10 @@
                                 ? ImagePathHelper.GetImageUrl(p.Image) 
                                 : Url.Content("~/images/placeholder.png");
                         }
-                        <img class="card-img-top object-fit-cover" 
-                             style="height:200px !important; width:100% !important; display:block !important; object-fit:cover !important; min-height:200px; visibility:visible !important; opacity:1 !important;" 
+                        <img class="card-img-top" 
                              src="@homeImageUrl" 
                              alt="@p.Title"
                              loading="lazy"
-                             width="300"
-                             height="200"
                              onerror="this.onerror=null; this.src='@Url.Content("~/images/placeholder.png")';" />
                     </a>
                     <div class="card-body d-flex flex-column p-3">
@@ -134,12 +131,10 @@
                             var newestImagePath = ImagePathHelper.NormalizeImagePath(p.Image);
                             var newestImageUrl = Url.Content(newestImagePath);
                         }
-                        <img class="card-img-top object-fit-cover" style="height:200px" 
+                        <img class="card-img-top" 
                              src="@newestImageUrl" 
                              alt="@p.Title"
                              loading="lazy"
-                             width="300"
-                             height="200"
                              onerror="this.onerror=null; this.src='@Url.Content("~/images/placeholder.png")';" />
                     </a>
                     <div class="card-body d-flex flex-column p-3">
@@ -194,12 +189,10 @@
                             var bestSaleImagePath = ImagePathHelper.NormalizeImagePath(p.Image);
                             var bestSaleImageUrl = Url.Content(bestSaleImagePath);
                         }
-                        <img class="card-img-top object-fit-cover" style="height:200px" 
+                        <img class="card-img-top" 
                              src="@bestSaleImageUrl" 
                              alt="@p.Title"
                              loading="lazy"
-                             width="300"
-                             height="200"
                              onerror="this.onerror=null; this.src='@Url.Content("~/images/placeholder.png")';" />
                     </a>
                     <div class="card-body d-flex flex-column p-3">
