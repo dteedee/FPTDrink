@@ -27,6 +27,7 @@ namespace FPTDrink.Infrastructure.Services
 				Credentials = new NetworkCredential(sender, password)
 			};
 			using var msg = new MailMessage(sender, to, subject, htmlBody) { IsBodyHtml = true };
+			msg.From = new MailAddress(sender, "FPTDrink");
 			await client.SendMailAsync(msg, cancellationToken);
 		}
 	}

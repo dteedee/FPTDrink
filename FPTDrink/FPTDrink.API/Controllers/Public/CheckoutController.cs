@@ -45,6 +45,7 @@ namespace FPTDrink.API.Controllers.Public
 			};
 			var order = await _checkoutService.CreateOrderAsync(coreReq, ct);
 			var persisted = await _orderRepo.GetByIdAsync(order.MaHoaDon, ct);
+			// Only send email to admin when order is created, not to customer
 			_ = Task.Run(async () =>
 			{
 				try
@@ -52,15 +53,11 @@ namespace FPTDrink.API.Controllers.Public
 					if (persisted != null)
 					{
 						await SendOrderEmailAsync(persisted, admin: true, ct);
-						if (!string.IsNullOrWhiteSpace(persisted.Email))
-					{
-							await SendOrderEmailAsync(persisted, admin: false, ct);
-						}
 					}
 				}
 				catch (Exception ex)
 				{
-					_logger.LogError(ex, "Send order email failed for {OrderCode}", order.MaHoaDon);
+					_logger.LogError(ex, "Send order email to admin failed for {OrderCode}", order.MaHoaDon);
 				}
 			});
 			var location = Url.ActionLink(action: "VnPayReturn", controller: "Checkout", values: null, protocol: Request.Scheme);
@@ -138,11 +135,8 @@ namespace FPTDrink.API.Controllers.Public
 					order.TrangThai = 2;
 					_orderRepo.Update(order);
 					await _orderRepo.SaveChangesAsync(ct);
-					// send success email to customer
-					if (!string.IsNullOrWhiteSpace(order.Email))
-					{
-						await SendPaidEmailAsync(order, amount, ct);
-					}
+					// Do not send email automatically after successful payment
+					// Customer will request invoice via SendInvoice endpoint
 				}
 				else if (order != null && !success && !string.IsNullOrWhiteSpace(order.Email))
 				{
@@ -189,7 +183,10 @@ namespace FPTDrink.API.Controllers.Public
 				template = "<p>Đơn hàng #{{MaDon}}</p><table>{{SanPham}}</table><p>Tổng: {{TongTien}} VNĐ</p>";
 			}
 			var rows = string.Join("", order.ChiTietHoaDons.Select((x, i) =>
-				$"<tr><td style=\"text-align:center; width: 40px;\">{i + 1}</td><td style=\"text-align:center;width: 150px;\">{x.ProductId}</td><td style=\"text-align:center;width: 80px;\">{x.SoLuong}</td><td style=\"text-align:center;\">{x.GiaBan:N0}</td><td style=\"text-align:center;\">{(x.GiaBan * x.SoLuong):N0}</td></tr>"));
+			{
+				string productName = x.Product?.Title ?? x.ProductId ?? "N/A";
+				return $"<tr><td style=\"text-align:center; width: 40px;\">{i + 1}</td><td style=\"text-align:center;width: 150px;\">{productName}</td><td style=\"text-align:center;width: 80px;\">{x.SoLuong}</td><td style=\"text-align:center;\">{x.GiaBan:N0} VNĐ</td><td style=\"text-align:center;\">{(x.GiaBan * x.SoLuong):N0} VNĐ</td></tr>";
+			}));
 			var thanhTien = order.ChiTietHoaDons.Sum(x => x.GiaBan * x.SoLuong);
 			var tongTien = thanhTien; // có thể cộng thêm phí nếu cần
 			var body = template
@@ -200,7 +197,8 @@ namespace FPTDrink.API.Controllers.Public
 				.Replace("{{TenKhachHang}}", order.TenKhachHang ?? "")
 				.Replace("{{DiaChiNhanHang}}", order.DiaChi ?? "")
 				.Replace("{{Phone}}", order.SoDienThoai ?? "")
-				.Replace("{{HinhThucThanhToan}}", order.PhuongThucThanhToan == 1 ? "COD" : order.PhuongThucThanhToan == 2 ? "Chuyển khoản" : "Mua trực tiếp")
+				.Replace("{{Email}}", order.Email ?? "")
+				.Replace("{{HinhThucThanhToan}}", order.PhuongThucThanhToan == 1 ? "Thanh toán khi nhận hàng (COD)" : order.PhuongThucThanhToan == 2 ? "Chuyển khoản" : "Mua trực tiếp tại cửa hàng")
 				.Replace("{{SanPham}}", rows)
 				.Replace("{{ThanhTien}}", string.Format("{0:N0}", thanhTien))
 				.Replace("{{TongTien}}", string.Format("{0:N0}", tongTien));
