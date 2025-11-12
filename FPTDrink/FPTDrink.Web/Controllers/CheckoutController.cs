@@ -88,7 +88,7 @@ namespace FPTDrink.Web.Controllers
 				var vnpay = await _api.PostAsync("api/public/Checkout/payment/vnpay", new
 				{
 					OrderCode = orderCode,
-					TypePaymentVN = model.TypePaymentVN,
+					TypePaymentVN = 0,
 					ReturnUrlOverride = Url.ActionLink("VnpayReturn", "Checkout", values: null, protocol: Request.Scheme),
 					ClientIp = remoteIp
 				});
@@ -102,7 +102,9 @@ namespace FPTDrink.Web.Controllers
 				}
 			}
 
-			return RedirectToAction("Success", new { orderCode });
+			TempData["PaymentMessage"] = "Không thể chuyển đến cổng thanh toán VNPay. Vui lòng thử lại hoặc chọn phương thức khác.";
+			ViewBag.Cart = cart;
+			return View(model);
 		}
 
 		[HttpGet]
@@ -152,9 +154,31 @@ namespace FPTDrink.Web.Controllers
 		}
 
 		[HttpGet]
-		public IActionResult VnpayReturn(string? vnp_TxnRef, string? vnp_ResponseCode, string? vnp_TransactionStatus)
+		public IActionResult VnpayReturn(string? vnp_TxnRef, string? vnp_ResponseCode, string? vnp_TransactionStatus, string? vnp_ResponseCodeDesc)
 		{
-			return RedirectToAction("Success", new { orderCode = vnp_TxnRef });
+			if (string.Equals(vnp_ResponseCode, "00", StringComparison.OrdinalIgnoreCase))
+			{
+				return RedirectToAction("Success", new { orderCode = vnp_TxnRef });
+			}
+
+			TempData["PaymentErrorMessage"] = string.IsNullOrWhiteSpace(vnp_ResponseCodeDesc)
+				? "Thanh toán không thành công hoặc đã bị hủy."
+				: vnp_ResponseCodeDesc;
+			return RedirectToAction("Failure", new { orderCode = vnp_TxnRef });
+		}
+
+		[HttpGet]
+		public async Task<IActionResult> Failure(string orderCode)
+		{
+			var message = TempData["PaymentErrorMessage"] as string ?? "Thanh toán không thành công hoặc đã bị hủy.";
+			OrderDetailViewModel? order = null;
+			if (!string.IsNullOrWhiteSpace(orderCode))
+			{
+				order = await _api.GetAsync<OrderDetailViewModel>($"api/public/Orders/{orderCode}");
+			}
+
+			ViewBag.Message = message;
+			return View(order);
 		}
 	}
 }

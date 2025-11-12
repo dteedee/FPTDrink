@@ -1,0 +1,138 @@
+@model FPTDrink.Web.ViewModels.OrderDetailViewModel?
+@{
+	ViewData["Title"] = "Thanh toán không thành công";
+	var orderCode = Model?.MaHoaDon ?? (string?)ViewBag.OrderCode ?? "";
+	var message = ViewBag.Message as string ?? "Thanh toán không thành công hoặc đã bị hủy.";
+}
+
+<section class="checkout-failure-section">
+	<div class="container">
+		<div class="row justify-content-center">
+			<div class="col-lg-10">
+				<div class="failure-card">
+					<div class="failure-header">
+						<div class="failure-icon">
+							<i class="bx bx-error"></i>
+						</div>
+						<div>
+							<h2>Thanh toán không thành công</h2>
+							<p class="mb-0 text-danger">@message</p>
+							@if (!string.IsNullOrWhiteSpace(orderCode))
+							{
+								<p class="mb-0">Mã đơn hàng: <strong>@orderCode</strong></p>
+							}
+						</div>
+					</div>
+
+					@if (Model != null)
+					{
+						<div class="alert alert-warning mt-3">
+							<i class="bx bx-info-circle me-2"></i>Đơn hàng vẫn đang ở trạng thái <strong>@Model.TrangThaiHienThi</strong>.
+							Bạn có thể thử thanh toán lại hoặc chọn phương thức khác.
+						</div>
+
+						<div class="order-summary-card mt-3">
+							<h5 class="info-title"><i class="bx bx-receipt me-2"></i>Thông tin đơn hàng</h5>
+							<ul class="info-list">
+								<li><span>Mã đơn:</span> <strong>@Model.MaHoaDon</strong></li>
+								<li><span>Ngày đặt:</span> <strong>@Model.CreatedDate.ToString("dd/MM/yyyy HH:mm")</strong></li>
+								<li><span>Hình thức thanh toán:</span> <strong>@Model.PaymentMethodName</strong></li>
+								<li><span>Trạng thái hiện tại:</span> <strong>@Model.TrangThaiHienThi</strong></li>
+							</ul>
+						</div>
+					}
+
+					<div class="mt-4 d-flex gap-3 justify-content-center flex-wrap">
+						<a class="btn btn-outline-primary btn-coffee-outline" asp-controller="Checkout" asp-action="Index">
+							<i class="bx bx-repeat me-2"></i>Thử thanh toán lại
+						</a>
+						<a class="btn btn-primary btn-coffee" asp-controller="ShoppingCart" asp-action="Index">
+							<i class="bx bx-cart me-2"></i>Quay về giỏ hàng
+						</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+
+@section Styles {
+	<style>
+		.checkout-failure-section {
+			padding: 3rem 0 4rem;
+			background: linear-gradient(135deg, #fafafa 0%, #f5f0e8 100%);
+		}
+
+		.failure-card {
+			background: #ffffff;
+			border-radius: 24px;
+			box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+			padding: 2.5rem;
+			border: 2px solid rgba(220, 53, 69, 0.25);
+		}
+
+		.failure-header {
+			display: flex;
+			align-items: center;
+			gap: 1.5rem;
+			padding-bottom: 1.5rem;
+			border-bottom: 2px dashed rgba(220, 53, 69, 0.3);
+		}
+
+		.failure-icon {
+			width: 72px;
+			height: 72px;
+			background: linear-gradient(135deg, rgba(220, 53, 69, 0.2), rgba(220, 53, 69, 0.4));
+			color: #dc3545;
+			border-radius: 50%;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			font-size: 2rem;
+		}
+
+		.failure-card h2 {
+			color: #dc3545;
+			font-weight: 700;
+		}
+
+		.order-summary-card {
+			background: rgba(255, 255, 255, 0.9);
+			border: 1px solid rgba(212, 165, 116, 0.25);
+			border-radius: 16px;
+			padding: 1.5rem;
+			margin-top: 1.5rem;
+		}
+
+		.info-title {
+			color: #2d1b0e;
+			font-weight: 700;
+			margin-bottom: 1rem;
+		}
+
+		.info-list {
+			list-style: none;
+			margin: 0;
+			padding: 0;
+		}
+
+		.info-list li {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			gap: 0.75rem;
+			padding: 0.5rem 0;
+			border-bottom: 1px dashed rgba(212, 165, 116, 0.25);
+			color: #4b3b2a;
+		}
+
+		.info-list li:last-child {
+			border-bottom: none;
+		}
+
+		.info-list span {
+			color: #6f5a45;
+		}
+	</style>
+}
+

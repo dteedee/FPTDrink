@@ -23,7 +23,6 @@ namespace FPTDrink.Web.ViewModels
         public string Email { get; set; } = string.Empty;
 
         public int TypePayment { get; set; } = 1;
-		public int TypePaymentVN { get; set; } = 2;
 
         public List<CartItem> Items { get; set; } = new();
 
