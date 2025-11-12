@@ -299,7 +299,8 @@
         }
 
         .product-card {
-            background: linear-gradient(135deg, #1c4c4a, #2d726c);
+            background: linear-gradient(135deg, #2563eb, #3b82f6);
+            color: #ffffff;
         }
 
         .product-card .card-content {
@@ -313,6 +314,7 @@
             letter-spacing: 0.1em;
             opacity: 0.95;
             font-weight: 600;
+            color: #ffffff;
             text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
         }
 
@@ -320,6 +322,7 @@
             font-weight: 800;
             font-size: 2.5rem;
             margin: 0.75rem 0 0.5rem;
+            color: #ffffff;
             text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
             letter-spacing: -0.02em;
         }
@@ -329,11 +332,17 @@
             margin-bottom: 0;
             font-weight: 500;
             font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .product-card .muted.text-danger {
+            color: #fee2e2;
         }
 
         .product-card .muted strong {
             font-weight: 700;
             font-size: 1rem;
+            color: #ffffff;
         }
 
         .customer-card {
@@ -342,6 +351,52 @@
 
         .bg-coffee {
             background-color: #6b4f33;
+        }
+
+        /* Số liệu tổng quan - CSS cho list group và badge */
+        .admin-card .list-group-item {
+            border: none;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+            padding: 0.85rem 0;
+            font-size: 0.95rem;
+            color: #5e4a36;
+        }
+
+        .admin-card .list-group-item:last-child {
+            border-bottom: none;
+        }
+
+        .admin-card .list-group-item .badge {
+            font-size: 0.875rem;
+            font-weight: 700;
+            padding: 0.4rem 0.85rem;
+            min-width: 50px;
+            text-align: center;
+        }
+
+        .admin-card .list-group-item .badge.bg-coffee {
+            background: linear-gradient(135deg, #6b4f33, #8b6f47) !important;
+            color: #ffffff;
+        }
+
+        .admin-card .list-group-item .badge.bg-success {
+            background: linear-gradient(135deg, #10b981, #34d399) !important;
+            color: #ffffff;
+        }
+
+        .admin-card .list-group-item .badge.bg-info {
+            background: linear-gradient(135deg, #3b82f6, #60a5fa) !important;
+            color: #ffffff;
+        }
+
+        .admin-card .list-group-item .badge.bg-primary {
+            background: linear-gradient(135deg, #2563eb, #3b82f6) !important;
+            color: #ffffff;
+        }
+
+        .admin-card .list-group-item .badge.bg-warning {
+            background: linear-gradient(135deg, #f59e0b, #fbbf24) !important;
+            color: #1a0f08;
         }
     </style>
 }
