@@ -18,7 +18,7 @@ namespace FPTDrink.Web.Controllers
             _api = api;
         }
 
-        public async Task<IActionResult> Index(int page = 1, int pageSize = 12, int? categoryId = null, int? supplierId = null, decimal? priceFrom = null, decimal? priceTo = null, string? sort = null, string? q = null)
+        public async Task<IActionResult> Index(int page = 1, int pageSize = 12, int? categoryId = null, string? supplierId = null, decimal? priceFrom = null, decimal? priceTo = null, string? sort = null, string? q = null)
         {
             var categories = await _api.GetAsync<List<MenuCategoryItemViewModel>>("api/public/Catalog/categories") ?? new List<MenuCategoryItemViewModel>();
             var suppliersResponse = await _api.GetAsync<List<SupplierResponse>>("api/public/Suppliers") ?? new List<SupplierResponse>();
@@ -33,7 +33,7 @@ namespace FPTDrink.Web.Controllers
             };
 
             if (categoryId.HasValue) queryParts.Add($"categoryId={categoryId}");
-            if (supplierId.HasValue) queryParts.Add($"supplierId={supplierId}");
+            if (!string.IsNullOrWhiteSpace(supplierId)) queryParts.Add($"supplierId={WebUtility.UrlEncode(supplierId)}");
             if (priceFrom.HasValue) queryParts.Add($"priceFrom={priceFrom}");
             if (priceTo.HasValue) queryParts.Add($"priceTo={priceTo}");
             if (!string.IsNullOrWhiteSpace(sort)) queryParts.Add($"sort={WebUtility.UrlEncode(sort)}");
@@ -120,7 +120,7 @@ namespace FPTDrink.Web.Controllers
 
         private class SupplierResponse
         {
-            public int MaNhaCungCap { get; set; }
+            public string? MaNhaCungCap { get; set; }
             public string? Title { get; set; }
         }
     }

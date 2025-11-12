@@ -14,11 +14,12 @@ namespace FPTDrink.Web.Controllers
 			_api = api;
 		}
 
-		public async Task<IActionResult> Index(int page = 1, int pageSize = 12, int? categoryId = null, int? supplierId = null, string? q = null, decimal? priceFrom = null, decimal? priceTo = null, string? sort = null)
+		public async Task<IActionResult> Index(int page = 1, int pageSize = 12, int? categoryId = null, string? supplierId = null, string? q = null, decimal? priceFrom = null, decimal? priceTo = null, string? sort = null)
 		{
 			var cartId = Request.Cookies["cart_id"];
 			var cartIdParam = !string.IsNullOrWhiteSpace(cartId) ? $"&cartId={System.Net.WebUtility.UrlEncode(cartId)}" : "";
-			string url = $"api/public/Catalog/products?page={page}&pageSize={pageSize}&categoryId={categoryId}&supplierId={supplierId}&q={System.Net.WebUtility.UrlEncode(q)}&priceFrom={priceFrom}&priceTo={priceTo}&sort={sort}{cartIdParam}";
+			var supplierIdParam = !string.IsNullOrWhiteSpace(supplierId) ? $"&supplierId={System.Net.WebUtility.UrlEncode(supplierId)}" : "";
+			string url = $"api/public/Catalog/products?page={page}&pageSize={pageSize}&categoryId={categoryId}{supplierIdParam}&q={System.Net.WebUtility.UrlEncode(q ?? "")}&priceFrom={priceFrom}&priceTo={priceTo}&sort={System.Net.WebUtility.UrlEncode(sort ?? "")}{cartIdParam}";
 			var vm = await _api.GetAsync<ProductsListViewModel>(url) ?? new ProductsListViewModel();
 			vm.Page = page;
 			vm.PageSize = pageSize;

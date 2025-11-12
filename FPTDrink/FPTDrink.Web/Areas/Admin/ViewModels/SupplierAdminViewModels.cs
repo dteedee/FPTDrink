@@ -8,6 +8,7 @@ namespace FPTDrink.Web.Areas.Admin.ViewModels
 		public string Title { get; set; } = string.Empty;
 		public string Phone { get; set; } = string.Empty;
 		public string Email { get; set; } = string.Empty;
+		public string? Image { get; set; }
 		public bool IsActive { get; set; }
 		public int Status { get; set; }
 	}

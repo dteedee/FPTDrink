@@ -31,6 +31,7 @@ namespace FPTDrink.Web.Areas.Admin.Controllers
 				Title = s.Title,
 				Phone = s.SoDienThoai,
 				Email = s.Email,
+				Image = s.Image,
 				IsActive = s.Status != 0,
 				Status = s.Status
 			}).ToList();

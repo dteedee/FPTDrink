@@ -2,7 +2,7 @@
 @using System.Linq
 @{
     ViewData["Title"] = ViewData["Title"] ?? "Thực đơn";
-    Func<int?, int?, decimal?, decimal?, string?, string?, string> buildUrl = (catId, supplierId, priceFrom, priceTo, sort, search) =>
+    Func<int?, string?, decimal?, decimal?, string?, string?, string> buildUrl = (catId, supplierId, priceFrom, priceTo, sort, search) =>
         Url.Action("Index", new
         {
             categoryId = catId,

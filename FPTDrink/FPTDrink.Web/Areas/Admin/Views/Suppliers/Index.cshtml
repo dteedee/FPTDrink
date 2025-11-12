@@ -1,4 +1,5 @@
 @model IReadOnlyList<FPTDrink.Web.Areas.Admin.ViewModels.AdminSupplierListItemViewModel>
+@using FPTDrink.Web.Helpers
 @{
     ViewData["Title"] = "Nhà cung cấp";
     var status = ViewBag.Status as string ?? "Index";
@@ -49,6 +50,7 @@
         <thead class="table-light">
             <tr>
                 <th class="stt-column">STT</th>
+                <th class="sortable-header sort-none">Ảnh</th>
                 <th class="sortable-header sort-none">Tên nhà cung cấp</th>
                 <th class="sortable-header sort-none">Số điện thoại</th>
                 <th class="sortable-header sort-none">Email</th>
@@ -60,7 +62,7 @@
         @if (!Model.Any())
         {
             <tr>
-                <td colspan="6" class="text-center text-muted py-4">Không có dữ liệu.</td>
+                <td colspan="7" class="text-center text-muted py-4">Không có dữ liệu.</td>
             </tr>
         }
         else
@@ -68,8 +70,13 @@
             var stt = 1;
             foreach (var item in Model)
             {
+                var imageUrl = ImagePathHelper.GetImageUrl(item.Image);
                 <tr>
                     <td class="stt-column">@(stt++)</td>
+                    <td>
+                        <img src="@imageUrl" alt="@item.Title" class="admin-supplier-image" 
+                             onerror="this.onerror=null; this.src='@Url.Content("~/images/placeholder.png")';" />
+                    </td>
                     <td>
                         <strong>@item.Title</strong>
                         <div class="small text-muted">@item.Id</div>

@@ -11,7 +11,7 @@ namespace FPTDrink.Web.ViewModels
         public ProductsListViewModel Products { get; set; } = new();
 
         public int? SelectedCategoryId { get; set; }
-        public int? SelectedSupplierId { get; set; }
+        public string? SelectedSupplierId { get; set; }
         public decimal? SelectedPriceFrom { get; set; }
         public decimal? SelectedPriceTo { get; set; }
         public string? Sort { get; set; }
@@ -28,7 +28,7 @@ namespace FPTDrink.Web.ViewModels
 
     public class MenuSupplierItemViewModel
     {
-        public int Id { get; set; }
+        public string? Id { get; set; }
         public string? Title { get; set; }
     }
 
