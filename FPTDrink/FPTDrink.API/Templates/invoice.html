@@ -1,106 +1,216 @@
-<table border="0" cellpadding="0" cellspacing="0" width="600" style="background-color:#ffffff;border:1px solid black;border-radius:3px">
-	<thead>
-		<tr>
-			<td align="center" valign="top">
-				<table border="0" cellpadding="0" cellspacing="0" width="100%" style="color:black;border-bottom:0;line-height:100%;vertical-align:middle;font-family:'Helvetica Neue',Helvetica,Roboto,Arial,sans-serif;border-radius:3px 3px 0 0">
-					<tbody>
-						<tr>
-							<td style="padding:36px 48px;display:block;text-align: center;">
-								<h1 style="font-weight:bold;font-family:'Helvetica Neue',Helvetica,Roboto,Arial,sans-serif;font-size:30px;font-weight:300;line-height:150%;margin:0;text-align:center;color:black;background-color:inherit">
-									HOÁ ĐƠN BÁN HÀNG
-								</h1>
-								<h4><i>Ngày</i> {{NgayDat}} <i>Tháng</i> {{ThangDat}} <i>Năm</i> {{NamDat}}</h4>
-								<h4>Số hóa đơn: <span style="color: #45B0E1; font-weight: bold;">{{MaDon}}</span></h4>
-							</td>
-						</tr>
-					</tbody>
-				</table>
-			</td>
-		</tr>
-	</thead>
-	<tbody>
-		<tr>
-			<td>
-				<table border="0" cellpadding="10" cellspacing="0" style="width: 100%;">
-					<tr style="background-color: #45B0E1; color: #ffffff;">
-						<td style="font-size: 20px;">CỬA HÀNG THỨC UỐNG GIẢI KHÁT FPTDRINK</td>
-					</tr>
-					<tr>
-						<td>
-							Địa chỉ: FPT University, Khu Công nghệ Cao Hoà Lạc, Hà Nội<br>
-							Số điện thoại: 0969995633 <br>
-							Website: http://www.fptdrink.vn <br>
-							Số tài khoản: 68686868379379 <br>
-							Ngân hàng: TMCP Ngoại thương Việt Nam – Chi nhánh Hà Nội
-						</td>
-					</tr>
-					<tr style="background-color: #45B0E1; color: #ffffff;">
-						<td style="font-size: 20px;">THÔNG TIN KHÁCH HÀNG</td>
-					</tr>
-					<tr>
-						<td>
-							Họ tên khách hàng: {{TenKhachHang}}<br>
-							Địa chỉ giao hàng: {{DiaChiNhanHang}}<br>
-							Số điện thoại: {{Phone}}<br>
-							Email: {{Email}}<br>
-							Hình thức thanh toán: {{HinhThucThanhToan}}<br>
-						</td>
-					</tr>
-				</table>
-			</td>
-		</tr>
-		<tr>
-			<td>
-				<table cellspacing="0" border="1" style="margin-top: 10px; margin-bottom: 10px; width: 100%;">
-					<thead>
-						<tr>
-							<th style="text-align:center; width: 40px;">STT</th>
-							<th style="text-align:center;width: 150px;">Tên sản phẩm</th>
-							<th style="text-align:center;width: 80px;">Số lượng</th>
-							<th scope="col" style="text-align:center;">Đơn giá</th>
-							<th scope="col" style="text-align:center;">Thành tiền</th>
-						</tr>
-					</thead>
-					<tbody>
-						{{SanPham}}
-					</tbody>
-				</table>
-			</td>
-		</tr>
-	</tbody>
-	<tfoot>
-		<tr>
-			<td>
-				<table cellspacing="0" border="1" style="width: 100%;">
-					<tr style="text-align: right;">
-						<td>Tổng tiền hàng</td>
-						<td><b>{{ThanhTien}} VNĐ</b></td>
-					</tr>
-					<tr style="text-align: right;">
-						<td>Tổng cộng tiền thanh toán</td>
-						<td><b>{{TongTien}} VNĐ</b></td>
-					</tr>
-				</table>
-			</td>
-		</tr>
-		<tr>
-			<td>
-				<table style="width: 100%;">
-					<tr style="text-align: center;">
-						<td><b>Khách hàng</b></td>
-						<td><b>Người bán hàng</b></td>
-					</tr>
-					<tr style="text-align: center;">
-						<td><i>(Ký, họ tên)</i></td>
-						<td><i>(Ký, họ tên)</i></td>
-					</tr>
-					<tr style="text-align: center;">
-						<td style="padding-top: 20px; padding-bottom: 20px;"><i>{{TenKhachHang}}</i></td>
-						<td style="padding-top: 20px; padding-bottom: 20px;"><i>FPTDrink STORE</i></td>
-					</tr>
-				</table>
-			</td>
-		</tr>
-	</tfoot>
-</table>
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hoá đơn #{{MaDon}}</title>
+</head>
+<body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background: linear-gradient(180deg, #f5ede5 0%, #ede4d8 50%, #e8ddd0 100%); line-height: 1.6; color: #212529;">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%" style="background: linear-gradient(180deg, #f5ede5 0%, #ede4d8 50%, #e8ddd0 100%); padding: 40px 20px;">
+        <tr>
+            <td align="center">
+                <table border="0" cellpadding="0" cellspacing="0" width="650" style="max-width: 650px; background: #ffffff; border-radius: 16px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15), 0 2px 8px rgba(0, 0, 0, 0.1); overflow: hidden;">
+                    <!-- Header -->
+                    <tr>
+                        <td style="background: linear-gradient(135deg, #2d1b0e 0%, #1a0f08 50%, #0f0804 100%); padding: 40px 48px; text-align: center; border-bottom: 3px solid rgba(212, 165, 116, 0.4);">
+                            <h1 style="margin: 0; font-size: 32px; font-weight: 700; color: #f0c896; text-shadow: 0 4px 12px rgba(0, 0, 0, 0.6), 0 0 20px rgba(212, 165, 116, 0.3); letter-spacing: 1px; text-transform: uppercase;">
+                                HOÁ ĐƠN BÁN HÀNG
+                            </h1>
+                            <div style="margin-top: 20px; padding-top: 20px; border-top: 2px solid rgba(212, 165, 116, 0.3);">
+                                <p style="margin: 8px 0; color: #e8ddd0; font-size: 16px; font-style: italic;">
+                                    <i>Ngày</i> {{NgayDat}} <i>Tháng</i> {{ThangDat}} <i>Năm</i> {{NamDat}}
+                                </p>
+                                <p style="margin: 8px 0; color: #f0c896; font-size: 18px; font-weight: 600;">
+                                    Số hóa đơn: <span style="color: #d4a574; font-weight: 700; letter-spacing: 1px;">{{MaDon}}</span>
+                                </p>
+                            </div>
+                        </td>
+                    </tr>
 
+                    <!-- Store Information -->
+                    <tr>
+                        <td style="padding: 0;">
+                            <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                                <tr>
+                                    <td style="background: linear-gradient(135deg, rgba(212, 165, 116, 0.15) 0%, rgba(139, 90, 43, 0.1) 100%); padding: 20px 32px; border-bottom: 2px solid rgba(212, 165, 116, 0.2);">
+                                        <h2 style="margin: 0 0 16px 0; font-size: 20px; font-weight: 700; color: #6b4f33; text-transform: uppercase; letter-spacing: 0.5px; display: flex; align-items: center; gap: 10px;">
+                                            <span style="display: inline-block; width: 4px; height: 24px; background: linear-gradient(135deg, #d4a574 0%, #f0c896 100%); border-radius: 2px;"></span>
+                                            CỬA HÀNG THỨC UỐNG GIẢI KHÁT FPTDRINK
+                                        </h2>
+                                        <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                                            <tr>
+                                                <td style="padding: 8px 0; color: #5e4a36; font-size: 14px;">
+                                                    <strong style="color: #6b4f33;">Địa chỉ:</strong> FPT University, Khu Công nghệ Cao Hoà Lạc, Hà Nội
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td style="padding: 8px 0; color: #5e4a36; font-size: 14px;">
+                                                    <strong style="color: #6b4f33;">Số điện thoại:</strong> 0969995633
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td style="padding: 8px 0; color: #5e4a36; font-size: 14px;">
+                                                    <strong style="color: #6b4f33;">Website:</strong> <a href="http://www.fptdrink.vn" style="color: #d4a574; text-decoration: none;">http://www.fptdrink.vn</a>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td style="padding: 8px 0; color: #5e4a36; font-size: 14px;">
+                                                    <strong style="color: #6b4f33;">Số tài khoản:</strong> 68686868379379
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td style="padding: 8px 0; color: #5e4a36; font-size: 14px;">
+                                                    <strong style="color: #6b4f33;">Ngân hàng:</strong> TMCP Ngoại thương Việt Nam – Chi nhánh Hà Nội
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+
+                    <!-- Customer Information -->
+                    <tr>
+                        <td style="padding: 0;">
+                            <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                                <tr>
+                                    <td style="background: linear-gradient(135deg, rgba(212, 165, 116, 0.15) 0%, rgba(139, 90, 43, 0.1) 100%); padding: 20px 32px; border-top: 2px solid rgba(212, 165, 116, 0.2); border-bottom: 2px solid rgba(212, 165, 116, 0.2);">
+                                        <h2 style="margin: 0 0 16px 0; font-size: 20px; font-weight: 700; color: #6b4f33; text-transform: uppercase; letter-spacing: 0.5px; display: flex; align-items: center; gap: 10px;">
+                                            <span style="display: inline-block; width: 4px; height: 24px; background: linear-gradient(135deg, #d4a574 0%, #f0c896 100%); border-radius: 2px;"></span>
+                                            THÔNG TIN KHÁCH HÀNG
+                                        </h2>
+                                        <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                                            <tr>
+                                                <td style="padding: 8px 0; color: #5e4a36; font-size: 14px;">
+                                                    <strong style="color: #6b4f33;">Họ tên khách hàng:</strong> {{TenKhachHang}}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td style="padding: 8px 0; color: #5e4a36; font-size: 14px;">
+                                                    <strong style="color: #6b4f33;">Địa chỉ giao hàng:</strong> {{DiaChiNhanHang}}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td style="padding: 8px 0; color: #5e4a36; font-size: 14px;">
+                                                    <strong style="color: #6b4f33;">Số điện thoại:</strong> {{Phone}}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td style="padding: 8px 0; color: #5e4a36; font-size: 14px;">
+                                                    <strong style="color: #6b4f33;">Email:</strong> {{Email}}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td style="padding: 8px 0; color: #5e4a36; font-size: 14px;">
+                                                    <strong style="color: #6b4f33;">Hình thức thanh toán:</strong> <span style="color: #d4a574; font-weight: 600;">{{HinhThucThanhToan}}</span>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+
+                    <!-- Products Table -->
+                    <tr>
+                        <td style="padding: 32px 32px 24px 32px;">
+                            <table border="0" cellpadding="0" cellspacing="0" width="100%" style="border-collapse: collapse; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);">
+                                <thead>
+                                    <tr>
+                                        <th style="background: linear-gradient(135deg, #2d1b0e 0%, #1a0f08 100%); color: #f0c896; padding: 16px 12px; text-align: center; font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; border-right: 1px solid rgba(212, 165, 116, 0.3); width: 50px;">
+                                            STT
+                                        </th>
+                                        <th style="background: linear-gradient(135deg, #2d1b0e 0%, #1a0f08 100%); color: #f0c896; padding: 16px 12px; text-align: center; font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; border-right: 1px solid rgba(212, 165, 116, 0.3);">
+                                            Tên sản phẩm
+                                        </th>
+                                        <th style="background: linear-gradient(135deg, #2d1b0e 0%, #1a0f08 100%); color: #f0c896; padding: 16px 12px; text-align: center; font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; border-right: 1px solid rgba(212, 165, 116, 0.3); width: 90px;">
+                                            Số lượng
+                                        </th>
+                                        <th style="background: linear-gradient(135deg, #2d1b0e 0%, #1a0f08 100%); color: #f0c896; padding: 16px 12px; text-align: center; font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; border-right: 1px solid rgba(212, 165, 116, 0.3); width: 130px;">
+                                            Đơn giá
+                                        </th>
+                                        <th style="background: linear-gradient(135deg, #2d1b0e 0%, #1a0f08 100%); color: #f0c896; padding: 16px 12px; text-align: center; font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; width: 140px;">
+                                            Thành tiền
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {{SanPham}}
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+
+                    <!-- Total -->
+                    <tr>
+                        <td style="padding: 0 32px 32px 32px;">
+                            <table border="0" cellpadding="0" cellspacing="0" width="100%" style="border-collapse: collapse; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);">
+                                <tr style="background: linear-gradient(135deg, rgba(212, 165, 116, 0.1) 0%, rgba(139, 90, 43, 0.08) 100%);">
+                                    <td style="padding: 16px 20px; text-align: right; font-size: 15px; font-weight: 600; color: #6b4f33; border-bottom: 1px solid rgba(212, 165, 116, 0.2);">
+                                        Tổng tiền hàng
+                                    </td>
+                                    <td style="padding: 16px 20px; text-align: right; font-size: 15px; font-weight: 700; color: #6b4f33; border-bottom: 1px solid rgba(212, 165, 116, 0.2); width: 180px;">
+                                        {{ThanhTien}} VNĐ
+                                    </td>
+                                </tr>
+                                <tr style="background: linear-gradient(135deg, rgba(212, 165, 116, 0.2) 0%, rgba(139, 90, 43, 0.15) 100%);">
+                                    <td style="padding: 20px; text-align: right; font-size: 18px; font-weight: 700; color: #2d1b0e; text-transform: uppercase; letter-spacing: 0.5px;">
+                                        Tổng cộng tiền thanh toán
+                                    </td>
+                                    <td style="padding: 20px; text-align: right; font-size: 20px; font-weight: 800; color: #d4a574; width: 180px; text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);">
+                                        {{TongTien}} VNĐ
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+
+                    <!-- Footer Signature -->
+                    <tr>
+                        <td style="padding: 32px; background: linear-gradient(180deg, rgba(245, 237, 229, 0.5) 0%, rgba(237, 228, 216, 0.3) 100%); border-top: 2px solid rgba(212, 165, 116, 0.2);">
+                            <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                                <tr>
+                                    <td style="text-align: center; padding: 0 20px;">
+                                        <p style="margin: 0 0 12px 0; font-size: 16px; font-weight: 700; color: #6b4f33; text-transform: uppercase; letter-spacing: 0.5px;">
+                                            Khách hàng
+                                        </p>
+                                        <p style="margin: 0 0 24px 0; font-size: 13px; font-style: italic; color: #8b6f47;">
+                                            (Ký, họ tên)
+                                        </p>
+                                        <p style="margin: 0; font-size: 15px; font-weight: 600; color: #5e4a36; font-style: italic; padding: 12px 0; border-top: 1px solid rgba(212, 165, 116, 0.3);">
+                                            {{TenKhachHang}}
+                                        </p>
+                                    </td>
+                                    <td style="text-align: center; padding: 0 20px;">
+                                        <p style="margin: 0 0 12px 0; font-size: 16px; font-weight: 700; color: #6b4f33; text-transform: uppercase; letter-spacing: 0.5px;">
+                                            Người bán hàng
+                                        </p>
+                                        <p style="margin: 0 0 24px 0; font-size: 13px; font-style: italic; color: #8b6f47;">
+                                            (Ký, họ tên)
+                                        </p>
+                                        <p style="margin: 0; font-size: 15px; font-weight: 600; color: #5e4a36; font-style: italic; padding: 12px 0; border-top: 1px solid rgba(212, 165, 116, 0.3);">
+                                            FPTDrink STORE
+                                        </p>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+
+                    <!-- Footer Note -->
+                    <tr>
+                        <td style="padding: 24px 32px; background: linear-gradient(135deg, #2d1b0e 0%, #1a0f08 100%); text-align: center; border-top: 3px solid rgba(212, 165, 116, 0.4);">
+                            <p style="margin: 0; font-size: 12px; color: #c9b99a; line-height: 1.6;">
+                                Cảm ơn quý khách đã sử dụng dịch vụ của FPTDrink!<br>
+                                <span style="color: #d4a574;">Mọi thắc mắc vui lòng liên hệ: 0969995633</span>
+                            </p>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>

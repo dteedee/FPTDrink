@@ -177,15 +177,32 @@ namespace FPTDrink.API.Controllers.Public
 			string baseDir = AppContext.BaseDirectory;
 			string tplFile = admin ? "invoice_admin.html" : "invoice.html";
 			string tplPath = System.IO.Path.Combine(baseDir, "Templates", tplFile);
+			
+			_logger.LogInformation("Loading email template from: {TemplatePath}", tplPath);
+			_logger.LogInformation("Base directory: {BaseDir}", baseDir);
+			_logger.LogInformation("Template file exists: {Exists}", System.IO.File.Exists(tplPath));
+			
 			string template = System.IO.File.Exists(tplPath) ? await System.IO.File.ReadAllTextAsync(tplPath, ct) : "";
 			if (string.IsNullOrWhiteSpace(template))
 			{
+				_logger.LogWarning("Template file not found or empty, using fallback template. Path: {TemplatePath}", tplPath);
 				template = "<p>Đơn hàng #{{MaDon}}</p><table>{{SanPham}}</table><p>Tổng: {{TongTien}} VNĐ</p>";
+			}
+			else
+			{
+				_logger.LogInformation("Template loaded successfully from: {TemplatePath}", tplPath);
 			}
 			var rows = string.Join("", order.ChiTietHoaDons.Select((x, i) =>
 			{
 				string productName = x.Product?.Title ?? x.ProductId ?? "N/A";
-				return $"<tr><td style=\"text-align:center; width: 40px;\">{i + 1}</td><td style=\"text-align:center;width: 150px;\">{productName}</td><td style=\"text-align:center;width: 80px;\">{x.SoLuong}</td><td style=\"text-align:center;\">{x.GiaBan:N0} VNĐ</td><td style=\"text-align:center;\">{(x.GiaBan * x.SoLuong):N0} VNĐ</td></tr>";
+				string rowBg = i % 2 == 0 ? "background: rgba(245, 237, 229, 0.3);" : "background: rgba(237, 228, 216, 0.2);";
+				return $"<tr style=\"{rowBg}\">" +
+					$"<td style=\"padding: 14px 12px; text-align: center; font-size: 14px; color: #5e4a36; font-weight: 600; border-right: 1px solid rgba(212, 165, 116, 0.2); border-bottom: 1px solid rgba(212, 165, 116, 0.15);\">{i + 1}</td>" +
+					$"<td style=\"padding: 14px 12px; text-align: center; font-size: 14px; color: #6b4f33; font-weight: 500; border-right: 1px solid rgba(212, 165, 116, 0.2); border-bottom: 1px solid rgba(212, 165, 116, 0.15);\">{productName}</td>" +
+					$"<td style=\"padding: 14px 12px; text-align: center; font-size: 14px; color: #5e4a36; font-weight: 600; border-right: 1px solid rgba(212, 165, 116, 0.2); border-bottom: 1px solid rgba(212, 165, 116, 0.15);\">{x.SoLuong}</td>" +
+					$"<td style=\"padding: 14px 12px; text-align: right; font-size: 14px; color: #5e4a36; font-weight: 500; border-right: 1px solid rgba(212, 165, 116, 0.2); border-bottom: 1px solid rgba(212, 165, 116, 0.15);\">{x.GiaBan:N0} VNĐ</td>" +
+					$"<td style=\"padding: 14px 12px; text-align: right; font-size: 14px; color: #6b4f33; font-weight: 700; border-bottom: 1px solid rgba(212, 165, 116, 0.15);\">{(x.GiaBan * x.SoLuong):N0} VNĐ</td>" +
+					$"</tr>";
 			}));
 			var thanhTien = order.ChiTietHoaDons.Sum(x => x.GiaBan * x.SoLuong);
 			var tongTien = thanhTien; // có thể cộng thêm phí nếu cần
