@@ -1,0 +1,125 @@
+@model IReadOnlyList<FPTDrink.Web.Areas.Admin.ViewModels.AdminOrderListItemViewModel>
+@{
+    ViewData["Title"] = "Quản lý đơn hàng";
+    var search = ViewBag.Search as string;
+}
+
+<div class="admin-page-header">
+    <div class="admin-page-title">
+        <h2>Đơn hàng</h2>
+        <p>Theo dõi, xử lý và cập nhật trạng thái đơn hàng của khách.</p>
+    </div>
+    <div class="admin-page-actions">
+        <a asp-action="Index" class="btn btn-coffee-outline admin-pill-button">
+            <i class="bx bx-rotate-left"></i>Làm mới
+        </a>
+    </div>
+</div>
+
+<form method="get" class="admin-filter-bar row g-3">
+    <div class="col-lg-9">
+        <label class="form-label">Từ khóa tìm kiếm</label>
+        <div class="input-group">
+            <span class="input-group-text"><i class="bx bx-search"></i></span>
+            <input type="text" name="search" value="@search" class="form-control" placeholder="Mã đơn, khách hàng, email, SĐT..." />
+        </div>
+    </div>
+    <div class="col-lg-3 d-flex align-items-end justify-content-lg-end gap-2">
+        <button type="submit" class="btn btn-coffee admin-pill-button w-100">
+            <i class="bx bx-filter-alt"></i>Lọc danh sách
+        </button>
+    </div>
+</form>
+
+<div class="admin-table-wrapper">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle">
+            <thead>
+                <tr>
+                    <th class="stt-column">STT</th>
+                    <th class="sortable-header sort-none">Mã đơn</th>
+                    <th class="sortable-header sort-none">Khách hàng</th>
+                    <th class="sortable-header sort-none">Liên hệ</th>
+                    <th class="sortable-header sort-none">Ngày đặt</th>
+                    <th class="sortable-header sort-none">Thanh toán</th>
+                    <th class="sortable-header sort-none">Trạng thái</th>
+                    <th class="text-end sortable-header sort-none">Tổng tiền</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+            @if (!Model.Any())
+            {
+                <tr>
+                    <td colspan="9" class="text-center text-muted py-4">Chưa có đơn hàng phù hợp.</td>
+                </tr>
+            }
+            else
+            {
+                var stt = 1;
+                foreach (var order in Model)
+                {
+                    <tr>
+                        <td class="stt-column">@(stt++)</td>
+                        <td><strong>@order.OrderCode</strong></td>
+                        <td>@order.CustomerName</td>
+                        <td>
+                            <div class="d-flex flex-column">
+                                <span><i class="bx bx-phone me-1"></i>@order.Phone</span>
+                                @if (!string.IsNullOrWhiteSpace(order.Email))
+                                {
+                                    <span><i class="bx bx-envelope me-1"></i>@order.Email</span>
+                                }
+                            </div>
+                        </td>
+                        <td>@order.CreatedDate.ToString("dd/MM/yyyy HH:mm")</td>
+                        <td>@GetPaymentMethod(order.PaymentMethod)</td>
+                        <td>
+                            <span class="status-badge @GetStatusBadge(order.Status)">@GetStatusText(order.Status)</span>
+                        </td>
+                        <td class="text-end">@order.TotalAmount.ToString("N0") ₫</td>
+                        <td class="text-end">
+                            <div class="admin-table-actions justify-content-end">
+                                <a asp-action="Details" asp-route-id="@order.OrderCode" class="btn btn-coffee-outline admin-pill-button btn-sm">
+                                    <i class="bx bx-detail"></i>Chi tiết
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@functions{
+    private string GetPaymentMethod(int method) => method switch
+    {
+        1 => "Thanh toán tại cửa hàng",
+        2 => "VNPay",
+        3 => "Thanh toán khi nhận hàng",
+        _ => "Khác"
+    };
+
+    private string GetStatusText(int status) => status switch
+    {
+        0 => "Đã hủy",
+        1 => "Đang xử lý",
+        2 => "Hoàn tất",
+        3 => "Đang giao",
+        4 => "Chờ thanh toán",
+        _ => "Không xác định"
+    };
+
+    private string GetStatusBadge(int status) => status switch
+    {
+        0 => "danger",
+        1 => "warning",
+        2 => "success",
+        3 => "info",
+        4 => "secondary",
+        _ => "secondary"
+    };
+}
+

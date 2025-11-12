@@ -1,0 +1,381 @@
+@model FPTDrink.Web.Areas.Admin.ViewModels.AdminStatisticsViewModel
+@{
+    ViewData["Title"] = "Báo cáo & thống kê";
+    var overview = Model.Overview ?? new FPTDrink.Web.Areas.Admin.ViewModels.StatisticsOverviewSection();
+    var visitor = Model.VisitorStats ?? new FPTDrink.Core.Models.Reports.VisitorStats();
+    string FormatVisitor(object? value)
+    {
+        switch (value)
+        {
+            case null:
+                return "0";
+            case string s when string.IsNullOrWhiteSpace(s):
+                return "0";
+            case string s when int.TryParse(s, out var n):
+                return n.ToString("N0");
+            case int i:
+                return i.ToString("N0");
+            case long l:
+                return l.ToString("N0");
+            case decimal dec:
+                return dec.ToString("N0");
+            case double dbl:
+                return dbl.ToString("N0");
+            case float flt:
+                return flt.ToString("N0");
+            default:
+                return value.ToString() ?? "0";
+        }
+    }
+}
+
+<div class="admin-page-header">
+    <div class="admin-page-title">
+        <h2>Báo cáo & thống kê</h2>
+        <p>Theo dõi hoạt động kinh doanh, lượt truy cập và sản phẩm bán chạy.</p>
+    </div>
+    <div class="admin-page-actions">
+        <a asp-area="Admin" asp-controller="Orders" asp-action="Index" class="btn btn-coffee-outline admin-pill-button">
+            <i class="bx bx-receipt"></i>Đơn hàng
+        </a>
+        <a asp-area="Admin" asp-controller="Products" asp-action="Index" class="btn btn-coffee admin-pill-button">
+            <i class="bx bx-package"></i>Sản phẩm
+        </a>
+    </div>
+</div>
+
+<div class="row g-4 mb-4">
+    <div class="col-md-3">
+        <div class="admin-card gradient-card revenue-card">
+            <div class="card-content">
+                <span class="label">Doanh thu tháng này</span>
+                <h3 class="value">@overview.Revenue.ThisMonth.ToString("N0") ₫</h3>
+                <p class="muted">Tháng trước: @overview.Revenue.LastMonth.ToString("N0") ₫</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="admin-card gradient-card order-card">
+            <div class="card-content">
+                <span class="label">Đơn hàng đã xử lý</span>
+                <h3 class="value">@overview.Orders.Paid.ToString("N0") đơn</h3>
+                <p class="muted">Đang chờ: <strong>@overview.Orders.Pending.ToString("N0")</strong></p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="admin-card gradient-card product-card">
+            <div class="card-content">
+                <span class="label">Sản phẩm còn hàng</span>
+                <h3 class="value">@overview.Products.Total.ToString("N0")</h3>
+                <p class="muted text-danger">Hết hàng: @overview.Products.OutOfStock.ToString("N0")</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="admin-card gradient-card customer-card">
+            <div class="card-content">
+                <span class="label">Khách hàng</span>
+                <h3 class="value">@overview.Customers.Total.ToString("N0")</h3>
+                <p class="muted">Khách mới: @overview.Customers.NewThisMonth.ToString("N0")</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4 mb-4">
+    <div class="col-lg-6">
+        <div class="admin-card h-100">
+            <h5 class="mb-3"><i class="bx bx-calendar me-2"></i>Doanh thu theo ngày (tháng này)</h5>
+            @if (!Model.RevenueMonth.Any())
+            {
+                <p class="text-muted mb-0">Chưa có dữ liệu doanh thu trong tháng này.</p>
+            }
+            else
+            {
+                <div class="chart-container">
+                    <canvas id="revenueMonthChart"></canvas>
+                </div>
+            }
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="admin-card h-100">
+            <h5 class="mb-3"><i class="bx bx-bar-chart-alt-2 me-2"></i>Doanh thu theo tháng (năm nay)</h5>
+            @if (!Model.RevenueYear.Any())
+            {
+                <p class="text-muted mb-0">Chưa có dữ liệu doanh thu cho năm nay.</p>
+            }
+            else
+            {
+                <div class="chart-container">
+                    <canvas id="revenueYearChart"></canvas>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-6">
+        <div class="admin-card h-100">
+            <h5 class="mb-3"><i class="bx bx-trophy me-2"></i>Sản phẩm bán chạy</h5>
+            @if (!Model.TopProducts.Any())
+            {
+                <p class="text-muted mb-0">Chưa có dữ liệu.</p>
+            }
+            else
+            {
+                <div class="chart-container large">
+                    <canvas id="topProductsChart"></canvas>
+                </div>
+            }
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="admin-card h-100">
+            <h5 class="mb-3"><i class="bx bx-line-chart me-2"></i>Lượt truy cập</h5>
+            <div class="chart-container large">
+                <canvas id="visitorChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Revenue Month Chart
+            @if (Model.RevenueMonth.Any())
+            {
+                <text>
+                const revenueMonthCtx = document.getElementById('revenueMonthChart');
+                if (revenueMonthCtx) {
+                    new Chart(revenueMonthCtx, {
+                        type: 'line',
+                        data: {
+                            labels: [@Html.Raw(string.Join(", ", Model.RevenueMonth.Select(p => $"'{p.Label}'")))],
+                            datasets: [{
+                                label: 'Doanh thu (₫)',
+                                data: [@string.Join(", ", Model.RevenueMonth.Select(p => p.Value.ToString()))],
+                                borderColor: '#d4a574',
+                                backgroundColor: 'rgba(212, 165, 116, 0.1)',
+                                borderWidth: 3,
+                                fill: true,
+                                tension: 0.4
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: true,
+                            aspectRatio: 2,
+                            plugins: {
+                                legend: {
+                                    display: false
+                                },
+                                tooltip: {
+                                    callbacks: {
+                                        label: function(context) {
+                                            return 'Doanh thu: ' + new Intl.NumberFormat('vi-VN').format(context.parsed.y) + ' ₫';
+                                        }
+                                    }
+                                }
+                            },
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    ticks: {
+                                        callback: function(value) {
+                                            return new Intl.NumberFormat('vi-VN').format(value) + ' ₫';
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    });
+                }
+                </text>
+            }
+
+            // Revenue Year Chart
+            @if (Model.RevenueYear.Any())
+            {
+                <text>
+                const revenueYearCtx = document.getElementById('revenueYearChart');
+                if (revenueYearCtx) {
+                    new Chart(revenueYearCtx, {
+                        type: 'bar',
+                        data: {
+                            labels: [@Html.Raw(string.Join(", ", Model.RevenueYear.Select(p => $"'{p.Label}'")))],
+                            datasets: [{
+                                label: 'Doanh thu (₫)',
+                                data: [@string.Join(", ", Model.RevenueYear.Select(p => p.Value.ToString()))],
+                                backgroundColor: 'rgba(212, 165, 116, 0.8)',
+                                borderColor: '#d4a574',
+                                borderWidth: 2
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: true,
+                            aspectRatio: 2,
+                            plugins: {
+                                legend: {
+                                    display: false
+                                },
+                                tooltip: {
+                                    callbacks: {
+                                        label: function(context) {
+                                            return 'Doanh thu: ' + new Intl.NumberFormat('vi-VN').format(context.parsed.y) + ' ₫';
+                                        }
+                                    }
+                                }
+                            },
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    ticks: {
+                                        callback: function(value) {
+                                            return new Intl.NumberFormat('vi-VN').format(value) + ' ₫';
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    });
+                }
+                </text>
+            }
+
+            // Top Products Chart
+            @if (Model.TopProducts.Any())
+            {
+                <text>
+                const topProductsCtx = document.getElementById('topProductsChart');
+                if (topProductsCtx) {
+                    new Chart(topProductsCtx, {
+                        type: 'doughnut',
+                        data: {
+                            labels: [@Html.Raw(string.Join(", ", Model.TopProducts.Select(p => $"'{p.Name}'")))],
+                            datasets: [{
+                                data: [@string.Join(", ", Model.TopProducts.Select(p => p.Revenue.ToString()))],
+                                backgroundColor: [
+                                    'rgba(212, 165, 116, 0.8)',
+                                    'rgba(240, 200, 150, 0.8)',
+                                    'rgba(214, 165, 116, 0.6)',
+                                    'rgba(240, 200, 150, 0.6)',
+                                    'rgba(212, 165, 116, 0.4)'
+                                ],
+                                borderColor: [
+                                    '#d4a574',
+                                    '#f0c896',
+                                    '#d4a574',
+                                    '#f0c896',
+                                    '#d4a574'
+                                ],
+                                borderWidth: 2
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: true,
+                            aspectRatio: 1.2,
+                            plugins: {
+                                legend: {
+                                    position: 'bottom',
+                                    labels: {
+                                        padding: 15,
+                                        font: {
+                                            size: 12
+                                        }
+                                    }
+                                },
+                                tooltip: {
+                                    callbacks: {
+                                        label: function(context) {
+                                            const label = context.label || '';
+                                            const value = new Intl.NumberFormat('vi-VN').format(context.parsed);
+                                            return label + ': ' + value + ' ₫';
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    });
+                }
+                </text>
+            }
+
+            // Visitor Chart
+            const visitorCtx = document.getElementById('visitorChart');
+            if (visitorCtx) {
+                const homNay = parseInt('@FormatVisitor(visitor.HomNay)'.replace(/,/g, '')) || 0;
+                const homQua = parseInt('@FormatVisitor(visitor.HomQua)'.replace(/,/g, '')) || 0;
+                const tuanNay = parseInt('@FormatVisitor(visitor.TuanNay)'.replace(/,/g, '')) || 0;
+                const tuanTruoc = parseInt('@FormatVisitor(visitor.TuanTruoc)'.replace(/,/g, '')) || 0;
+                const thangNay = parseInt('@FormatVisitor(visitor.ThangNay)'.replace(/,/g, '')) || 0;
+                const thangTruoc = parseInt('@FormatVisitor(visitor.ThangTruoc)'.replace(/,/g, '')) || 0;
+                const online = parseInt('@FormatVisitor(visitor.VisitorsOnline)'.replace(/,/g, '')) || 0;
+
+                new Chart(visitorCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Hôm nay', 'Hôm qua', 'Tuần này', 'Tuần trước', 'Tháng này', 'Tháng trước', 'Đang online'],
+                        datasets: [{
+                            label: 'Lượt truy cập',
+                            data: [homNay, homQua, tuanNay, tuanTruoc, thangNay, thangTruoc, online],
+                            backgroundColor: [
+                                'rgba(212, 165, 116, 0.8)',
+                                'rgba(149, 165, 166, 0.8)',
+                                'rgba(46, 204, 113, 0.8)',
+                                'rgba(149, 165, 166, 0.8)',
+                                'rgba(52, 152, 219, 0.8)',
+                                'rgba(241, 196, 15, 0.8)',
+                                'rgba(231, 76, 60, 0.8)'
+                            ],
+                            borderColor: [
+                                '#d4a574',
+                                '#95a5a6',
+                                '#2ecc71',
+                                '#95a5a6',
+                                '#3498db',
+                                '#f1c40f',
+                                '#e74c3c'
+                            ],
+                            borderWidth: 2
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        aspectRatio: 1.5,
+                        plugins: {
+                            legend: {
+                                display: false
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        return 'Lượt truy cập: ' + new Intl.NumberFormat('vi-VN').format(context.parsed.y);
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    callback: function(value) {
+                                        return new Intl.NumberFormat('vi-VN').format(value);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+        });
+    </script>
+}
+

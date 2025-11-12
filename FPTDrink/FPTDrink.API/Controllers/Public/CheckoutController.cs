@@ -53,7 +53,7 @@ namespace FPTDrink.API.Controllers.Public
 					{
 						await SendOrderEmailAsync(persisted, admin: true, ct);
 						if (!string.IsNullOrWhiteSpace(persisted.Email))
-						{
+					{
 							await SendOrderEmailAsync(persisted, admin: false, ct);
 						}
 					}

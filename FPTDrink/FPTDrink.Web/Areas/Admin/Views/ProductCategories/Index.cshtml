@@ -1,0 +1,123 @@
+@model IReadOnlyList<FPTDrink.Web.Areas.Admin.ViewModels.AdminProductCategoryListItemViewModel>
+@{
+    ViewData["Title"] = "Loại sản phẩm";
+    var status = ViewBag.Status as string ?? "Index";
+    var search = ViewBag.Search as string;
+}
+
+<div class="admin-page-header">
+    <div class="admin-page-title">
+        <h2>Loại sản phẩm</h2>
+        <p>Quản lý danh mục sản phẩm hiển thị trên website.</p>
+    </div>
+    <div class="admin-page-actions">
+        <a asp-action="Create" class="btn btn-coffee admin-pill-button">
+            <i class="bx bx-plus"></i>Thêm loại sản phẩm
+        </a>
+    </div>
+</div>
+
+<div class="admin-subnav">
+    <a asp-action="Index" asp-route-status="Index" class="@(status == "Index" ? "active" : "")"><i class="bx bx-grid-alt me-1"></i>Đang hoạt động</a>
+    <a asp-action="Index" asp-route-status="All" class="@(status == "All" ? "active" : "")"><i class="bx bx-list-ul me-1"></i>Tất cả</a>
+    <a asp-action="Index" asp-route-status="Trash" class="@(status == "Trash" ? "active" : "")"><i class="bx bx-trash me-1"></i>Thùng rác</a>
+</div>
+
+<form method="get" class="admin-filter-bar row g-3">
+    <div class="col-lg-3">
+        <input type="hidden" name="status" value="@status" />
+        <label class="form-label">Trạng thái</label>
+        <div class="form-control-plaintext fw-semibold">
+            @(status switch { "All" => "Tất cả", "Trash" => "Trong thùng rác", _ => "Đang hoạt động" })
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <label class="form-label">Từ khóa</label>
+        <div class="input-group">
+            <span class="input-group-text"><i class="bx bx-search"></i></span>
+            <input type="text" name="search" value="@search" class="form-control" placeholder="Tên loại sản phẩm..." />
+        </div>
+    </div>
+    <div class="col-lg-3 d-flex align-items-end gap-2">
+        <button class="btn btn-coffee admin-pill-button flex-grow-1" type="submit"><i class="bx bx-filter-alt"></i>Lọc</button>
+        <a asp-action="Index" class="btn btn-coffee-outline admin-pill-button flex-shrink-0"><i class="bx bx-reset"></i></a>
+    </div>
+</form>
+
+<div class="admin-table-wrapper">
+    <table class="table table-hover align-middle mb-0">
+        <thead class="table-light">
+            <tr>
+                <th class="stt-column">STT</th>
+                <th class="sortable-header sort-none">Tên loại</th>
+                <th class="sortable-header sort-none">Mô tả</th>
+                <th class="sortable-header sort-none">SEO Title</th>
+                <th class="sortable-header sort-none">SEO Keywords</th>
+                <th class="text-center sortable-header sort-none">Trạng thái</th>
+                <th class="text-end">Thao tác</th>
+            </tr>
+        </thead>
+        <tbody>
+        @if (!Model.Any())
+        {
+            <tr>
+                <td colspan="7" class="text-center text-muted py-4">Không có dữ liệu phù hợp.</td>
+            </tr>
+        }
+        else
+        {
+            var stt = 1;
+            foreach (var item in Model)
+            {
+                <tr>
+                    <td class="stt-column">@(stt++)</td>
+                    <td>
+                        <strong>@item.Title</strong>
+                        <div class="small text-muted">@item.Id</div>
+                    </td>
+                    <td>@item.Description</td>
+                    <td>@item.SeoTitle</td>
+                    <td>@item.SeoKeywords</td>
+                    <td class="text-center">
+                        <span class="status-badge @(item.IsActive ? "success" : "secondary")">
+                            @(item.IsActive ? "Đang bật" : "Đang tắt")
+                        </span>
+                    </td>
+                    <td class="text-end">
+                        <div class="admin-table-actions justify-content-end">
+                            <a asp-action="Edit" asp-route-id="@item.Id" asp-route-status="@status" class="btn btn-coffee-outline admin-pill-button btn-sm">
+                                <i class="bx bx-edit"></i>Sửa
+                            </a>
+                            <form asp-action="ToggleActive" asp-route-id="@item.Id" asp-route-status="@status" method="post" class="d-inline">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn admin-pill-button btn-sm @(item.IsActive ? "btn-warning text-dark" : "btn-success")" title="@(item.IsActive ? "Tắt" : "Bật")">
+                                    <i class="bx @(item.IsActive ? "bx-pause" : "bx-play")"></i>
+                                </button>
+                            </form>
+                            @if (status == "Trash")
+                            {
+                                <form asp-action="Restore" asp-route-id="@item.Id" asp-route-status="@status" method="post" class="d-inline">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="btn btn-success admin-pill-button btn-sm" title="Khôi phục">
+                                        <i class="bx bx-undo"></i>Khôi phục
+                                    </button>
+                                </form>
+                            }
+                            else
+                            {
+                                <form asp-action="Delete" asp-route-id="@item.Id" asp-route-status="@status" method="post" class="d-inline js-confirm-form" data-confirm="Bạn chắc chắn muốn chuyển vào thùng rác?">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="btn btn-danger admin-pill-button btn-sm" title="Xoá">
+                                        <i class="bx bx-trash"></i>Xóa
+                                    </button>
+                                </form>
+                            }
+                        </div>
+                    </td>
+                </tr>
+            }
+        }
+        </tbody>
+    </table>
+</div>
+

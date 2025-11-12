@@ -1,0 +1,23 @@
+@model FPTDrink.Web.Areas.Admin.ViewModels.AdminSupplierFormViewModel
+<div class="admin-card">
+    <div class="mb-3">
+        <label asp-for="Title" class="form-label fw-semibold"></label>
+        <input asp-for="Title" class="form-control" placeholder="Tên nhà cung cấp" />
+        <span asp-validation-for="Title" class="text-danger small"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Phone" class="form-label fw-semibold"></label>
+        <input asp-for="Phone" class="form-control" placeholder="Số điện thoại liên hệ" />
+        <span asp-validation-for="Phone" class="text-danger small"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Email" class="form-label fw-semibold"></label>
+        <input asp-for="Email" class="form-control" placeholder="Email liên hệ" />
+        <span asp-validation-for="Email" class="text-danger small"></span>
+    </div>
+    <div class="form-check form-switch">
+        <input asp-for="IsActive" class="form-check-input" />
+        <label asp-for="IsActive" class="form-check-label"></label>
+    </div>
+</div>
+

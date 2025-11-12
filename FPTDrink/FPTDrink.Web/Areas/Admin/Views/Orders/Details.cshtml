@@ -1,0 +1,203 @@
+@model FPTDrink.Web.Areas.Admin.ViewModels.AdminOrderDetailViewModel
+@{
+    ViewData["Title"] = $"Đơn hàng {Model.OrderCode}";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+    <div>
+        <h2 class="mb-1">Chi tiết đơn hàng</h2>
+        <p class="text-muted mb-0">Quản lý thông tin, trạng thái và sản phẩm của đơn hàng.</p>
+    </div>
+    <a asp-action="Index" class="btn btn-coffee-outline"><i class="bx bx-arrow-back me-2"></i>Quay lại danh sách</a>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-8">
+        <div class="admin-card">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <div>
+                    <h5 class="mb-1">Thông tin đơn hàng</h5>
+                    <span class="badge @GetStatusBadge(Model.Status)">@GetStatusText(Model.Status)</span>
+                </div>
+                <div class="text-end">
+                    <div><strong>Mã đơn:</strong> @Model.OrderCode</div>
+                    <div class="text-muted small">Đặt lúc @Model.CreatedDate.ToString("dd/MM/yyyy HH:mm")</div>
+                </div>
+            </div>
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="fw-semibold text-muted small text-uppercase">Khách hàng</label>
+                    <p class="mb-0">@Model.CustomerName</p>
+                </div>
+                <div class="col-md-6">
+                    <label class="fw-semibold text-muted small text-uppercase">Liên hệ</label>
+                    <p class="mb-0">
+                        <i class="bx bx-phone me-1"></i>@Model.Phone<br />
+                        @if (!string.IsNullOrWhiteSpace(Model.Email))
+                        {
+                            <span><i class="bx bx-envelope me-1"></i>@Model.Email</span>
+                        }
+                    </p>
+                </div>
+                <div class="col-12">
+                    <label class="fw-semibold text-muted small text-uppercase">Địa chỉ giao hàng</label>
+                    <p class="mb-0">@Model.Address</p>
+                </div>
+                <div class="col-md-6">
+                    <label class="fw-semibold text-muted small text-uppercase">Phương thức thanh toán</label>
+                    <p class="mb-0">@GetPaymentMethod(Model.PaymentMethod)</p>
+                </div>
+                <div class="col-md-6">
+                    <label class="fw-semibold text-muted small text-uppercase">Tổng tiền</label>
+                    <p class="mb-0">@Model.TotalAmount.ToString("N0") ₫</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="admin-card">
+            <h5 class="mb-3">Danh sách sản phẩm</h5>
+            <div class="table-responsive">
+                <table class="table table-borderless align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Sản phẩm</th>
+                            <th class="text-center">Số lượng</th>
+                            <th class="text-end">Đơn giá</th>
+                            <th class="text-end">Thành tiền</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    @foreach (var item in Model.Items)
+                    {
+                        <tr>
+                            <td>
+                                <div class="d-flex flex-column">
+                                    <strong>@(item.ProductTitle ?? item.ProductId ?? "Sản phẩm")</strong>
+                                    <small class="text-muted">@item.ProductId</small>
+                                </div>
+                            </td>
+                            <td class="text-center">@item.Quantity</td>
+                            <td class="text-end">@item.UnitPrice.ToString("N0") ₫</td>
+                            <td class="text-end">@item.LineTotal.ToString("N0") ₫</td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="admin-card">
+            <h5 class="mb-3">Cập nhật trạng thái</h5>
+            <form asp-action="UpdateStatus" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="OrderCode" value="@Model.OrderCode" />
+                @if (Model.Status == 0 || Model.Status == 2)
+                {
+                    <div class="alert alert-info mb-0">
+                        <i class="bx bx-info-circle me-2"></i>
+                        Đơn hàng ở trạng thái <strong>@GetStatusText(Model.Status)</strong> không thể thay đổi trạng thái.
+                    </div>
+                }
+                else
+                {
+                    var availableStatuses = GetStatusOptions().ToList();
+                    if (availableStatuses.Any())
+                    {
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Trạng thái mới</label>
+                            <select name="NewStatus" class="form-select" required>
+                                <option value="">-- Chọn trạng thái --</option>
+                                @foreach (var option in availableStatuses)
+                                {
+                                    <option value="@option.Value">@option.Text</option>
+                                }
+                            </select>
+                            <small class="text-muted">Trạng thái hiện tại: <strong>@GetStatusText(Model.Status)</strong></small>
+                        </div>
+                        <button type="submit" class="btn btn-coffee w-100"><i class="bx bx-save me-2"></i>Cập nhật</button>
+                    }
+                    else
+                    {
+                        <div class="alert alert-warning mb-0">
+                            <i class="bx bx-error-circle me-2"></i>
+                            Không có trạng thái nào có thể chuyển từ trạng thái hiện tại.
+                        </div>
+                    }
+                }
+            </form>
+        </div>
+        <div class="admin-card">
+            <h5 class="mb-3">Ghi chú & nhật ký</h5>
+            <ul class="list-unstyled mb-0">
+                <li class="mb-2"><i class="bx bx-calendar-check me-2"></i>Đặt lúc @Model.CreatedDate.ToString("dd/MM/yyyy HH:mm")</li>
+                @if (Model.UpdatedDate.HasValue)
+                {
+                    <li class="mb-2"><i class="bx bx-refresh me-2"></i>Cập nhật gần nhất @Model.UpdatedDate.Value.ToString("dd/MM/yyyy HH:mm")</li>
+                }
+                <li class="mb-0"><i class="bx bx-info-circle me-2"></i>Trạng thái hiện tại: <strong>@GetStatusText(Model.Status)</strong></li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+@functions{
+    private string GetPaymentMethod(int method) => method switch
+    {
+        1 => "Thanh toán tại cửa hàng",
+        2 => "VNPay",
+        3 => "Thanh toán khi nhận hàng",
+        _ => "Khác"
+    };
+
+    private string GetStatusText(int status) => status switch
+    {
+        0 => "Đã hủy",
+        1 => "Đang xử lý",
+        2 => "Hoàn tất",
+        3 => "Đang giao",
+        4 => "Chờ thanh toán",
+        _ => "Không xác định"
+    };
+
+    private string GetStatusBadge(int status) => status switch
+    {
+        0 => "bg-danger",
+        1 => "bg-warning text-dark",
+        2 => "bg-success",
+        3 => "bg-info text-dark",
+        4 => "bg-secondary",
+        _ => "bg-light text-dark"
+    };
+
+    private IEnumerable<(int Value, string Text)> GetStatusOptions()
+    {
+        // Chỉ hiển thị các trạng thái có thể chuyển từ trạng thái hiện tại
+        int currentStatus = Model.Status;
+        
+        switch (currentStatus)
+        {
+            case 0: // Đã hủy - không thể chuyển
+                break;
+            
+            case 1: // Đang xử lý - có thể chuyển sang: Đang giao (3) hoặc Chờ thanh toán (4)
+                yield return (3, "Đang giao");
+                yield return (4, "Chờ thanh toán");
+                break;
+            
+            case 2: // Hoàn tất - không thể chuyển
+                break;
+            
+            case 3: // Đang giao - có thể chuyển sang: Hoàn tất (2) hoặc Đã hủy (0)
+                yield return (2, "Hoàn tất");
+                yield return (0, "Đã hủy");
+                break;
+            
+            case 4: // Chờ thanh toán - có thể chuyển sang: Đang giao (3) hoặc Đã hủy (0)
+                yield return (3, "Đang giao");
+                yield return (0, "Đã hủy");
+                break;
+        }
+    }
+}
+

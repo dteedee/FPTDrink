@@ -1,0 +1,109 @@
+@model IReadOnlyList<FPTDrink.Web.Areas.Admin.ViewModels.AdminSupplierListItemViewModel>
+@{
+    ViewData["Title"] = "Nhà cung cấp";
+    var status = ViewBag.Status as string ?? "Index";
+    var search = ViewBag.Search as string;
+}
+
+<div class="admin-page-header">
+    <div class="admin-page-title">
+        <h2>Nhà cung cấp</h2>
+        <p>Quản lý đối tác cung ứng sản phẩm cho cửa hàng.</p>
+    </div>
+    <div class="admin-page-actions">
+        <a asp-action="Create" class="btn btn-coffee admin-pill-button">
+            <i class="bx bx-plus"></i>Thêm nhà cung cấp
+        </a>
+    </div>
+</div>
+
+<div class="admin-subnav">
+    <a asp-action="Index" asp-route-status="Index" class="@(status == "Index" ? "active" : "")"><i class="bx bx-store-alt me-1"></i>Đang hợp tác</a>
+    <a asp-action="Index" asp-route-status="All" class="@(status == "All" ? "active" : "")"><i class="bx bx-list-ul me-1"></i>Tất cả</a>
+    <a asp-action="Index" asp-route-status="Trash" class="@(status == "Trash" ? "active" : "")"><i class="bx bx-trash me-1"></i>Thùng rác</a>
+</div>
+
+<form method="get" class="admin-filter-bar row g-3">
+    <div class="col-lg-3">
+        <input type="hidden" name="status" value="@status" />
+        <label class="form-label">Trạng thái</label>
+        <div class="form-control-plaintext fw-semibold">
+            @(status switch { "All" => "Tất cả", "Trash" => "Tạm ngưng", _ => "Đang hợp tác" })
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <label class="form-label">Từ khóa</label>
+        <div class="input-group">
+            <span class="input-group-text"><i class="bx bx-search"></i></span>
+            <input class="form-control" type="text" name="search" value="@search" placeholder="Tên, SĐT, email..." />
+        </div>
+    </div>
+    <div class="col-lg-3 d-flex align-items-end gap-2">
+        <button class="btn btn-coffee admin-pill-button flex-grow-1" type="submit"><i class="bx bx-filter-alt"></i>Lọc</button>
+        <a asp-action="Index" class="btn btn-coffee-outline admin-pill-button"><i class="bx bx-reset"></i></a>
+    </div>
+</form>
+
+<div class="admin-table-wrapper">
+    <table class="table table-hover align-middle">
+        <thead class="table-light">
+            <tr>
+                <th class="stt-column">STT</th>
+                <th class="sortable-header sort-none">Tên nhà cung cấp</th>
+                <th class="sortable-header sort-none">Số điện thoại</th>
+                <th class="sortable-header sort-none">Email</th>
+                <th class="text-center sortable-header sort-none">Trạng thái</th>
+                <th class="text-end">Thao tác</th>
+            </tr>
+        </thead>
+        <tbody>
+        @if (!Model.Any())
+        {
+            <tr>
+                <td colspan="6" class="text-center text-muted py-4">Không có dữ liệu.</td>
+            </tr>
+        }
+        else
+        {
+            var stt = 1;
+            foreach (var item in Model)
+            {
+                <tr>
+                    <td class="stt-column">@(stt++)</td>
+                    <td>
+                        <strong>@item.Title</strong>
+                        <div class="small text-muted">@item.Id</div>
+                    </td>
+                    <td>@item.Phone</td>
+                    <td>@item.Email</td>
+                    <td class="text-center">
+                        <span class="status-badge @(item.IsActive ? "success" : "secondary")">
+                            @(item.IsActive ? "Đang hợp tác" : "Tạm ngưng")
+                        </span>
+                    </td>
+                    <td class="text-end">
+                        <div class="admin-table-actions justify-content-end">
+                            <a asp-action="Edit" asp-route-id="@item.Id" asp-route-status="@status" class="btn btn-coffee-outline admin-pill-button btn-sm"><i class="bx bx-edit"></i>Sửa</a>
+                            @if (status == "Trash")
+                            {
+                                <form asp-action="Restore" asp-route-id="@item.Id" asp-route-status="@status" method="post" class="d-inline">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="btn btn-success admin-pill-button btn-sm" title="Khôi phục"><i class="bx bx-undo"></i>Khôi phục</button>
+                                </form>
+                            }
+                            else
+                            {
+                                <form asp-action="Delete" asp-route-id="@item.Id" asp-route-status="@status" method="post" class="d-inline js-confirm-form" data-confirm="Chuyển nhà cung cấp vào trạng thái tạm ngưng?">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="btn btn-danger admin-pill-button btn-sm" title="Ngưng hợp tác"><i class="bx bx-trash"></i>Ngưng</button>
+                                </form>
+                            }
+                        </div>
+                    </td>
+                </tr>
+            }
+        }
+        </tbody>
+    </table>
+</div>
+

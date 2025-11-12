@@ -1,0 +1,34 @@
+@model FPTDrink.Web.Areas.Admin.ViewModels.AdminRoleFormViewModel
+@{
+    ViewData["Title"] = "Thêm chức vụ";
+}
+
+<div class="admin-page-header">
+    <div class="admin-page-title">
+        <h2>Thêm chức vụ</h2>
+        <p>Tạo mới vai trò và thiết lập trạng thái hoạt động.</p>
+    </div>
+    <div class="admin-page-actions">
+        <a asp-action="Index" class="btn btn-coffee-outline admin-pill-button">
+            <i class="bx bx-arrow-back"></i>Quay lại danh sách
+        </a>
+    </div>
+</div>
+
+<form asp-action="Create" method="post" class="needs-validation" novalidate>
+    @Html.AntiForgeryToken()
+    @Html.Partial("_Form", Model)
+    <div class="mt-4 d-flex gap-2">
+        <button type="submit" class="btn btn-coffee admin-pill-button">
+            <i class="bx bx-save"></i>Lưu
+        </button>
+        <a asp-action="Index" class="btn btn-coffee-outline admin-pill-button">
+            <i class="bx bx-x"></i>Hủy
+        </a>
+    </div>
+</form>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+

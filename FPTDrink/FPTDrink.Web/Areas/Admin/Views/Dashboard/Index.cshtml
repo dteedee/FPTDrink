@@ -1,0 +1,421 @@
+@model FPTDrink.Web.Areas.Admin.ViewModels.DashboardViewModel
+@{
+    ViewData["Title"] = "Bảng điều khiển";
+}
+
+<div class="admin-page-header">
+    <div class="admin-page-title">
+        <h2>Bảng điều khiển</h2>
+        <p>Theo dõi hiệu suất kinh doanh và trạng thái hoạt động tổng quan.</p>
+    </div>
+    <div class="admin-page-actions">
+        <a asp-area="Admin" asp-controller="Orders" asp-action="Index" class="btn btn-coffee-outline admin-pill-button">
+            <i class="bx bx-receipt"></i>Quản lý đơn hàng
+        </a>
+        <a asp-area="Admin" asp-controller="Products" asp-action="Index" class="btn btn-coffee admin-pill-button">
+            <i class="bx bx-package"></i>Quản lý sản phẩm
+        </a>
+    </div>
+</div>
+
+<div class="row g-4 mb-4">
+    <div class="col-12 col-xl-3 col-md-6">
+        <div class="admin-card h-100 gradient-card revenue-card">
+            <div class="card-icon">
+                <i class="bx bx-dollar-circle"></i>
+            </div>
+            <div class="card-content">
+                <span class="label">Doanh thu hôm nay</span>
+                <h2 class="value">@Model.Overview.RevenueToday.ToString("N0") ₫</h2>
+                <p class="muted">Tháng này: <strong>@Model.Overview.RevenueThisMonth.ToString("N0") ₫</strong></p>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-xl-3 col-md-6">
+        <div class="admin-card h-100 gradient-card order-card">
+            <div class="card-icon">
+                <i class="bx bx-cart"></i>
+            </div>
+            <div class="card-content">
+                <span class="label">Đơn hàng chờ xử lý</span>
+                <h2 class="value">@Model.Overview.OrdersPending</h2>
+                <p class="muted">Đã thanh toán: <strong>@Model.Overview.OrdersPaid</strong></p>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-xl-3 col-md-6">
+        <div class="admin-card h-100 gradient-card product-card">
+            <div class="card-icon">
+                <i class="bx bx-package"></i>
+            </div>
+            <div class="card-content">
+                <span class="label">Sản phẩm đang bán</span>
+                <h2 class="value">@Model.Overview.ProductActiveCount</h2>
+                <p class="muted text-danger">Hết hàng: <strong>@Model.Overview.ProductOutOfStock</strong></p>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-xl-3 col-md-6">
+        <div class="admin-card h-100 gradient-card customer-card">
+            <div class="card-icon">
+                <i class="bx bx-id-card"></i>
+            </div>
+            <div class="card-content">
+                <span class="label">Khách hàng</span>
+                <h2 class="value">@Model.Overview.CustomerTotal</h2>
+                <p class="muted">Tháng này: <strong>@Model.Overview.CustomerNewThisMonth</strong> khách mới</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4 mb-4">
+    <div class="col-12 col-xl-8">
+        <div class="admin-card h-100">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <div>
+                    <h5 class="mb-1">Doanh thu 7 ngày gần nhất</h5>
+                    <span class="text-muted small">Theo dõi xu hướng doanh thu theo ngày</span>
+                </div>
+                <span class="badge bg-light text-dark">Tổng: @Model.RevenueChart.Sum(x => x.Value).ToString("N0") ₫</span>
+            </div>
+            @if (!Model.RevenueChart.Any())
+            {
+                <p class="text-muted mb-0">Chưa có dữ liệu doanh thu trong 7 ngày gần nhất.</p>
+            }
+            else
+            {
+                <div class="chart-container">
+                    <canvas id="revenue7DaysChart"></canvas>
+                </div>
+            }
+        </div>
+    </div>
+    <div class="col-12 col-xl-4">
+        <div class="admin-card h-100">
+            <h5 class="mb-3">Số liệu tổng quan</h5>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    Đơn hàng phát sinh hôm nay
+                    <span class="badge rounded-pill bg-coffee">@Model.Overview.OrdersToday</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    Tăng trưởng doanh thu tháng
+                    <span class="badge rounded-pill bg-success">@Model.Overview.RevenueGrowthPercent.ToString("N1")%</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    Tổng danh mục
+                    <span class="badge rounded-pill bg-info text-dark">@Model.Overview.CategoryTotal</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    Nhà cung cấp hoạt động
+                    <span class="badge rounded-pill bg-primary">@Model.Overview.SupplierTotal</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    Nhân viên đang làm việc
+                    <span class="badge rounded-pill bg-warning text-dark">@Model.Overview.EmployeeTotal</span>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-12 col-xl-6">
+        <div class="admin-card h-100">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="mb-0">Sản phẩm bán chạy</h5>
+                <a asp-area="Admin" asp-controller="Products" asp-action="Index" class="btn btn-sm btn-coffee-outline">Quản lý sản phẩm</a>
+            </div>
+            <div class="table-responsive">
+                <table class="table align-middle">
+                    <thead>
+                        <tr>
+                            <th>Sản phẩm</th>
+                            <th>Số lượng</th>
+                            <th>Doanh thu</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    @if (!Model.TopProducts.Any())
+                    {
+                        <tr>
+                            <td colspan="3" class="text-center text-muted py-4">Chưa có dữ liệu bán hàng</td>
+                        </tr>
+                    }
+                    else
+                    {
+                        foreach (var product in Model.TopProducts)
+                        {
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center gap-3">
+                                        <img src="@(string.IsNullOrWhiteSpace(product.ProductImage) ? Url.Content("~/images/placeholder.png") : product.ProductImage)"
+                                             class="rounded-3 object-fit-cover"
+                                             style="width: 48px; height: 48px;"
+                                             alt="@product.ProductName" />
+                                        <div>
+                                            <strong>@product.ProductName</strong>
+                                            <p class="text-muted small mb-0">@product.ProductId</p>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td><span class="badge bg-light text-dark">@product.TotalQuantity</span></td>
+                                <td>@product.TotalRevenue.ToString("N0") ₫</td>
+                            </tr>
+                        }
+                    }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-xl-6">
+        <div class="admin-card h-100">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="mb-0">Đơn hàng gần đây</h5>
+                <a asp-area="Admin" asp-controller="Orders" asp-action="Index" class="btn btn-sm btn-coffee-outline">Xem tất cả</a>
+            </div>
+            <div class="table-responsive">
+                <table class="table align-middle">
+                    <thead>
+                        <tr>
+                            <th>Mã đơn</th>
+                            <th>Khách hàng</th>
+                            <th>Ngày đặt</th>
+                            <th>Trạng thái</th>
+                            <th class="text-end">Tổng tiền</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    @if (!Model.RecentOrders.Any())
+                    {
+                        <tr>
+                            <td colspan="5" class="text-center text-muted py-4">Chưa có đơn hàng nào</td>
+                        </tr>
+                    }
+                    else
+                    {
+                        foreach (var order in Model.RecentOrders)
+                        {
+                            <tr>
+                                <td><strong>@order.OrderCode</strong></td>
+                                <td>
+                                    <div class="d-flex flex-column">
+                                        <span>@order.CustomerName</span>
+                                        <small class="text-muted">@GetPaymentMethodLabel(order.PaymentMethod)</small>
+                                    </div>
+                                </td>
+                                <td>@order.CreatedDate.ToString("dd/MM/yyyy HH:mm")</td>
+                                <td>
+                                    <span class="badge @GetOrderStatusBadge(order.Status)">
+                                        @GetOrderStatusLabel(order.Status)
+                                    </span>
+                                </td>
+                                <td class="text-end">@order.TotalAmount.ToString("N0") ₫</td>
+                            </tr>
+                        }
+                    }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@functions{
+    private string GetOrderStatusLabel(int status) => status switch
+    {
+        0 => "Đã huỷ",
+        1 => "Đang xử lý",
+        2 => "Hoàn tất",
+        3 => "Đang giao",
+        _ => "Không xác định"
+    };
+
+    private string GetOrderStatusBadge(int status) => status switch
+    {
+        0 => "bg-danger",
+        1 => "bg-warning text-dark",
+        2 => "bg-success",
+        3 => "bg-info text-dark",
+        _ => "bg-secondary"
+    };
+
+    private string GetPaymentMethodLabel(int paymentMethod) => paymentMethod switch
+    {
+        1 => "Thanh toán tại cửa hàng",
+        2 => "VNPay",
+        3 => "Thanh toán khi nhận hàng",
+        _ => "Không xác định"
+    };
+}
+
+@section Styles{
+    <style>
+        .gradient-card {
+            position: relative;
+            overflow: hidden;
+            color: #fff;
+        }
+
+        .gradient-card::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.08), transparent 60%);
+        }
+
+        .gradient-card .card-icon {
+            position: absolute;
+            top: 1rem;
+            right: 1.25rem;
+            font-size: 2.85rem;
+            opacity: 0.25;
+        }
+
+        .gradient-card .card-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .gradient-card .label {
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 0.08em;
+            opacity: 0.85;
+        }
+
+        .gradient-card .value {
+            font-weight: 700;
+            margin: 0.75rem 0 0.5rem;
+        }
+
+        .gradient-card .muted {
+            opacity: 0.9;
+            margin-bottom: 0;
+        }
+
+        .revenue-card {
+            background: linear-gradient(135deg, #845634, #d4a574);
+        }
+
+        .order-card {
+            background: linear-gradient(135deg, #2d1b0e, #4c2d16);
+        }
+
+        .product-card {
+            background: linear-gradient(135deg, #1c4c4a, #2d726c);
+        }
+
+        .product-card .card-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .product-card .label {
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 0.1em;
+            opacity: 0.95;
+            font-weight: 600;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+        }
+
+        .product-card .value {
+            font-weight: 800;
+            font-size: 2.5rem;
+            margin: 0.75rem 0 0.5rem;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+            letter-spacing: -0.02em;
+        }
+
+        .product-card .muted {
+            opacity: 0.95;
+            margin-bottom: 0;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .product-card .muted strong {
+            font-weight: 700;
+            font-size: 1rem;
+        }
+
+        .customer-card {
+            background: linear-gradient(135deg, #4b2e83, #8152d9);
+        }
+
+        .bg-coffee {
+            background-color: #6b4f33;
+        }
+    </style>
+}
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Revenue 7 Days Chart
+            @if (Model.RevenueChart.Any())
+            {
+                <text>
+                const revenue7DaysCtx = document.getElementById('revenue7DaysChart');
+                if (revenue7DaysCtx) {
+                    new Chart(revenue7DaysCtx, {
+                        type: 'line',
+                        data: {
+                            labels: [@Html.Raw(string.Join(", ", Model.RevenueChart.Select(p => $"'{p.Label}'")))],
+                            datasets: [{
+                                label: 'Doanh thu (₫)',
+                                data: [@string.Join(", ", Model.RevenueChart.Select(p => p.Value.ToString(System.Globalization.CultureInfo.InvariantCulture)))],
+                                borderColor: '#d4a574',
+                                backgroundColor: 'rgba(212, 165, 116, 0.1)',
+                                borderWidth: 3,
+                                fill: true,
+                                tension: 0.4
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: true,
+                            aspectRatio: 2,
+                            plugins: {
+                                legend: {
+                                    display: false
+                                },
+                                tooltip: {
+                                    callbacks: {
+                                        label: function(context) {
+                                            return 'Doanh thu: ' + new Intl.NumberFormat('vi-VN').format(context.parsed.y) + ' ₫';
+                                        }
+                                    }
+                                }
+                            },
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    ticks: {
+                                        callback: function(value) {
+                                            // Format số lớn với đơn vị K (nghìn) hoặc M (triệu)
+                                            if (value >= 1000000) {
+                                                return (value / 1000000).toFixed(1) + 'M ₫';
+                                            } else if (value >= 1000) {
+                                                return (value / 1000).toFixed(0) + 'K ₫';
+                                            } else {
+                                                return new Intl.NumberFormat('vi-VN').format(value) + ' ₫';
+                                            }
+                                        },
+                                        maxTicksLimit: 8
+                                    }
+                                }
+                            }
+                        }
+                    });
+                }
+                </text>
+            }
+        });
+    </script>
+}
+

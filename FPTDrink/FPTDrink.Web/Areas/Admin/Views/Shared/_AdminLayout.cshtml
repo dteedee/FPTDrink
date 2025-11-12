@@ -1,0 +1,144 @@
+@using Microsoft.AspNetCore.Http
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+@{
+    var title = ViewData["Title"] ?? "Bảng điều khiển";
+    var displayName = HttpContextAccessor.HttpContext?.Session?.GetString(FPTDrink.Web.Constants.AdminSessionKeys.DisplayName) ?? "Quản trị viên";
+    var roleName = HttpContextAccessor.HttpContext?.Session?.GetString(FPTDrink.Web.Constants.AdminSessionKeys.RoleName) ?? "Admin";
+}
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@title - FPTDrink Admin</title>
+    <link rel="preload" href="~/lib/bootstrap/dist/css/bootstrap.min.css" as="style" />
+    <link rel="preload" href="~/css/site.css" as="style" />
+    <link rel="preload" href="~/css/admin.css" as="style" />
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/pages.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/admin.css" asp-append-version="true" />
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+    <link rel="icon" type="image/x-icon" href="~/favicon.ico" />
+    @await RenderSectionAsync("Styles", required: false)
+</head>
+<body class="admin-body">
+    <div class="admin-wrapper">
+        <aside class="admin-sidebar">
+            <div class="sidebar-brand">
+                <a asp-area="" asp-controller="Home" asp-action="Index" class="sidebar-logo">
+                    <img src="~/images/logocf.png" alt="FPTDrink Logo" />
+                    <span>FPTDrink Admin</span>
+                </a>
+            </div>
+            <a asp-area="Admin" asp-controller="Profile" asp-action="Index" class="sidebar-user" style="text-decoration: none; color: inherit;">
+                <div class="avatar">
+                    <i class="bx bx-user-circle"></i>
+                </div>
+                <div class="info">
+                    <div class="name">@displayName</div>
+                    <div class="role"><i class="bx bx-shield-quarter me-1"></i>@roleName</div>
+                </div>
+            </a>
+            <nav class="sidebar-menu">
+                <a asp-area="Admin" asp-controller="Dashboard" asp-action="Index" class="sidebar-link @(ViewContext.ActionDescriptor.DisplayName?.Contains("Dashboard") == true ? "active" : "")">
+                    <i class="bx bxs-dashboard"></i><span>Bảng điều khiển</span>
+                </a>
+                <a asp-area="Admin" asp-controller="Orders" asp-action="Index" class="sidebar-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Orders" ? "active" : "")">
+                    <i class="bx bx-receipt"></i><span>Đơn hàng</span>
+                </a>
+                <a asp-area="Admin" asp-controller="Products" asp-action="Index" class="sidebar-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Products" ? "active" : "")">
+                    <i class="bx bx-cube"></i><span>Sản phẩm</span>
+                </a>
+                <a asp-area="Admin" asp-controller="ProductCategories" asp-action="Index" class="sidebar-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "ProductCategories" ? "active" : "")">
+                    <i class="bx bx-purchase-tag"></i><span>Loại sản phẩm</span>
+                </a>
+                <a asp-area="Admin" asp-controller="Suppliers" asp-action="Index" class="sidebar-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Suppliers" ? "active" : "")">
+                    <i class="bx bx-store-alt"></i><span>Nhà cung cấp</span>
+                </a>
+                <a asp-area="Admin" asp-controller="Staffs" asp-action="Index" class="sidebar-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Staffs" ? "active" : "")">
+                    <i class="bx bx-group"></i><span>Nhân viên</span>
+                </a>
+                <a asp-area="Admin" asp-controller="Roles" asp-action="Index" class="sidebar-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Roles" ? "active" : "")">
+                    <i class="bx bx-lock-alt"></i><span>Chức vụ & phân quyền</span>
+                </a>
+                <a asp-area="Admin" asp-controller="Statistics" asp-action="Index" class="sidebar-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Statistics" ? "active" : "")">
+                    <i class="bx bx-line-chart"></i><span>Thống kê</span>
+                </a>
+            </nav>
+        </aside>
+        <div class="admin-main">
+            <header class="admin-topbar">
+                <button class="btn btn-coffee-outline d-lg-none admin-sidebar-toggle" type="button">
+                    <i class="bx bx-menu"></i>
+                </button>
+                <div class="admin-breadcrumb">
+                    <i class="bx bx-chevrons-right me-2"></i>
+                    <span>@ViewData["Title"]</span>
+                </div>
+                <div class="admin-topbar-actions">
+                    <a class="btn btn-coffee-outline" asp-area="" asp-controller="Home" asp-action="Index">
+                        <i class="bx bx-globe me-1"></i>Xem website
+                    </a>
+                    <form asp-area="Admin" asp-controller="Auth" asp-action="Logout" method="post" class="d-inline">
+                        <button type="submit" class="btn btn-coffee">
+                            <i class="bx bx-power-off me-2"></i>Đăng xuất
+                        </button>
+                        @Html.AntiForgeryToken()
+                    </form>
+                </div>
+            </header>
+            <main class="admin-content">
+                @RenderBody()
+            </main>
+            <footer class="admin-footer">
+                <span>&copy; @DateTime.Now.Year FPTDrink. Tất cả các quyền được bảo lưu.</span>
+            </footer>
+        </div>
+    </div>
+
+    <div class="admin-confirm-backdrop" id="adminConfirmModal" hidden>
+        <div class="admin-confirm-dialog">
+            <div class="admin-confirm-header">
+                <i class="bx bx-help-circle"></i>
+                <h5>Xác nhận thao tác</h5>
+            </div>
+            <div class="admin-confirm-body">
+                <p id="adminConfirmMessage">Bạn có chắc chắn muốn thực hiện thao tác này?</p>
+            </div>
+            <div class="admin-confirm-actions">
+                <button type="button" class="btn btn-coffee-outline admin-pill-button" id="adminConfirmCancel">Hủy</button>
+                <button type="button" class="btn btn-coffee admin-pill-button" id="adminConfirmOk">Đồng ý</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js" defer></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js" defer></script>
+    <script src="~/js/site.js" asp-append-version="true" defer></script>
+    <script src="~/js/admin.js" asp-append-version="true" defer></script>
+    <script src="~/js/admin-table-sort.js" asp-append-version="true" defer></script>
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                if (window.FPTDrink && window.FPTDrink.Toast) {
+                    window.FPTDrink.Toast.show('@Html.Raw(TempData["SuccessMessage"])', 'success');
+                }
+            });
+        </script>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                if (window.FPTDrink && window.FPTDrink.Toast) {
+                    window.FPTDrink.Toast.show('@Html.Raw(TempData["ErrorMessage"])', 'error');
+                }
+            });
+        </script>
+    }
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
+

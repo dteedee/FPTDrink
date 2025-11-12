@@ -1,0 +1,123 @@
+@model FPTDrink.Web.Areas.Admin.ViewModels.AdminProfileViewModel
+@{
+    ViewData["Title"] = "Thông tin tài khoản";
+}
+
+<div class="admin-page-header">
+    <div class="admin-page-title">
+        <h2>Thông tin tài khoản</h2>
+        <p>Xem và cập nhật thông tin cá nhân của bạn.</p>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-8">
+        <div class="admin-card">
+            <h5 class="mb-4"><i class="bx bx-user me-2"></i>Thông tin cá nhân</h5>
+            <form asp-action="Index" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" asp-for="Id" />
+                
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label asp-for="Username" class="form-label"></label>
+                        <input asp-for="Username" class="form-control" readonly />
+                        <span asp-validation-for="Username" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="RoleName" class="form-label">Chức vụ</label>
+                        <input type="text" value="@Model.RoleName" class="form-control" readonly />
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="FullName" class="form-label"></label>
+                        <input asp-for="FullName" class="form-control" />
+                        <span asp-validation-for="FullName" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="DisplayName" class="form-label"></label>
+                        <input asp-for="DisplayName" class="form-control" />
+                        <span asp-validation-for="DisplayName" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="Phone" class="form-label"></label>
+                        <input asp-for="Phone" class="form-control" />
+                        <span asp-validation-for="Phone" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="Email" class="form-label"></label>
+                        <input asp-for="Email" class="form-control" />
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
+                    <div class="col-12">
+                        <label asp-for="Address" class="form-label"></label>
+                        <input asp-for="Address" class="form-control" />
+                        <span asp-validation-for="Address" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="BirthDate" class="form-label"></label>
+                        <input asp-for="BirthDate" type="date" class="form-control" />
+                        <span asp-validation-for="BirthDate" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="Gender" class="form-label"></label>
+                        <select asp-for="Gender" class="form-select">
+                            <option value="false">Nữ</option>
+                            <option value="true">Nam</option>
+                        </select>
+                        <span asp-validation-for="Gender" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <hr class="my-4" />
+
+                <h6 class="mb-3"><i class="bx bx-lock me-2"></i>Đổi mật khẩu</h6>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label asp-for="NewPassword" class="form-label"></label>
+                        <input asp-for="NewPassword" class="form-control" />
+                        <span asp-validation-for="NewPassword" class="text-danger"></span>
+                        <small class="text-muted">Để trống nếu không muốn đổi mật khẩu</small>
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="ConfirmPassword" class="form-label"></label>
+                        <input asp-for="ConfirmPassword" class="form-control" />
+                        <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="mt-4 d-flex gap-2">
+                    <button type="submit" class="btn btn-coffee admin-pill-button">
+                        <i class="bx bx-save"></i>Lưu thay đổi
+                    </button>
+                    <a asp-area="Admin" asp-controller="Dashboard" asp-action="Index" class="btn btn-coffee-outline admin-pill-button">
+                        <i class="bx bx-arrow-back"></i>Quay lại
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="admin-card">
+            <h5 class="mb-3"><i class="bx bx-info-circle me-2"></i>Thông tin bổ sung</h5>
+            <div class="d-flex flex-column gap-3">
+                <div>
+                    <small class="text-muted d-block mb-1">Tên đăng nhập</small>
+                    <strong>@Model.Username</strong>
+                </div>
+                <div>
+                    <small class="text-muted d-block mb-1">Chức vụ</small>
+                    <span class="status-badge success">@Model.RoleName</span>
+                </div>
+                <div>
+                    <small class="text-muted d-block mb-1">Trạng thái</small>
+                    <span class="status-badge success">Đang hoạt động</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+

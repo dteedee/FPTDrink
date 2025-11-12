@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore;
 using FPTDrink.Infrastructure.Extensions;
+using FPTDrink.Web.Extensions;
 using System.Net.Http;
 using System;
 var builder = WebApplication.CreateBuilder(args);
@@ -12,8 +13,15 @@ builder.Services.Configure<FPTDrink.Web.Extensions.EmailOptions>(builder.Configu
 builder.Services.Configure<FPTDrink.Web.Extensions.VnPayOptions>(builder.Configuration.GetSection("VNPay"));
 builder.Services.AddDbContext<FPTDrink.Infrastructure.Data.FptdrinkContext>(options =>
 	options.UseSqlServer(builder.Configuration.GetConnectionString("MyCnn")));
-builder.Services.AddSingleton<FPTDrink.Core.Interfaces.Services.IVisitorsOnlineTracker, FPTDrink.Infrastructure.Services.VisitorsOnlineTracker>();
-builder.Services.AddScoped<FPTDrink.Core.Interfaces.Services.IVisitorStatsService, FPTDrink.Infrastructure.Services.VisitorStatsService>();
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSession(options =>
+{
+	options.Cookie.Name = ".FPTDrink.Session";
+	options.IdleTimeout = TimeSpan.FromMinutes(60);
+	options.Cookie.HttpOnly = true;
+	options.Cookie.IsEssential = true;
+});
+builder.Services.AddFptDrinkInfrastructure(builder.Configuration);
 
 var apiBaseUrl = builder.Configuration.GetValue<string>("ApiBaseUrl");
 builder.Services.AddHttpClient("FPTDrinkApi", client =>
@@ -28,7 +36,7 @@ builder.Services.AddHttpClient("FPTDrinkApi", client =>
 	ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true
 });
 builder.Services.AddScoped<FPTDrink.Web.Services.ApiClient>();
-
+builder.Services.AddHttpContextAccessor();
 var app = builder.Build();
 
 if (!app.Environment.IsDevelopment())
@@ -38,8 +46,14 @@ if (!app.Environment.IsDevelopment())
 app.UseStatusCodePagesWithReExecute("/Home/Error");
 app.UseStaticFiles();
 app.UseRouting();
+app.UseSession();
 app.UseAuthorization();
 app.UseVisitorsTracking();
+
+app.MapAreaControllerRoute(
+	name: "admin",
+	areaName: "Admin",
+	pattern: "admin/{controller=Dashboard}/{action=Index}/{id?}");
 app.MapControllerRoute(
 	name: "Contact",
 	pattern: "lien-he",

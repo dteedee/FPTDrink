@@ -1,0 +1,60 @@
+@model FPTDrink.Web.Areas.Admin.ViewModels.AdminStaffFormViewModel
+<div class="admin-card">
+    <div class="row g-3">
+        <div class="col-md-6">
+            <label asp-for="Username" class="form-label fw-semibold"></label>
+            <input asp-for="Username" class="form-control" placeholder="Tên đăng nhập hệ thống" />
+            <span asp-validation-for="Username" class="text-danger small"></span>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="Password" class="form-label fw-semibold"></label>
+            <input asp-for="Password" class="form-control" placeholder="Mật khẩu (để trống nếu không đổi)" />
+            <span asp-validation-for="Password" class="text-danger small"></span>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="FullName" class="form-label fw-semibold"></label>
+            <input asp-for="FullName" class="form-control" placeholder="Họ tên đầy đủ" />
+            <span asp-validation-for="FullName" class="text-danger small"></span>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="DisplayName" class="form-label fw-semibold"></label>
+            <input asp-for="DisplayName" class="form-control" placeholder="Tên hiển thị" />
+        </div>
+        <div class="col-md-6">
+            <label asp-for="Phone" class="form-label fw-semibold"></label>
+            <input asp-for="Phone" class="form-control" placeholder="Số điện thoại" />
+        </div>
+        <div class="col-md-6">
+            <label asp-for="Email" class="form-label fw-semibold"></label>
+            <input asp-for="Email" class="form-control" placeholder="Email" />
+            <span asp-validation-for="Email" class="text-danger small"></span>
+        </div>
+        <div class="col-12">
+            <label asp-for="Address" class="form-label fw-semibold"></label>
+            <input asp-for="Address" class="form-control" placeholder="Địa chỉ liên hệ" />
+        </div>
+        <div class="col-md-4">
+            <label asp-for="BirthDate" class="form-label fw-semibold"></label>
+            <input asp-for="BirthDate" type="date" class="form-control" />
+        </div>
+        <div class="col-md-4">
+            <label asp-for="Gender" class="form-label fw-semibold"></label>
+            <select asp-for="Gender" class="form-select">
+                <option value="true">Nam</option>
+                <option value="false">Nữ</option>
+            </select>
+        </div>
+        <div class="col-md-4">
+            <label asp-for="RoleId" class="form-label fw-semibold"></label>
+            <select asp-for="RoleId" asp-items="Model.RoleOptions" class="form-select">
+                <option value="">-- Chọn chức vụ --</option>
+            </select>
+            <span asp-validation-for="RoleId" class="text-danger small"></span>
+        </div>
+    </div>
+    <div class="form-check form-switch mt-3">
+        <input asp-for="IsActive" class="form-check-input" />
+        <label asp-for="IsActive" class="form-check-label"></label>
+    </div>
+</div>
+

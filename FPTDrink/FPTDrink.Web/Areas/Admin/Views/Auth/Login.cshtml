@@ -1,0 +1,158 @@
+@model FPTDrink.Web.Areas.Admin.ViewModels.AdminLoginViewModel
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_AuthLayout.cshtml";
+    ViewData["Title"] = "Đăng nhập quản trị";
+}
+
+<section class="admin-login-section">
+    <div class="admin-login-card shadow-lg">
+        <div class="login-header text-center mb-4">
+            <img src="~/images/logocf.png" alt="FPTDrink Logo" class="login-logo" />
+            <h1 class="h4 fw-bold mt-3 text-uppercase text-coffee">FPTDrink Admin</h1>
+            <p class="text-muted mb-0">Quản lý toàn bộ hệ thống cửa hàng ngay tại đây.</p>
+        </div>
+
+        <form asp-action="Login" method="post" novalidate class="admin-login-form">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="returnUrl" value="@ViewBag.ReturnUrl" />
+            <div class="mb-3">
+                <label asp-for="Username" class="form-label fw-semibold"></label>
+                <div class="input-group input-group-lg login-input-group">
+                    <span class="input-group-text"><i class="bx bx-user"></i></span>
+                    <input asp-for="Username" class="form-control" placeholder="Nhập tên đăng nhập" autocomplete="username" />
+                </div>
+                <span class="text-danger small" asp-validation-for="Username"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Password" class="form-label fw-semibold"></label>
+                <div class="input-group input-group-lg login-input-group">
+                    <span class="input-group-text"><i class="bx bx-lock-alt"></i></span>
+                    <input asp-for="Password" class="form-control" placeholder="Nhập mật khẩu" autocomplete="current-password" />
+                    <button class="btn btn-outline-secondary toggle-password" type="button" aria-label="Ẩn hiện mật khẩu">
+                        <i class="bx bx-low-vision"></i>
+                    </button>
+                </div>
+                <span class="text-danger small" asp-validation-for="Password"></span>
+            </div>
+
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div class="form-check">
+                    <input asp-for="RememberMe" class="form-check-input" />
+                    <label asp-for="RememberMe" class="form-check-label"></label>
+                </div>
+                <a class="text-decoration-none text-coffee" href="mailto:@(ViewBag.SupportEmail ?? "support@fptdrink.com")">
+                    <i class="bx bx-support me-1"></i>Liên hệ hỗ trợ
+                </a>
+            </div>
+
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger rounded-3 py-2" role="alert"></div>
+
+            <button type="submit" class="btn btn-coffee w-100 btn-lg">
+                <i class="bx bx-log-in-circle me-2"></i>Đăng nhập
+            </button>
+
+            <p class="text-center mt-4 text-muted small">
+                Bằng việc đăng nhập, bạn đồng ý tuân thủ các quy định bảo mật của FPTDrink.
+            </p>
+        </form>
+    </div>
+</section>
+
+@section Styles{
+    <style>
+        .admin-login-section {
+            width: 100%;
+            max-width: 420px;
+        }
+
+        .admin-login-card {
+            background: #ffffff;
+            padding: 2.5rem;
+            border-radius: var(--border-radius-lg);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .admin-login-card::before {
+            content: "";
+            position: absolute;
+            inset: -40%;
+            background: radial-gradient(circle at top, rgba(212, 165, 116, 0.18), transparent 60%);
+            opacity: 0.85;
+            pointer-events: none;
+        }
+
+        .admin-login-card::after {
+            content: "";
+            position: absolute;
+            inset: -20%;
+            background: linear-gradient(140deg, rgba(212, 165, 116, 0.08), rgba(26, 15, 8, 0.08));
+            opacity: 0.9;
+            z-index: -1;
+        }
+
+        .admin-login-card .form-control {
+            padding: 0.75rem 1rem;
+        }
+
+        .login-header .login-logo {
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            box-shadow: 0 12px 24px rgba(15, 8, 4, 0.25);
+        }
+
+        .text-coffee {
+            color: #6b4f33 !important;
+        }
+
+        .login-input-group .input-group-text {
+            background: rgba(212, 165, 116, 0.15);
+            border: 1px solid rgba(212, 165, 116, 0.35);
+            color: #6b4f33;
+        }
+
+        .login-input-group .form-control {
+            border: 1px solid rgba(212, 165, 116, 0.35);
+        }
+
+        .login-input-group .form-control:focus {
+            border-color: #d4a574;
+            box-shadow: 0 0 0 0.2rem rgba(212, 165, 116, 0.25);
+        }
+
+        .toggle-password {
+            border-color: rgba(212, 165, 116, 0.35);
+            color: #6b4f33;
+        }
+
+        .toggle-password:hover,
+        .toggle-password:focus {
+            background-color: rgba(212, 165, 116, 0.15);
+            color: #2d1b0e;
+        }
+    </style>
+}
+
+@section Scripts{
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const togglePassword = document.querySelector('.toggle-password');
+            const passwordInput = document.querySelector('input[name="Password"]');
+
+            if (togglePassword && passwordInput) {
+                togglePassword.addEventListener('click', () => {
+                    const isPassword = passwordInput.getAttribute('type') === 'password';
+                    passwordInput.setAttribute('type', isPassword ? 'text' : 'password');
+                    togglePassword.querySelector('i').classList.toggle('bx-low-vision');
+                    togglePassword.querySelector('i').classList.toggle('bx-show-alt');
+                });
+            }
+        });
+    </script>
+}
+

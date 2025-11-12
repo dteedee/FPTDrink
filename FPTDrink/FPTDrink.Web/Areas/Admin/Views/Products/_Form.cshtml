@@ -1,0 +1,117 @@
+@model FPTDrink.Web.Areas.Admin.ViewModels.AdminProductFormViewModel
+<div class="row g-4">
+    <div class="col-lg-8">
+        <div class="admin-card h-100">
+            <div class="mb-3">
+                <label asp-for="Name" class="form-label fw-semibold"></label>
+                <input asp-for="Name" class="form-control" placeholder="Tên sản phẩm" />
+                <span asp-validation-for="Name" class="text-danger small"></span>
+            </div>
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label asp-for="ProductCategoryId" class="form-label fw-semibold"></label>
+                    <select asp-for="ProductCategoryId" asp-items="Model.CategoryOptions" class="form-select"></select>
+                    <span asp-validation-for="ProductCategoryId" class="text-danger small"></span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="SupplierId" class="form-label fw-semibold"></label>
+                    <select asp-for="SupplierId" asp-items="Model.SupplierOptions" class="form-select"></select>
+                    <span asp-validation-for="SupplierId" class="text-danger small"></span>
+                </div>
+            </div>
+            <div class="mt-3">
+                <label asp-for="Description" class="form-label fw-semibold"></label>
+                <textarea asp-for="Description" class="form-control" rows="3" placeholder="Mô tả ngắn gọn về sản phẩm"></textarea>
+            </div>
+            <div class="mt-3">
+                <label asp-for="Detail" class="form-label fw-semibold"></label>
+                <textarea asp-for="Detail" class="form-control" rows="6" placeholder="Chi tiết sản phẩm, thành phần, hướng dẫn sử dụng"></textarea>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="admin-card h-100">
+            <div class="mb-3">
+                <label asp-for="UploadImage" class="form-label fw-semibold"></label>
+                <input asp-for="UploadImage" class="form-control" type="file" accept=".jpg,.jpeg,.png,.gif,.webp" />
+                <small class="text-muted d-block mt-2">Định dạng hỗ trợ: JPG, PNG, GIF, WEBP. Tối đa 3MB.</small>
+                <span asp-validation-for="UploadImage" class="text-danger small"></span>
+            </div>
+            @if (!string.IsNullOrWhiteSpace(Model.ExistingImage))
+            {
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Hình ảnh hiện tại</label>
+                    <img src="@(string.IsNullOrWhiteSpace(Model.ExistingImage) ? Url.Content("~/images/placeholder.png") : Model.ExistingImage)"
+                         alt="Hình ảnh sản phẩm"
+                         class="w-100 rounded-3 shadow-sm object-fit-cover"
+                         style="max-height: 220px;" />
+                    <input type="hidden" asp-for="ExistingImage" />
+                </div>
+            }
+            <div class="row g-3">
+                <div class="col-12">
+                    <label asp-for="CostPrice" class="form-label fw-semibold"></label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bx bx-purchase-tag"></i></span>
+                        <input asp-for="CostPrice" class="form-control" />
+                    </div>
+                    <span asp-validation-for="CostPrice" class="text-danger small"></span>
+                </div>
+                <div class="col-12">
+                    <label asp-for="ListPrice" class="form-label fw-semibold"></label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bx bx-purchase-tag-alt"></i></span>
+                        <input asp-for="ListPrice" class="form-control" />
+                    </div>
+                    <span asp-validation-for="ListPrice" class="text-danger small"></span>
+                </div>
+                <div class="col-12">
+                    <label asp-for="DiscountPercent" class="form-label fw-semibold"></label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bx bx-trending-down"></i></span>
+                        <input asp-for="DiscountPercent" class="form-control" />
+                        <span class="input-group-text">%</span>
+                    </div>
+                    <span asp-validation-for="DiscountPercent" class="text-danger small"></span>
+                </div>
+                <div class="col-12">
+                    <label asp-for="Stock" class="form-label fw-semibold"></label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bx bx-layer"></i></span>
+                        <input asp-for="Stock" class="form-control" />
+                    </div>
+                    <span asp-validation-for="Stock" class="text-danger small"></span>
+                </div>
+            </div>
+            <div class="mt-4">
+                <div class="row g-2">
+                    <div class="col-6">
+                        <div class="form-check form-switch">
+                            <input asp-for="IsActive" class="form-check-input" />
+                            <label asp-for="IsActive" class="form-check-label"></label>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="form-check form-switch">
+                            <input asp-for="IsHome" class="form-check-input" />
+                            <label asp-for="IsHome" class="form-check-label"></label>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="form-check form-switch">
+                            <input asp-for="IsNew" class="form-check-input" />
+                            <label asp-for="IsNew" class="form-check-label"></label>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="form-check form-switch">
+                            <input asp-for="IsHot" class="form-check-input" />
+                            <label asp-for="IsHot" class="form-check-label"></label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

@@ -53,25 +53,82 @@ namespace FPTDrink.Infrastructure.Services
 		{
 			var order = await _orderRepo.GetByIdAsync(id, cancellationToken);
 			if (order == null) return (false, "Không tìm thấy đơn hàng");
+			
 			int oldStatus = order.TrangThai;
-			if (oldStatus == 2 || oldStatus == 3)
+			
+			// Không cho phép chuyển nếu trạng thái mới giống trạng thái cũ
+			if (oldStatus == newStatus)
 			{
-				if (!confirmed)
-				{
-					return (false, $"Đơn hàng đang ở trạng thái '{GetStatusName(oldStatus)}'. Trạng thái này không thể thay đổi.");
-				}
-				return (false, $"Đơn hàng ở trạng thái '{GetStatusName(oldStatus)}' đã cố định và không thể thay đổi.");
+				return (false, "Trạng thái mới phải khác trạng thái hiện tại.");
 			}
-			if (oldStatus != 1) return (false, "Chỉ có thể thay đổi từ 'Chờ thanh toán'.");
-			if (newStatus != 2 && newStatus != 3) return (false, "Chỉ cho phép chuyển sang 'Đã thanh toán' hoặc 'Đã huỷ'.");
 
-			// update status
+			// Quy trình chuyển trạng thái:
+			// 0: Đã hủy - không thể chuyển sang trạng thái khác
+			// 1: Đang xử lý - có thể chuyển sang: Đang giao (3) hoặc Chờ thanh toán (4)
+			// 2: Hoàn tất - không thể chuyển sang trạng thái khác
+			// 3: Đang giao - có thể chuyển sang: Hoàn tất (2) hoặc Đã hủy (0)
+			// 4: Chờ thanh toán - có thể chuyển sang: Đang giao (3) hoặc Đã hủy (0)
+
+			bool isValidTransition = false;
+			string errorMessage = string.Empty;
+
+			switch (oldStatus)
+			{
+				case 0: // Đã hủy
+					return (false, "Đơn hàng đã hủy không thể thay đổi trạng thái.");
+				
+				case 1: // Đang xử lý
+					if (newStatus == 3 || newStatus == 4)
+					{
+						isValidTransition = true;
+					}
+					else
+					{
+						errorMessage = "Từ trạng thái 'Đang xử lý' chỉ có thể chuyển sang 'Đang giao' hoặc 'Chờ thanh toán'.";
+					}
+					break;
+				
+				case 2: // Hoàn tất
+					return (false, "Đơn hàng đã hoàn tất không thể thay đổi trạng thái.");
+				
+				case 3: // Đang giao
+					if (newStatus == 2 || newStatus == 0)
+					{
+						isValidTransition = true;
+					}
+					else
+					{
+						errorMessage = "Từ trạng thái 'Đang giao' chỉ có thể chuyển sang 'Hoàn tất' hoặc 'Đã hủy'.";
+					}
+					break;
+				
+				case 4: // Chờ thanh toán
+					if (newStatus == 3 || newStatus == 0)
+					{
+						isValidTransition = true;
+					}
+					else
+					{
+						errorMessage = "Từ trạng thái 'Chờ thanh toán' chỉ có thể chuyển sang 'Đang giao' hoặc 'Đã hủy'.";
+					}
+					break;
+				
+				default:
+					return (false, "Trạng thái hiện tại không hợp lệ.");
+			}
+
+			if (!isValidTransition)
+			{
+				return (false, errorMessage);
+			}
+
+			// Cập nhật trạng thái
 			order.TrangThai = newStatus;
 			order.ModifiedDate = DateTime.Now;
 			_orderRepo.Update(order);
 
-			// if cancel, restore inventory
-			if (newStatus == 3)
+			// Nếu hủy đơn, hoàn trả số lượng sản phẩm
+			if (newStatus == 0)
 			{
 				var items = await _itemRepo.GetByOrderIdAsync(order.MaHoaDon, cancellationToken);
 				foreach (var detail in items)
@@ -84,10 +141,11 @@ namespace FPTDrink.Infrastructure.Services
 						_productRepo.Update(product);
 					}
 				}
+				await _productRepo.SaveChangesAsync(cancellationToken);
 			}
+
 			await _orderRepo.SaveChangesAsync(cancellationToken);
-			await _productRepo.SaveChangesAsync(cancellationToken);
-			return (true, "Cập nhật trạng thái thành công");
+			return (true, $"Đã cập nhật trạng thái từ '{GetStatusName(oldStatus)}' sang '{GetStatusName(newStatus)}' thành công.");
 		}
 
 		public async Task<IReadOnlyList<FPTDrink.Core.Models.Reports.CustomerSummaryInfo>> GetCustomersAsync(string? search, CancellationToken cancellationToken = default)
@@ -139,9 +197,11 @@ namespace FPTDrink.Infrastructure.Services
 
 		private static string GetStatusName(int status) => status switch
 		{
-			1 => "Chờ thanh toán",
-			2 => "Đã thanh toán",
-			3 => "Đã huỷ",
+			0 => "Đã hủy",
+			1 => "Đang xử lý",
+			2 => "Hoàn tất",
+			3 => "Đang giao",
+			4 => "Chờ thanh toán",
 			_ => "Không xác định"
 		};
 	}

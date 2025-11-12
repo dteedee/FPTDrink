@@ -1,0 +1,58 @@
+@model IReadOnlyList<FPTDrink.Core.Models.ChucNangQuyen>
+@{
+    var role = ViewBag.Role as FPTDrink.Core.Models.ChucVu;
+    var granted = ViewBag.Granted as List<string> ?? new List<string>();
+    ViewData["Title"] = $"Phân quyền - {role?.TenChucVu}";
+}
+
+<div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
+    <div>
+        <h2 class="mb-1">Phân quyền: @role?.TenChucVu</h2>
+        <p class="text-muted mb-0">Bật / tắt quyền hạn cho từng chức năng của hệ thống.</p>
+    </div>
+    <a asp-action="Index" class="btn btn-coffee-outline"><i class="bx bx-arrow-back me-2"></i>Danh sách chức vụ</a>
+</div>
+
+<div class="admin-card">
+    <table class="table table-hover align-middle mb-0">
+        <thead class="table-light">
+            <tr>
+                <th>Mã chức năng</th>
+                <th>Tên chức năng</th>
+                <th>Mô tả</th>
+                <th class="text-end">Trạng thái</th>
+            </tr>
+        </thead>
+        <tbody>
+        @if (!Model.Any())
+        {
+            <tr>
+                <td colspan="4" class="text-center text-muted py-4">Chưa có cấu hình chức năng.</td>
+            </tr>
+        }
+        else
+        {
+            foreach (var feature in Model)
+            {
+                var isGranted = granted.Contains(feature.MaChucNang);
+                <tr>
+                    <td><strong>@feature.MaChucNang</strong></td>
+                    <td>@feature.TenChucNang</td>
+                    <td>@feature.MoTa</td>
+                    <td class="text-end">
+                        <form asp-action="TogglePermission" method="post" class="d-inline">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="roleId" value="@role?.Id" />
+                            <input type="hidden" name="featureCode" value="@feature.MaChucNang" />
+                            <button type="submit" class="btn btn-sm @(isGranted ? "btn-success" : "btn-secondary")">
+                                <i class="bx @(isGranted ? "bx-check-shield" : "bx-shield") me-2"></i>@(isGranted ? "Đang bật" : "Đang tắt")
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        }
+        </tbody>
+    </table>
+</div>
+

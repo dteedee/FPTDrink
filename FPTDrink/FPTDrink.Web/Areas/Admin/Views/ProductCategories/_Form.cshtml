@@ -1,0 +1,31 @@
+@model FPTDrink.Web.Areas.Admin.ViewModels.AdminProductCategoryFormViewModel
+<div class="admin-card">
+    <div class="mb-3">
+        <label asp-for="Title" class="form-label fw-semibold"></label>
+        <input asp-for="Title" class="form-control" placeholder="Nhập tên loại sản phẩm" />
+        <span asp-validation-for="Title" class="text-danger small"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Description" class="form-label fw-semibold"></label>
+        <textarea asp-for="Description" class="form-control" rows="4" placeholder="Mô tả tổng quan"></textarea>
+    </div>
+    <div class="row g-3">
+        <div class="col-md-6">
+            <label asp-for="SeoTitle" class="form-label fw-semibold"></label>
+            <input asp-for="SeoTitle" class="form-control" placeholder="SEO page title" />
+        </div>
+        <div class="col-md-6">
+            <label asp-for="SeoKeywords" class="form-label fw-semibold"></label>
+            <input asp-for="SeoKeywords" class="form-control" placeholder="Từ khóa SEO" />
+        </div>
+        <div class="col-12">
+            <label asp-for="SeoDescription" class="form-label fw-semibold"></label>
+            <textarea asp-for="SeoDescription" class="form-control" rows="3" placeholder="Mô tả SEO"></textarea>
+        </div>
+    </div>
+    <div class="form-check form-switch mt-3">
+        <input asp-for="IsActive" class="form-check-input" />
+        <label asp-for="IsActive" class="form-check-label"></label>
+    </div>
+</div>
+
