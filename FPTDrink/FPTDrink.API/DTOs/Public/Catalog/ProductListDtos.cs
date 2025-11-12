@@ -20,6 +20,7 @@ namespace FPTDrink.API.DTOs.Public.Catalog
 		public string MaSanPham { get; set; } = string.Empty;
 		public string Title { get; set; } = string.Empty;
 		public string? Image { get; set; }
+		public decimal GiaNiemYet { get; set; }
 		public decimal GiaHienThi { get; set; }
 		public decimal? GiamGia { get; set; }
 		public bool IsSale { get; set; }

@@ -14,6 +14,9 @@ namespace FPTDrink.Web.ViewModels
         [JsonPropertyName("image")]
         public string? Image { get; set; }
 
+        [JsonPropertyName("giaNiemYet")]
+        public decimal GiaNiemYet { get; set; }
+
         [JsonPropertyName("giaHienThi")]
         public decimal GiaHienThi { get; set; }
 
@@ -33,14 +36,14 @@ namespace FPTDrink.Web.ViewModels
         public int SoLuong { get; set; }
 
         [JsonIgnore]
-        public bool HasDiscount => GiamGia.HasValue && GiamGia.Value > 0;
+        public bool HasDiscount => GiaNiemYet > 0 && GiaHienThi < GiaNiemYet;
 
         [JsonIgnore]
-        public decimal OriginalPrice => HasDiscount ? GiaHienThi + GiamGia!.Value : GiaHienThi;
+        public decimal OriginalPrice => HasDiscount ? GiaNiemYet : GiaHienThi;
 
         [JsonIgnore]
-        public int DiscountPercent => HasDiscount && OriginalPrice > 0
-            ? (int)Math.Round((double)(GiamGia!.Value / OriginalPrice * 100))
+        public int DiscountPercent => HasDiscount && GiaNiemYet > 0
+            ? (int)Math.Round((double)((GiaNiemYet - GiaHienThi) / GiaNiemYet * 100), MidpointRounding.AwayFromZero)
             : 0;
     }
 }
