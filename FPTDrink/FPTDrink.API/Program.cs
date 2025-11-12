@@ -53,6 +53,11 @@ builder.Services.AddAuthorization(options =>
 builder.Services.AddControllers(options =>
 {
 	options.Filters.Add(new FPTDrink.API.Filters.ValidationFilter());
+})
+.AddJsonOptions(options =>
+{
+	options.JsonSerializerOptions.PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase;
+	options.JsonSerializerOptions.WriteIndented = false;
 });
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

@@ -1,6 +1,7 @@
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
@@ -11,6 +12,11 @@ namespace FPTDrink.Web.Services
 	{
 		private readonly HttpClient _httpClient;
 		private readonly ILogger<ApiClient>? _logger;
+		private static readonly JsonSerializerOptions JsonOptions = new JsonSerializerOptions
+		{
+			PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+			PropertyNameCaseInsensitive = true
+		};
 
 		public ApiClient(IHttpClientFactory httpClientFactory, ILogger<ApiClient>? logger = null)
 		{
@@ -32,7 +38,7 @@ namespace FPTDrink.Web.Services
 					return default(T);
 				}
 				
-				return await response.Content.ReadFromJsonAsync<T>(cancellationToken: cancellationToken);
+				return await response.Content.ReadFromJsonAsync<T>(JsonOptions, cancellationToken: cancellationToken);
 			}
 			catch (HttpRequestException ex)
 			{

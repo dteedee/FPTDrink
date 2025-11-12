@@ -148,9 +148,15 @@
 				{
                             <div class="order-item">
                                 <div class="item-image">
-                                    <img src="@(string.IsNullOrWhiteSpace(item.ProductImg) ? Url.Content("~/images/placeholder.png") : item.ProductImg)"
+                                    @{
+                                        var checkoutImageUrl = !string.IsNullOrWhiteSpace(item.ProductImg) 
+                                            ? ImagePathHelper.GetImageUrl(item.ProductImg) 
+                                            : Url.Content("~/images/placeholder.png");
+                                    }
+                                    <img src="@checkoutImageUrl"
                                          alt="@item.ProductName"
-                                         loading="lazy" />
+                                         loading="lazy"
+                                         style="width:100% !important; height:100% !important; display:block !important; object-fit:cover !important; visibility:visible !important; opacity:1 !important;" />
                                 </div>
                                 <div class="item-details">
                                     <h6 class="item-name">@item.ProductName</h6>
@@ -450,9 +456,13 @@
         }
 
         .item-image img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
+            width: 100% !important;
+            height: 100% !important;
+            display: block !important;
+            object-fit: cover !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+            background-color: #f5f0e8;
         }
 
         .item-details {

@@ -281,7 +281,11 @@ else
 				{
 							<tr style="border-bottom: 1px solid rgba(212, 165, 116, 0.2);">
 						<td>
-									<img src="@(string.IsNullOrWhiteSpace(item.ProductImg) ? Url.Content("~/images/placeholder.png") : item.ProductImg)" 
+									@{
+										var cartImagePath = ImagePathHelper.NormalizeImagePath(item.ProductImg);
+										var cartImageUrl = Url.Content(cartImagePath);
+									}
+									<img src="@cartImageUrl" 
 									     class="rounded object-fit-cover" 
 									     style="height:64px;width:64px;object-fit:cover; border: 2px solid rgba(212, 165, 116, 0.3);" />
 						</td>

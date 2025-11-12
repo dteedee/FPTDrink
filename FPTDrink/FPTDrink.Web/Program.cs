@@ -6,6 +6,8 @@ using FPTDrink.Infrastructure.Extensions;
 using FPTDrink.Web.Extensions;
 using System.Net.Http;
 using System;
+using System.IO;
+using Microsoft.Extensions.FileProviders;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllersWithViews();
@@ -44,7 +46,43 @@ if (!app.Environment.IsDevelopment())
     app.UseExceptionHandler("/Home/Error");
 }
 app.UseStatusCodePagesWithReExecute("/Home/Error");
-app.UseStaticFiles();
+
+// Configure static files - serve from wwwroot
+app.UseStaticFiles(new Microsoft.AspNetCore.Builder.StaticFileOptions
+{
+    OnPrepareResponse = ctx =>
+    {
+        // Cache static files for 1 year
+        ctx.Context.Response.Headers.Append("Cache-Control", "public,max-age=31536000");
+    }
+});
+
+// Serve static files from Uploads folder (outside wwwroot) - for backward compatibility
+// This allows serving files from FPTDrink.Web\Uploads\files if they exist there
+var uploadsPath = Path.Combine(app.Environment.ContentRootPath, "Uploads", "files");
+if (Directory.Exists(uploadsPath))
+{
+    app.UseStaticFiles(new Microsoft.AspNetCore.Builder.StaticFileOptions
+    {
+        FileProvider = new PhysicalFileProvider(uploadsPath),
+        RequestPath = "/Uploads/files",
+        OnPrepareResponse = ctx =>
+        {
+            ctx.Context.Response.Headers.Append("Cache-Control", "public,max-age=31536000");
+        }
+    });
+}
+
+// Serve static files from wwwroot/Uploads folder (primary location)
+// Files are already in wwwroot/Uploads/files, so this ensures they are served correctly
+var wwwrootUploadsPath = Path.Combine(app.Environment.WebRootPath, "Uploads", "files");
+if (Directory.Exists(wwwrootUploadsPath))
+{
+    // This is already handled by the default UseStaticFiles() above,
+    // but we can add explicit configuration if needed
+    // The default UseStaticFiles() will serve files from wwwroot, so /Uploads/files/... will work
+}
+
 app.UseRouting();
 app.UseSession();
 app.UseAuthorization();
