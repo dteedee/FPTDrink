@@ -82,32 +82,41 @@
                             <a asp-action="Permissions" asp-route-id="@role.Id" class="btn btn-coffee-outline admin-pill-button btn-sm">
                                 <i class="bx bx-shield-quarter"></i>Quyền
                             </a>
-                            <a asp-action="Edit" asp-route-id="@role.Id" class="btn btn-coffee-outline admin-pill-button btn-sm">
-                                <i class="bx bx-edit"></i>Sửa
-                            </a>
-                                <form asp-action="ToggleActive" asp-route-id="@role.Id" asp-route-status="@status" method="post" class="d-inline js-confirm-form" data-confirm="Bạn có chắc muốn thay đổi trạng thái của chức vụ này?">
-                                @Html.AntiForgeryToken()
-                                <button type="submit" class="btn admin-pill-button btn-sm @(role.Status != 0 ? "btn-warning text-dark" : "btn-success")" title="@(role.Status != 0 ? "Tạm ngưng" : "Kích hoạt")">
-                                    <i class="bx @(role.Status != 0 ? "bx-pause" : "bx-play")"></i>
-                                </button>
-                            </form>
-                            @if (status == "Trash")
+                            @if (!string.Equals(role.Title, "Quản lý", StringComparison.OrdinalIgnoreCase))
                             {
-                                <form asp-action="Restore" asp-route-id="@role.Id" asp-route-status="@status" method="post" class="d-inline js-confirm-form" data-confirm="Khôi phục chức vụ này?">
+                                <a asp-action="Edit" asp-route-id="@role.Id" class="btn btn-coffee-outline admin-pill-button btn-sm">
+                                    <i class="bx bx-edit"></i>Sửa
+                                </a>
+                                <form asp-action="ToggleActive" asp-route-id="@role.Id" asp-route-status="@status" method="post" class="d-inline js-confirm-form" data-confirm="Bạn có chắc muốn thay đổi trạng thái của chức vụ này?">
                                     @Html.AntiForgeryToken()
-                                    <button type="submit" class="btn btn-success admin-pill-button btn-sm" title="Khôi phục">
-                                        <i class="bx bx-undo"></i>Khôi phục
+                                    <button type="submit" class="btn admin-pill-button btn-sm @(role.Status != 0 ? "btn-warning text-dark" : "btn-success")" title="@(role.Status != 0 ? "Tạm ngưng" : "Kích hoạt")">
+                                        <i class="bx @(role.Status != 0 ? "bx-pause" : "bx-play")"></i>
                                     </button>
                                 </form>
+                                @if (status == "Trash")
+                                {
+                                    <form asp-action="Restore" asp-route-id="@role.Id" asp-route-status="@status" method="post" class="d-inline js-confirm-form" data-confirm="Khôi phục chức vụ này?">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="btn btn-success admin-pill-button btn-sm" title="Khôi phục">
+                                            <i class="bx bx-undo"></i>Khôi phục
+                                        </button>
+                                    </form>
+                                }
+                                else
+                                {
+                                    <form asp-action="Delete" asp-route-id="@role.Id" asp-route-status="@status" method="post" class="d-inline js-confirm-form" data-confirm="Chuyển chức vụ này vào thùng rác?">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="btn btn-danger admin-pill-button btn-sm" title="Xóa">
+                                            <i class="bx bx-trash"></i>Xóa
+                                        </button>
+                                    </form>
+                                }
                             }
                             else
                             {
-                                <form asp-action="Delete" asp-route-id="@role.Id" asp-route-status="@status" method="post" class="d-inline js-confirm-form" data-confirm="Chuyển chức vụ này vào thùng rác?">
-                                    @Html.AntiForgeryToken()
-                                    <button type="submit" class="btn btn-danger admin-pill-button btn-sm" title="Xóa">
-                                        <i class="bx bx-trash"></i>Xóa
-                                    </button>
-                                </form>
+                                <span class="badge bg-info text-dark ms-2">
+                                    <i class="bx bx-shield-check"></i> Full quyền
+                                </span>
                             }
                         </div>
                     </td>

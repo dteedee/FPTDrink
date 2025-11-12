@@ -175,28 +175,23 @@
     border-color: rgba(212, 165, 116, 0.5) !important;
 }
 
-.product-card .card-img-top,
-.product-card .card-img-top.object-fit-cover,
-.product-card img.card-img-top {
+.product-card .card-img-top {
     border-radius: 14px 14px 0 0;
-    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: transform 0.5s ease;
     position: relative;
     z-index: 2;
     width: 100% !important;
-    height: 200px !important;
-    min-height: 200px !important;
-    max-height: 200px !important;
+    height: auto;
+    min-height: 180px;
     display: block !important;
-    object-fit: contain !important;
-    object-position: center !important;
-    background: linear-gradient(135deg, #faf8f5 0%, #f5f0e8 100%) !important;
-    padding: 12px !important;
+    object-fit: cover;
+    background-color: #f5f0e8;
     visibility: visible !important;
     opacity: 1 !important;
 }
 
 .product-card:hover .card-img-top {
-    transform: scale(1.05);
+    transform: scale(1.1);
 }
 
 .product-card .badge {
@@ -807,13 +802,8 @@
         font-size: 1.5rem;
     }
     
-    .product-card .card-img-top,
-    .product-card .card-img-top.object-fit-cover,
-    .product-card img.card-img-top {
+    .product-card .card-img-top {
         height: 160px !important;
-        min-height: 160px !important;
-        max-height: 160px !important;
-        padding: 10px !important;
     }
     
     .featured-section,
@@ -840,65 +830,73 @@
     }
 }
 
-/* === PRODUCT CARD IMAGE - ĐỒNG BỘ VÀ ĐẸP HƠN === */
-/* Override cho trang Products (180px) - Đảm bảo áp dụng cho tất cả card trong products-section */
-.products-section .product-card .card-img-top,
-.products-section .product-card .card-img-top.object-fit-cover,
-.products-section .product-card img.card-img-top,
-section.products-section .product-card .card-img-top,
-section.products-section .product-card img.card-img-top {
+/* === PRODUCT CARD IMAGE STYLES - PAGE SPECIFIC === */
+/* Trang Home: Featured, Newest, BestSale sections - Đảm bảo ảnh hiển thị đầy đủ */
+.home-product-card .home-product-img,
+.home-product-card .card-img-top.home-product-img {
+    width: 100% !important;
+    height: 200px !important;
+    min-height: 200px !important;
+    max-height: 200px !important;
+    object-fit: contain !important;
+    object-position: center !important;
+    display: block !important;
+    background-color: #faf8f5 !important;
+    padding: 8px;
+    border-radius: 14px 14px 0 0;
+}
+
+/* Trang Products - Đảm bảo ảnh hiển thị đầy đủ */
+.products-page-card .products-page-img,
+.products-page-card .card-img-top.products-page-img {
+    width: 100% !important;
     height: 180px !important;
     min-height: 180px !important;
     max-height: 180px !important;
     object-fit: contain !important;
     object-position: center !important;
-    background: linear-gradient(135deg, #faf8f5 0%, #f5f0e8 100%) !important;
-    padding: 12px !important;
+    display: block !important;
+    background-color: #faf8f5 !important;
+    padding: 8px;
+    border-radius: 14px 14px 0 0;
 }
 
-/* Override cho trang Menu (220px) - Đảm bảo áp dụng cho tất cả card trong menu */
-.menu-page-card .card-img-top,
-.menu-page-card .card-img-top.object-fit-cover,
-.menu-page-card img.card-img-top,
-#menu-products .product-card .card-img-top,
-#menu-products .product-card .card-img-top.object-fit-cover,
-#menu-products .product-card img.card-img-top,
-#menu-products .menu-page-card .card-img-top,
-#menu-products .menu-page-card img.card-img-top {
+/* Trang Menu - Đảm bảo ảnh hiển thị đầy đủ */
+.menu-page-card .menu-page-img,
+.menu-page-card .card-img-top.menu-page-img {
+    width: 100% !important;
     height: 220px !important;
     min-height: 220px !important;
     max-height: 220px !important;
     object-fit: contain !important;
     object-position: center !important;
-    background: linear-gradient(135deg, #faf8f5 0%, #f5f0e8 100%) !important;
-    padding: 12px !important;
+    display: block !important;
+    background-color: #faf8f5 !important;
+    padding: 8px;
+    border-radius: 14px 14px 0 0;
 }
 
-/* Responsive cho các trang có kích thước khác nhau */
+/* Responsive adjustments */
 @media (max-width: 768px) {
-    .products-section .product-card .card-img-top,
-    .products-section .product-card .card-img-top.object-fit-cover,
-    .products-section .product-card img.card-img-top,
-    section.products-section .product-card .card-img-top,
-    section.products-section .product-card img.card-img-top {
+    .home-product-card .home-product-img,
+    .home-product-card .card-img-top.home-product-img {
+        height: 160px !important;
+        min-height: 160px !important;
+        max-height: 160px !important;
+    }
+    
+    .products-page-card .products-page-img,
+    .products-page-card .card-img-top.products-page-img {
         height: 150px !important;
         min-height: 150px !important;
         max-height: 150px !important;
-        padding: 10px !important;
     }
     
-    .menu-page-card .card-img-top,
-    .menu-page-card .card-img-top.object-fit-cover,
-    .menu-page-card img.card-img-top,
-    #menu-products .product-card .card-img-top,
-    #menu-products .product-card .card-img-top.object-fit-cover,
-    #menu-products .product-card img.card-img-top,
-    #menu-products .menu-page-card .card-img-top,
-    #menu-products .menu-page-card img.card-img-top {
+    .menu-page-card .menu-page-img,
+    .menu-page-card .card-img-top.menu-page-img {
         height: 180px !important;
         min-height: 180px !important;
         max-height: 180px !important;
-        padding: 10px !important;
     }
 }
 

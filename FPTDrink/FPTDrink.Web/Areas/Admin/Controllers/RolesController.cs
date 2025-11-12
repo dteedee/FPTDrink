@@ -83,6 +83,13 @@ namespace FPTDrink.Web.Areas.Admin.Controllers
 				return RedirectToAction(nameof(Index));
 			}
 
+			// Không cho phép chỉnh sửa chức vụ "Quản lý"
+			if (string.Equals(role.TenChucVu, "Quản lý", StringComparison.OrdinalIgnoreCase))
+			{
+				TempData["ErrorMessage"] = "Không thể chỉnh sửa chức vụ 'Quản lý'. Chức vụ này mặc định có toàn quyền.";
+				return RedirectToAction(nameof(Index));
+			}
+
 			ViewData["Title"] = $"Chỉnh sửa chức vụ - {role.TenChucVu}";
 			var model = new AdminRoleFormViewModel
 			{
@@ -117,6 +124,13 @@ namespace FPTDrink.Web.Areas.Admin.Controllers
 				return RedirectToAction(nameof(Index));
 			}
 
+			// Không cho phép chỉnh sửa chức vụ "Quản lý"
+			if (string.Equals(role.TenChucVu, "Quản lý", StringComparison.OrdinalIgnoreCase))
+			{
+				TempData["ErrorMessage"] = "Không thể chỉnh sửa chức vụ 'Quản lý'. Chức vụ này mặc định có toàn quyền.";
+				return RedirectToAction(nameof(Index));
+			}
+
 			role.TenChucVu = model.Title;
 			role.MoTa = model.Description;
 			role.Status = model.IsActive ? 1 : 0;
@@ -131,6 +145,20 @@ namespace FPTDrink.Web.Areas.Admin.Controllers
 		[PermissionAuthorize("FPTDrink_Xoa", "Quản lý")]
 		public async Task<IActionResult> Delete(int id, string? status, CancellationToken cancellationToken = default)
 		{
+			var role = await _roleService.GetByIdAsync(id, cancellationToken);
+			if (role == null)
+			{
+				TempData["ErrorMessage"] = "Không tìm thấy chức vụ.";
+				return RedirectToAction(nameof(Index), new { status });
+			}
+
+			// Không cho phép xóa chức vụ "Quản lý"
+			if (string.Equals(role.TenChucVu, "Quản lý", StringComparison.OrdinalIgnoreCase))
+			{
+				TempData["ErrorMessage"] = "Không thể xóa chức vụ 'Quản lý'. Chức vụ này mặc định có toàn quyền.";
+				return RedirectToAction(nameof(Index), new { status });
+			}
+
 			var ok = await _roleService.MoveToTrashAsync(id, cancellationToken);
 			TempData[ok ? "SuccessMessage" : "ErrorMessage"] = ok ? "Đã chuyển chức vụ vào thùng rác." : "Không thể chuyển chức vụ.";
 			return RedirectToAction(nameof(Index), new { status });
@@ -141,6 +169,20 @@ namespace FPTDrink.Web.Areas.Admin.Controllers
 		[PermissionAuthorize("FPTDrink_ChinhSua", "Quản lý")]
 		public async Task<IActionResult> Restore(int id, string? status, CancellationToken cancellationToken = default)
 		{
+			var role = await _roleService.GetByIdAsync(id, cancellationToken);
+			if (role == null)
+			{
+				TempData["ErrorMessage"] = "Không tìm thấy chức vụ.";
+				return RedirectToAction(nameof(Index), new { status = status ?? "Trash" });
+			}
+
+			// Không cho phép khôi phục chức vụ "Quản lý" (vì nó không bao giờ bị xóa)
+			if (string.Equals(role.TenChucVu, "Quản lý", StringComparison.OrdinalIgnoreCase))
+			{
+				TempData["ErrorMessage"] = "Chức vụ 'Quản lý' luôn hoạt động và không thể bị xóa.";
+				return RedirectToAction(nameof(Index), new { status = status ?? "Trash" });
+			}
+
 			var ok = await _roleService.UndoAsync(id, cancellationToken);
 			TempData[ok ? "SuccessMessage" : "ErrorMessage"] = ok ? "Đã khôi phục chức vụ." : "Không thể khôi phục chức vụ.";
 			return RedirectToAction(nameof(Index), new { status = status ?? "Trash" });
@@ -155,6 +197,13 @@ namespace FPTDrink.Web.Areas.Admin.Controllers
 			if (role == null)
 			{
 				TempData["ErrorMessage"] = "Không tìm thấy chức vụ.";
+				return RedirectToAction(nameof(Index), new { status });
+			}
+
+			// Không cho phép thay đổi trạng thái chức vụ "Quản lý"
+			if (string.Equals(role.TenChucVu, "Quản lý", StringComparison.OrdinalIgnoreCase))
+			{
+				TempData["ErrorMessage"] = "Không thể thay đổi trạng thái chức vụ 'Quản lý'. Chức vụ này luôn hoạt động.";
 				return RedirectToAction(nameof(Index), new { status });
 			}
 
@@ -197,6 +246,20 @@ namespace FPTDrink.Web.Areas.Admin.Controllers
 		[PermissionAuthorize("FPTDrink_ChinhSua", "Quản lý")]
 		public async Task<IActionResult> TogglePermission(int roleId, string featureCode, CancellationToken cancellationToken = default)
 		{
+			var role = await _roleService.GetByIdAsync(roleId, cancellationToken);
+			if (role == null)
+			{
+				TempData["ErrorMessage"] = "Không tìm thấy chức vụ.";
+				return RedirectToAction(nameof(Index));
+			}
+
+			// Không cho phép thay đổi quyền của chức vụ "Quản lý"
+			if (string.Equals(role.TenChucVu, "Quản lý", StringComparison.OrdinalIgnoreCase))
+			{
+				TempData["ErrorMessage"] = "Không thể thay đổi quyền của chức vụ 'Quản lý'. Chức vụ này mặc định có toàn quyền.";
+				return RedirectToAction(nameof(Permissions), new { id = roleId });
+			}
+
 			var ok = await _roleService.TogglePermissionAsync(roleId, featureCode, cancellationToken);
 			TempData[ok ? "SuccessMessage" : "ErrorMessage"] = ok ? "Đã cập nhật phân quyền." : "Không thể cập nhật phân quyền.";
 			return RedirectToAction(nameof(Permissions), new { id = roleId });

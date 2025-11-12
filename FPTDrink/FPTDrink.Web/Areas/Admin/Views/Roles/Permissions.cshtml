@@ -6,10 +6,17 @@
 }
 
 <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
-    <div>
-        <h2 class="mb-1">Phân quyền: @role?.TenChucVu</h2>
-        <p class="text-muted mb-0">Bật / tắt quyền hạn cho từng chức năng của hệ thống.</p>
-    </div>
+        <div>
+            <h2 class="mb-1">Phân quyền: @role?.TenChucVu</h2>
+            @if (string.Equals(role?.TenChucVu, "Quản lý", StringComparison.OrdinalIgnoreCase))
+            {
+                <p class="text-muted mb-0">Chức vụ "Quản lý" mặc định có toàn quyền. Chỉ xem, không thể chỉnh sửa.</p>
+            }
+            else
+            {
+                <p class="text-muted mb-0">Bật / tắt quyền hạn cho từng chức năng của hệ thống.</p>
+            }
+        </div>
     <a asp-action="Index" class="btn btn-coffee-outline"><i class="bx bx-arrow-back me-2"></i>Danh sách chức vụ</a>
 </div>
 
@@ -35,19 +42,29 @@
             foreach (var feature in Model)
             {
                 var isGranted = granted.Contains(feature.MaChucNang);
+                var isQuanLy = string.Equals(role?.TenChucVu, "Quản lý", StringComparison.OrdinalIgnoreCase);
                 <tr>
                     <td><strong>@feature.MaChucNang</strong></td>
                     <td>@feature.TenChucNang</td>
                     <td>@feature.MoTa</td>
                     <td class="text-end">
-                        <form asp-action="TogglePermission" method="post" class="d-inline">
-                            @Html.AntiForgeryToken()
-                            <input type="hidden" name="roleId" value="@role?.Id" />
-                            <input type="hidden" name="featureCode" value="@feature.MaChucNang" />
-                            <button type="submit" class="btn btn-sm @(isGranted ? "btn-success" : "btn-secondary")">
-                                <i class="bx @(isGranted ? "bx-check-shield" : "bx-shield") me-2"></i>@(isGranted ? "Đang bật" : "Đang tắt")
-                            </button>
-                        </form>
+                        @if (isQuanLy)
+                        {
+                            <span class="btn btn-sm btn-success disabled" style="cursor: not-allowed; opacity: 0.8;">
+                                <i class="bx bx-check-shield me-2"></i>Đang bật (Full quyền)
+                            </span>
+                        }
+                        else
+                        {
+                            <form asp-action="TogglePermission" method="post" class="d-inline">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="roleId" value="@role?.Id" />
+                                <input type="hidden" name="featureCode" value="@feature.MaChucNang" />
+                                <button type="submit" class="btn btn-sm @(isGranted ? "btn-success" : "btn-secondary")">
+                                    <i class="bx @(isGranted ? "bx-check-shield" : "bx-shield") me-2"></i>@(isGranted ? "Đang bật" : "Đang tắt")
+                                </button>
+                            </form>
+                        }
                     </td>
                 </tr>
             }
