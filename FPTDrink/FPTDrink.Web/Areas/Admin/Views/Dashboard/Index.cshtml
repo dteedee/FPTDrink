@@ -72,13 +72,7 @@
 <div class="row g-4 mb-4">
     <div class="col-12 col-xl-8">
         <div class="admin-card h-100">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <div>
-                    <h5 class="mb-1">Doanh thu 7 ngày gần nhất</h5>
-                    <span class="text-muted small">Theo dõi xu hướng doanh thu theo ngày</span>
-                </div>
-                <span class="badge bg-light text-dark">Tổng: @Model.RevenueChart.Sum(x => x.Value).ToString("N0") ₫</span>
-            </div>
+            <h5 class="mb-3"><i class="bx bx-calendar me-2"></i>Doanh thu 7 ngày gần nhất</h5>
             @if (!Model.RevenueChart.Any())
             {
                 <p class="text-muted mb-0">Chưa có dữ liệu doanh thu trong 7 ngày gần nhất.</p>
@@ -356,7 +350,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            // Revenue 7 Days Chart
+            // Revenue 7 Days Chart - Copy y hệt từ Statistics
             @if (Model.RevenueChart.Any())
             {
                 <text>
@@ -368,7 +362,7 @@
                             labels: [@Html.Raw(string.Join(", ", Model.RevenueChart.Select(p => $"'{p.Label}'")))],
                             datasets: [{
                                 label: 'Doanh thu (₫)',
-                                data: [@string.Join(", ", Model.RevenueChart.Select(p => p.Value.ToString(System.Globalization.CultureInfo.InvariantCulture)))],
+                                data: [@string.Join(", ", Model.RevenueChart.Select(p => p.Value.ToString()))],
                                 borderColor: '#d4a574',
                                 backgroundColor: 'rgba(212, 165, 116, 0.1)',
                                 borderWidth: 3,
@@ -397,16 +391,8 @@
                                     beginAtZero: true,
                                     ticks: {
                                         callback: function(value) {
-                                            // Format số lớn với đơn vị K (nghìn) hoặc M (triệu)
-                                            if (value >= 1000000) {
-                                                return (value / 1000000).toFixed(1) + 'M ₫';
-                                            } else if (value >= 1000) {
-                                                return (value / 1000).toFixed(0) + 'K ₫';
-                                            } else {
-                                                return new Intl.NumberFormat('vi-VN').format(value) + ' ₫';
-                                            }
-                                        },
-                                        maxTicksLimit: 8
+                                            return new Intl.NumberFormat('vi-VN').format(value) + ' ₫';
+                                        }
                                     }
                                 }
                             }
