@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using FPTDrink.Core.Interfaces.Services;
 using FPTDrink.Core.Models;
 using FPTDrink.Web.Areas.Admin.ViewModels;
+using FPTDrink.Web.Filters;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -34,6 +35,7 @@ namespace FPTDrink.Web.Areas.Admin.Controllers
 		}
 
 		[HttpGet]
+		[PermissionAuthorize("FPTDrink_XemDanhSach", "Quản lý", "Kế toán", "Thu ngân")]
 		public async Task<IActionResult> Index(string status = "Index", string? search = null, CancellationToken cancellationToken = default)
 		{
 			ViewData["Title"] = "Quản lý sản phẩm";
@@ -61,6 +63,7 @@ namespace FPTDrink.Web.Areas.Admin.Controllers
 		}
 
 		[HttpGet]
+		[PermissionAuthorize("FPTDrink_ThemMoi", "Quản lý")]
 		public async Task<IActionResult> Create(CancellationToken cancellationToken = default)
 		{
 			ViewData["Title"] = "Thêm sản phẩm";
@@ -77,6 +80,7 @@ namespace FPTDrink.Web.Areas.Admin.Controllers
 
 		[HttpPost]
 		[ValidateAntiForgeryToken]
+		[PermissionAuthorize("FPTDrink_ThemMoi", "Quản lý")]
 		public async Task<IActionResult> Create(AdminProductFormViewModel model, CancellationToken cancellationToken = default)
 		{
 			if (!ModelState.IsValid)
@@ -120,6 +124,7 @@ namespace FPTDrink.Web.Areas.Admin.Controllers
 		}
 
 		[HttpGet]
+		[PermissionAuthorize("FPTDrink_XemChiTiet", "Quản lý", "Kế toán", "Thu ngân")]
 		public async Task<IActionResult> Edit(string id, CancellationToken cancellationToken = default)
 		{
 			var product = await _productService.GetByIdAsync(id, cancellationToken);
@@ -154,6 +159,7 @@ namespace FPTDrink.Web.Areas.Admin.Controllers
 
 		[HttpPost]
 		[ValidateAntiForgeryToken]
+		[PermissionAuthorize("FPTDrink_ChinhSua", "Quản lý")]
 		public async Task<IActionResult> Edit(string id, AdminProductFormViewModel model, CancellationToken cancellationToken = default)
 		{
 			if (id != model.Id)
@@ -213,6 +219,7 @@ namespace FPTDrink.Web.Areas.Admin.Controllers
 
 		[HttpPost]
 		[ValidateAntiForgeryToken]
+		[PermissionAuthorize("FPTDrink_ChinhSua", "Quản lý")]
 		public async Task<IActionResult> ToggleActive(string id, string? status, CancellationToken cancellationToken = default)
 		{
 			var (_, isActive) = await _productService.ToggleActiveAsync(id, cancellationToken);
@@ -231,6 +238,7 @@ namespace FPTDrink.Web.Areas.Admin.Controllers
 
 		[HttpPost]
 		[ValidateAntiForgeryToken]
+		[PermissionAuthorize("FPTDrink_Xoa", "Quản lý")]
 		public async Task<IActionResult> Delete(string id, string? status, CancellationToken cancellationToken = default)
 		{
 			var ok = await _productService.MoveToTrashAsync(id, cancellationToken);
@@ -242,6 +250,7 @@ namespace FPTDrink.Web.Areas.Admin.Controllers
 
 		[HttpPost]
 		[ValidateAntiForgeryToken]
+		[PermissionAuthorize("FPTDrink_ChinhSua", "Quản lý")]
 		public async Task<IActionResult> Restore(string id, string? status, CancellationToken cancellationToken = default)
 		{
 			var ok = await _productService.UndoAsync(id, cancellationToken);

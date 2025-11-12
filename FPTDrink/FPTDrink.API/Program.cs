@@ -65,6 +65,7 @@ builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
 builder.Services.AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>();
 builder.Services.AddScoped<IAuthorizationHandler, PermissionHandler>();
+builder.Services.AddSingleton<IAuthorizationMiddlewareResultHandler, PermissionAuthorizationMiddlewareResultHandler>();
 
 var app = builder.Build();
 

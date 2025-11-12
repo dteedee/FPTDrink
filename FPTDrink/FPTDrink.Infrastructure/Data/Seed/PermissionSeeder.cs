@@ -53,9 +53,19 @@ namespace FPTDrink.Infrastructure.Data.Seed
 
 		private static async Task EnsurePermissionsAsync(FptdrinkContext db, int roleId, IEnumerable<string> featureCodes, CancellationToken ct)
 		{
-			var existing = await db.PhanQuyens.Where(p => p.IdchucVu == roleId).Select(p => p.MaChucNang).ToListAsync(ct);
-			var toAdd = featureCodes.Except(existing).ToList();
-			if (toAdd.Count == 0) return;
+			var allowedCodes = featureCodes.ToHashSet();
+			var existing = await db.PhanQuyens.Where(p => p.IdchucVu == roleId).ToListAsync(ct);
+			
+			// Xóa các quyền không được phép
+			var toRemove = existing.Where(p => !allowedCodes.Contains(p.MaChucNang)).ToList();
+			if (toRemove.Count > 0)
+			{
+				db.PhanQuyens.RemoveRange(toRemove);
+			}
+			
+			// Thêm các quyền còn thiếu
+			var existingCodes = existing.Select(p => p.MaChucNang).ToHashSet();
+			var toAdd = allowedCodes.Except(existingCodes).ToList();
 			foreach (var code in toAdd)
 			{
 				db.PhanQuyens.Add(new PhanQuyen
@@ -64,7 +74,11 @@ namespace FPTDrink.Infrastructure.Data.Seed
 					MaChucNang = code
 				});
 			}
-			await db.SaveChangesAsync(ct);
+			
+			if (toRemove.Count > 0 || toAdd.Count > 0)
+			{
+				await db.SaveChangesAsync(ct);
+			}
 		}
 	}
 }

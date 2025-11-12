@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using FPTDrink.Core.Interfaces.Services;
 using FPTDrink.Web.Areas.Admin.ViewModels;
+using FPTDrink.Web.Filters;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FPTDrink.Web.Areas.Admin.Controllers
@@ -19,6 +20,7 @@ namespace FPTDrink.Web.Areas.Admin.Controllers
 		}
 
 		[HttpGet]
+		[PermissionAuthorize("FPTDrink_XemDanhSach", "Quản lý", "Kế toán", "Thu ngân")]
 		public async Task<IActionResult> Index(string? search, CancellationToken cancellationToken)
 		{
 			ViewData["Title"] = "Quản lý đơn hàng";
@@ -45,6 +47,7 @@ namespace FPTDrink.Web.Areas.Admin.Controllers
 		}
 
 		[HttpGet]
+		[PermissionAuthorize("FPTDrink_XemChiTiet", "Quản lý", "Kế toán", "Thu ngân")]
 		public async Task<IActionResult> Details(string id, CancellationToken cancellationToken)
 		{
 			var order = await _orderService.GetByIdAsync(id, cancellationToken);
@@ -83,6 +86,7 @@ namespace FPTDrink.Web.Areas.Admin.Controllers
 
 		[HttpPost]
 		[ValidateAntiForgeryToken]
+		[PermissionAuthorize("FPTDrink_ChinhSua", "Quản lý", "Thu ngân")]
 		public async Task<IActionResult> UpdateStatus(AdminOrderStatusUpdateViewModel model, CancellationToken cancellationToken)
 		{
 			if (!ModelState.IsValid)

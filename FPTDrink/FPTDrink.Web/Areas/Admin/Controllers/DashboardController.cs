@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text.Json;
 using FPTDrink.Core.Interfaces.Services;
 using FPTDrink.Web.Areas.Admin.ViewModels;
+using FPTDrink.Web.Filters;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FPTDrink.Web.Areas.Admin.Controllers
@@ -19,6 +20,7 @@ namespace FPTDrink.Web.Areas.Admin.Controllers
 		}
 
 		[HttpGet]
+		[PermissionAuthorize("FPTDrink_ThongKe", "Quản lý", "Kế toán")]
 		public async Task<IActionResult> Index(CancellationToken cancellationToken)
 		{
 			ViewData["Title"] = "Bảng điều khiển";

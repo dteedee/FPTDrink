@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using FPTDrink.Core.Interfaces.Services;
 using FPTDrink.Core.Models;
 using FPTDrink.Web.Areas.Admin.ViewModels;
+using FPTDrink.Web.Filters;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
@@ -22,6 +23,7 @@ namespace FPTDrink.Web.Areas.Admin.Controllers
 		}
 
 		[HttpGet]
+		[PermissionAuthorize("FPTDrink_XemDanhSach", "Quản lý", "Kế toán")]
 		public async Task<IActionResult> Index(string status = "Index", string? search = null, CancellationToken cancellationToken = default)
 		{
 			ViewData["Title"] = "Nhân viên";
@@ -46,6 +48,7 @@ namespace FPTDrink.Web.Areas.Admin.Controllers
 		}
 
 		[HttpGet]
+		[PermissionAuthorize("FPTDrink_ThemMoi", "Quản lý")]
 		public async Task<IActionResult> Create(CancellationToken cancellationToken)
 		{
 			ViewData["Title"] = "Thêm nhân viên";
@@ -58,6 +61,7 @@ namespace FPTDrink.Web.Areas.Admin.Controllers
 
 		[HttpPost]
 		[ValidateAntiForgeryToken]
+		[PermissionAuthorize("FPTDrink_ThemMoi", "Quản lý")]
 		public async Task<IActionResult> Create(AdminStaffFormViewModel model, CancellationToken cancellationToken)
 		{
 			if (!ModelState.IsValid)
@@ -98,6 +102,7 @@ namespace FPTDrink.Web.Areas.Admin.Controllers
 		}
 
 		[HttpGet]
+		[PermissionAuthorize("FPTDrink_XemChiTiet", "Quản lý", "Kế toán")]
 		public async Task<IActionResult> Edit(string id, CancellationToken cancellationToken)
 		{
 			var nv = await _staffService.GetByIdAsync(id, cancellationToken);
@@ -128,6 +133,7 @@ namespace FPTDrink.Web.Areas.Admin.Controllers
 
 		[HttpPost]
 		[ValidateAntiForgeryToken]
+		[PermissionAuthorize("FPTDrink_ChinhSua", "Quản lý")]
 		public async Task<IActionResult> Edit(string id, AdminStaffFormViewModel model, CancellationToken cancellationToken)
 		{
 			if (id != model.Id)
@@ -168,6 +174,7 @@ namespace FPTDrink.Web.Areas.Admin.Controllers
 
 		[HttpPost]
 		[ValidateAntiForgeryToken]
+		[PermissionAuthorize("FPTDrink_ChinhSua", "Quản lý")]
 		public async Task<IActionResult> ResetPassword(string id, string? status, CancellationToken cancellationToken)
 		{
 			var newPassword = Guid.NewGuid().ToString("N").Substring(0, 8);
@@ -180,6 +187,7 @@ namespace FPTDrink.Web.Areas.Admin.Controllers
 
 		[HttpPost]
 		[ValidateAntiForgeryToken]
+		[PermissionAuthorize("FPTDrink_Xoa", "Quản lý")]
 		public async Task<IActionResult> Delete(string id, string? status, CancellationToken cancellationToken)
 		{
 			var ok = await _staffService.MoveToTrashAsync(id, cancellationToken);
@@ -189,6 +197,7 @@ namespace FPTDrink.Web.Areas.Admin.Controllers
 
 		[HttpPost]
 		[ValidateAntiForgeryToken]
+		[PermissionAuthorize("FPTDrink_ChinhSua", "Quản lý")]
 		public async Task<IActionResult> Restore(string id, string? status, CancellationToken cancellationToken)
 		{
 			var ok = await _staffService.UndoAsync(id, cancellationToken);
