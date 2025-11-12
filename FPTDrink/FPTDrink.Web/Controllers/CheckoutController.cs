@@ -100,11 +100,13 @@ namespace FPTDrink.Web.Controllers
 						return Redirect(init.PaymentUrl);
 					}
 				}
+				TempData["PaymentMessage"] = "Không thể chuyển đến cổng thanh toán VNPay. Vui lòng thử lại hoặc chọn phương thức khác.";
+				ViewBag.Cart = cart;
+				return View(model);
 			}
 
-			TempData["PaymentMessage"] = "Không thể chuyển đến cổng thanh toán VNPay. Vui lòng thử lại hoặc chọn phương thức khác.";
-			ViewBag.Cart = cart;
-			return View(model);
+			// Redirect to success page for non-VNPay payments (in-store or COD)
+			return RedirectToAction("Success", new { orderCode = orderCode });
 		}
 
 		[HttpGet]

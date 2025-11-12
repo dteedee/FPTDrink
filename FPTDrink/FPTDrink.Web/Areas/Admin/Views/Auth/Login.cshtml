@@ -61,78 +61,351 @@
 
 @section Styles{
     <style>
+        body.admin-body {
+            background: linear-gradient(135deg, #2d1b0e 0%, #1a0f08 25%, #0f0804 50%, #1a0f08 75%, #2d1b0e 100%);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+            min-height: 100vh;
+            position: relative;
+            overflow: hidden;
+        }
+
+        body.admin-body::before {
+            content: "";
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(212, 165, 116, 0.1) 0%, transparent 70%);
+            animation: rotate 20s linear infinite;
+            pointer-events: none;
+        }
+
+        body.admin-body::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 30%, rgba(212, 165, 116, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(139, 90, 43, 0.06) 0%, transparent 50%);
+            animation: pulse 8s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        @@keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        @@keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @@keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        @@keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @@keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        @@keyframes shimmer {
+            0% { background-position: -1000px 0; }
+            100% { background-position: 1000px 0; }
+        }
+
         .admin-login-section {
             width: 100%;
-            max-width: 420px;
+            max-width: 450px;
+            position: relative;
+            z-index: 1;
+            animation: slideInUp 0.6s ease-out;
         }
 
         .admin-login-card {
-            background: #ffffff;
-            padding: 2.5rem;
-            border-radius: var(--border-radius-lg);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.25);
+            background: rgba(255, 255, 255, 0.98);
+            padding: 3rem;
+            border-radius: 24px;
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 
+                0 20px 60px rgba(0, 0, 0, 0.3),
+                0 0 0 1px rgba(255, 255, 255, 0.1) inset,
+                0 1px 0 rgba(255, 255, 255, 0.2) inset;
             position: relative;
             overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .admin-login-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 
+                0 25px 70px rgba(0, 0, 0, 0.35),
+                0 0 0 1px rgba(255, 255, 255, 0.1) inset,
+                0 1px 0 rgba(255, 255, 255, 0.2) inset;
         }
 
         .admin-login-card::before {
             content: "";
             position: absolute;
-            inset: -40%;
-            background: radial-gradient(circle at top, rgba(212, 165, 116, 0.18), transparent 60%);
-            opacity: 0.85;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                45deg,
+                transparent 30%,
+                rgba(212, 165, 116, 0.1) 50%,
+                transparent 70%
+            );
+            animation: shimmer 3s infinite;
             pointer-events: none;
         }
 
         .admin-login-card::after {
             content: "";
             position: absolute;
-            inset: -20%;
-            background: linear-gradient(140deg, rgba(212, 165, 116, 0.08), rgba(26, 15, 8, 0.08));
-            opacity: 0.9;
+            inset: 0;
+            background: 
+                radial-gradient(circle at 20% 20%, rgba(212, 165, 116, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(139, 90, 43, 0.06) 0%, transparent 50%);
+            border-radius: 24px;
             z-index: -1;
+            pointer-events: none;
         }
 
-        .admin-login-card .form-control {
-            padding: 0.75rem 1rem;
+        .login-header {
+            position: relative;
+            z-index: 1;
         }
 
         .login-header .login-logo {
-            width: 72px;
-            height: 72px;
+            width: 90px;
+            height: 90px;
             border-radius: 50%;
-            box-shadow: 0 12px 24px rgba(15, 8, 4, 0.25);
+            box-shadow: 
+                0 15px 35px rgba(15, 8, 4, 0.3),
+                0 5px 15px rgba(212, 165, 116, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            animation: float 3s ease-in-out infinite;
+            border: 3px solid rgba(212, 165, 116, 0.3);
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(240, 200, 150, 0.9));
+        }
+
+        .login-header .login-logo:hover {
+            transform: scale(1.1) rotate(5deg);
+            box-shadow: 
+                0 20px 40px rgba(15, 8, 4, 0.4),
+                0 8px 20px rgba(212, 165, 116, 0.3);
+        }
+
+        .login-header h1 {
+            background: linear-gradient(135deg, #6b4f33 0%, #8b6f47 50%, #6b4f33 100%);
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradientShift 3s ease infinite;
+            letter-spacing: 2px;
+            text-shadow: 0 2px 10px rgba(212, 165, 116, 0.3);
         }
 
         .text-coffee {
             color: #6b4f33 !important;
         }
 
+        .admin-login-form {
+            position: relative;
+            z-index: 1;
+        }
+
+        .admin-login-card .form-control {
+            padding: 0.85rem 1.1rem;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+        }
+
+        .login-input-group {
+            position: relative;
+            margin-bottom: 0.5rem;
+        }
+
         .login-input-group .input-group-text {
-            background: rgba(212, 165, 116, 0.15);
-            border: 1px solid rgba(212, 165, 116, 0.35);
+            background: linear-gradient(135deg, rgba(212, 165, 116, 0.2), rgba(240, 200, 150, 0.15));
+            border: 2px solid rgba(212, 165, 116, 0.4);
             color: #6b4f33;
+            border-radius: 12px 0 0 12px;
+            padding: 0.85rem 1.1rem;
+            transition: all 0.3s ease;
+            font-size: 1.1rem;
+        }
+
+        .login-input-group:focus-within .input-group-text {
+            background: linear-gradient(135deg, rgba(212, 165, 116, 0.3), rgba(240, 200, 150, 0.25));
+            border-color: #d4a574;
+            box-shadow: 0 0 0 0.2rem rgba(212, 165, 116, 0.2);
+            transform: scale(1.02);
         }
 
         .login-input-group .form-control {
-            border: 1px solid rgba(212, 165, 116, 0.35);
+            border: 2px solid rgba(212, 165, 116, 0.4);
+            border-left: none;
+            border-radius: 0 12px 12px 0;
+            transition: all 0.3s ease;
         }
 
         .login-input-group .form-control:focus {
             border-color: #d4a574;
-            box-shadow: 0 0 0 0.2rem rgba(212, 165, 116, 0.25);
+            box-shadow: 
+                0 0 0 0.2rem rgba(212, 165, 116, 0.25),
+                inset 0 2px 4px rgba(212, 165, 116, 0.1);
+            transform: translateX(-2px);
         }
 
         .toggle-password {
-            border-color: rgba(212, 165, 116, 0.35);
+            border: 2px solid rgba(212, 165, 116, 0.4);
+            border-left: none;
+            border-radius: 0 12px 12px 0;
             color: #6b4f33;
+            background: rgba(212, 165, 116, 0.1);
+            transition: all 0.3s ease;
+            padding: 0.85rem 1rem;
         }
 
         .toggle-password:hover,
         .toggle-password:focus {
-            background-color: rgba(212, 165, 116, 0.15);
+            background: linear-gradient(135deg, rgba(212, 165, 116, 0.25), rgba(240, 200, 150, 0.2));
             color: #2d1b0e;
+            border-color: #d4a574;
+            transform: scale(1.05);
+            box-shadow: 0 0 0 0.2rem rgba(212, 165, 116, 0.2);
+        }
+
+        .form-check-input:checked {
+            background-color: #d4a574;
+            border-color: #d4a574;
+        }
+
+        .form-check-input:focus {
+            border-color: #d4a574;
+            box-shadow: 0 0 0 0.2rem rgba(212, 165, 116, 0.25);
+        }
+
+        .btn-coffee {
+            background: linear-gradient(135deg, #d4a574 0%, #8b6f47 50%, #d4a574 100%);
+            background-size: 200% 200%;
+            border: none;
+            color: #ffffff;
+            font-weight: 600;
+            padding: 0.85rem 2rem;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            box-shadow: 
+                0 4px 15px rgba(212, 165, 116, 0.4),
+                0 2px 5px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-coffee::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .btn-coffee:hover {
+            background-position: 100% 0;
+            transform: translateY(-2px);
+            box-shadow: 
+                0 6px 20px rgba(212, 165, 116, 0.5),
+                0 3px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn-coffee:hover::before {
+            left: 100%;
+        }
+
+        .btn-coffee:active {
+            transform: translateY(0);
+            box-shadow: 
+                0 2px 10px rgba(212, 165, 116, 0.4),
+                0 1px 3px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-coffee i {
+            transition: transform 0.3s ease;
+        }
+
+        .btn-coffee:hover i {
+            transform: translateX(3px);
+        }
+
+        a.text-coffee {
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        a.text-coffee::after {
+            content: "";
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #d4a574, #8b6f47);
+            transition: width 0.3s ease;
+        }
+
+        a.text-coffee:hover {
+            color: #8b6f47 !important;
+            transform: translateX(3px);
+        }
+
+        a.text-coffee:hover::after {
+            width: 100%;
+        }
+
+        .alert-danger {
+            background: linear-gradient(135deg, rgba(220, 53, 69, 0.1), rgba(220, 53, 69, 0.05));
+            border: 2px solid rgba(220, 53, 69, 0.3);
+            border-radius: 12px;
+            animation: slideInUp 0.4s ease-out;
+        }
+
+        @@media (max-width: 576px) {
+            .admin-login-card {
+                padding: 2rem 1.5rem;
+                border-radius: 20px;
+            }
+
+            .login-header .login-logo {
+                width: 75px;
+                height: 75px;
+            }
         }
     </style>
 }

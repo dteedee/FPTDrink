@@ -145,20 +145,32 @@
 @section Scripts {
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <script>
+        // Data from server
+        var revenueMonthData = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.RevenueMonth.Select(p => new { Label = p.Label, Value = p.Value })));
+        var revenueYearData = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.RevenueYear.Select(p => new { Label = p.Label, Value = p.Value })));
+        var topProductsData = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.TopProducts.Select(p => new { Name = p.Name, Revenue = p.Revenue })));
+        var visitorData = {
+            homNay: @FormatVisitor(visitor.HomNay),
+            homQua: @FormatVisitor(visitor.HomQua),
+            tuanNay: @FormatVisitor(visitor.TuanNay),
+            tuanTruoc: @FormatVisitor(visitor.TuanTruoc),
+            thangNay: @FormatVisitor(visitor.ThangNay),
+            thangTruoc: @FormatVisitor(visitor.ThangTruoc),
+            online: @FormatVisitor(visitor.VisitorsOnline)
+        };
+
         document.addEventListener('DOMContentLoaded', function () {
             // Revenue Month Chart
-            @if (Model.RevenueMonth.Any())
-            {
-                <text>
-                const revenueMonthCtx = document.getElementById('revenueMonthChart');
+            if (revenueMonthData && revenueMonthData.length > 0) {
+                var revenueMonthCtx = document.getElementById('revenueMonthChart');
                 if (revenueMonthCtx) {
                     new Chart(revenueMonthCtx, {
                         type: 'line',
                         data: {
-                            labels: [@Html.Raw(string.Join(", ", Model.RevenueMonth.Select(p => $"'{p.Label}'")))],
+                            labels: revenueMonthData.map(function(p) { return p.Label; }),
                             datasets: [{
                                 label: 'Doanh thu (₫)',
-                                data: [@string.Join(", ", Model.RevenueMonth.Select(p => p.Value.ToString()))],
+                                data: revenueMonthData.map(function(p) { return p.Value; }),
                                 borderColor: '#d4a574',
                                 backgroundColor: 'rgba(212, 165, 116, 0.1)',
                                 borderWidth: 3,
@@ -195,22 +207,19 @@
                         }
                     });
                 }
-                </text>
             }
 
             // Revenue Year Chart
-            @if (Model.RevenueYear.Any())
-            {
-                <text>
-                const revenueYearCtx = document.getElementById('revenueYearChart');
+            if (revenueYearData && revenueYearData.length > 0) {
+                var revenueYearCtx = document.getElementById('revenueYearChart');
                 if (revenueYearCtx) {
                     new Chart(revenueYearCtx, {
                         type: 'bar',
                         data: {
-                            labels: [@Html.Raw(string.Join(", ", Model.RevenueYear.Select(p => $"'{p.Label}'")))],
+                            labels: revenueYearData.map(function(p) { return p.Label; }),
                             datasets: [{
                                 label: 'Doanh thu (₫)',
-                                data: [@string.Join(", ", Model.RevenueYear.Select(p => p.Value.ToString()))],
+                                data: revenueYearData.map(function(p) { return p.Value; }),
                                 backgroundColor: 'rgba(212, 165, 116, 0.8)',
                                 borderColor: '#d4a574',
                                 borderWidth: 2
@@ -245,21 +254,18 @@
                         }
                     });
                 }
-                </text>
             }
 
             // Top Products Chart
-            @if (Model.TopProducts.Any())
-            {
-                <text>
-                const topProductsCtx = document.getElementById('topProductsChart');
+            if (topProductsData && topProductsData.length > 0) {
+                var topProductsCtx = document.getElementById('topProductsChart');
                 if (topProductsCtx) {
                     new Chart(topProductsCtx, {
                         type: 'doughnut',
                         data: {
-                            labels: [@Html.Raw(string.Join(", ", Model.TopProducts.Select(p => $"'{p.Name}'")))],
+                            labels: topProductsData.map(function(p) { return p.Name; }),
                             datasets: [{
-                                data: [@string.Join(", ", Model.TopProducts.Select(p => p.Revenue.ToString()))],
+                                data: topProductsData.map(function(p) { return p.Revenue; }),
                                 backgroundColor: [
                                     'rgba(212, 165, 116, 0.8)',
                                     'rgba(240, 200, 150, 0.8)',
@@ -294,8 +300,8 @@
                                 tooltip: {
                                     callbacks: {
                                         label: function(context) {
-                                            const label = context.label || '';
-                                            const value = new Intl.NumberFormat('vi-VN').format(context.parsed);
+                                            var label = context.label || '';
+                                            var value = new Intl.NumberFormat('vi-VN').format(context.parsed);
                                             return label + ': ' + value + ' ₫';
                                         }
                                     }
@@ -304,19 +310,18 @@
                         }
                     });
                 }
-                </text>
             }
 
             // Visitor Chart
-            const visitorCtx = document.getElementById('visitorChart');
+            var visitorCtx = document.getElementById('visitorChart');
             if (visitorCtx) {
-                const homNay = parseInt('@FormatVisitor(visitor.HomNay)'.replace(/,/g, '')) || 0;
-                const homQua = parseInt('@FormatVisitor(visitor.HomQua)'.replace(/,/g, '')) || 0;
-                const tuanNay = parseInt('@FormatVisitor(visitor.TuanNay)'.replace(/,/g, '')) || 0;
-                const tuanTruoc = parseInt('@FormatVisitor(visitor.TuanTruoc)'.replace(/,/g, '')) || 0;
-                const thangNay = parseInt('@FormatVisitor(visitor.ThangNay)'.replace(/,/g, '')) || 0;
-                const thangTruoc = parseInt('@FormatVisitor(visitor.ThangTruoc)'.replace(/,/g, '')) || 0;
-                const online = parseInt('@FormatVisitor(visitor.VisitorsOnline)'.replace(/,/g, '')) || 0;
+                var homNay = parseInt(visitorData.homNay.toString().replace(/,/g, '')) || 0;
+                var homQua = parseInt(visitorData.homQua.toString().replace(/,/g, '')) || 0;
+                var tuanNay = parseInt(visitorData.tuanNay.toString().replace(/,/g, '')) || 0;
+                var tuanTruoc = parseInt(visitorData.tuanTruoc.toString().replace(/,/g, '')) || 0;
+                var thangNay = parseInt(visitorData.thangNay.toString().replace(/,/g, '')) || 0;
+                var thangTruoc = parseInt(visitorData.thangTruoc.toString().replace(/,/g, '')) || 0;
+                var online = parseInt(visitorData.online.toString().replace(/,/g, '')) || 0;
 
                 new Chart(visitorCtx, {
                     type: 'bar',

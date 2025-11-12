@@ -703,8 +703,6 @@
                 .map((input) => new FieldValidator(input));
 
             form.addEventListener('submit', (e) => {
-                e.preventDefault();
-
                 let isValid = true;
                 let firstInvalid = null;
 
@@ -718,17 +716,19 @@
                 });
 
                 if (!isValid) {
+                    e.preventDefault();
                     firstInvalid?.scrollIntoView({ behavior: 'smooth', block: 'center' });
                     setTimeout(() => firstInvalid?.focus(), 400);
                     return;
                 }
 
+                // Only prevent default if we're going to handle submission manually
+                // Otherwise, let the form submit naturally
                 submitBtn?.classList.add('loading');
                 if (submitBtn) {
                     submitBtn.disabled = true;
+                    submitBtn.innerHTML = '<i class="bx bx-loader-alt bx-spin me-2"></i>Đang xử lý...';
                 }
-
-                setTimeout(() => form.submit(), 300);
             });
         })();
     </script>
