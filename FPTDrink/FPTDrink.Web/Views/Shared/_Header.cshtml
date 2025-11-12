@@ -24,7 +24,6 @@
               <i class="bx bx-home me-1"></i>Trang chủ
             </a>
           </li>
-          @await Component.InvokeAsync("CategoriesMenu")
           <li class="nav-item">
             <a class="nav-link @(string.Equals(currentController, "Products", StringComparison.OrdinalIgnoreCase) ? "active" : "")" 
                asp-controller="Products" asp-action="Index">
@@ -41,6 +40,12 @@
             <a class="nav-link @(string.Equals(currentController, "ShoppingCart", StringComparison.OrdinalIgnoreCase) ? "active" : "")" 
                asp-controller="ShoppingCart" asp-action="Index">
               <i class="bx bx-cart me-1"></i>Giỏ hàng
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link @(string.Equals(currentController, "TraCuuDonHang", StringComparison.OrdinalIgnoreCase) ? "active" : "")"
+               asp-controller="TraCuuDonHang" asp-action="Index">
+              <i class="bx bx-search-alt me-1"></i>Tra cứu
             </a>
           </li>
           <li class="nav-item">

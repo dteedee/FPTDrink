@@ -14,7 +14,6 @@ namespace FPTDrink.Core.Interfaces.Services
 		public string SoDienThoai { get; set; } = string.Empty;
 		public string DiaChi { get; set; } = string.Empty;
 		public string? Email { get; set; }
-		public string CCCD { get; set; } = string.Empty;
 		public int TypePayment { get; set; }
 		public List<CreateOrderItemRequest> Items { get; set; } = new List<CreateOrderItemRequest>();
 	}
@@ -26,7 +25,7 @@ namespace FPTDrink.Core.Interfaces.Services
 
 	public interface IPaymentService
 	{
-		string CreateVnPayUrl(HoaDon order, int typePaymentVN, string returnUrl, string vnpUrl, string tmnCode, string hashSecret);
+		string CreateVnPayUrl(HoaDon order, int typePaymentVN, string returnUrl, string vnpUrl, string tmnCode, string hashSecret, string clientIp);
 	}
 }
 

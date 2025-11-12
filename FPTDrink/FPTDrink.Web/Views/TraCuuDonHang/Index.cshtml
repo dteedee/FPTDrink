@@ -1,53 +1,293 @@
+@using System.Linq
+@model FPTDrink.Web.ViewModels.OrderLookupViewModel
 @{
 	ViewData["Title"] = "Tra cứu đơn hàng";
-	var by = (string?)ViewBag.By;
 }
 
-<h1 class="h4 mb-3">Tra cứu đơn hàng</h1>
+<section class="products-section order-lookup-section">
+	<div class="section-header">
+		<h2><i class="bx bx-search-alt me-2"></i>Tra cứu đơn hàng</h2>
+		<p class="mb-0">Nhập mã đơn hàng hoặc thông tin khách hàng để xem chi tiết đơn đã đặt.</p>
+	</div>
 
-<div class="row g-4">
-	<div class="col-12 col-lg-6">
-		<div class="card shadow-sm">
-			<div class="card-header">Theo mã đơn</div>
-			<div class="card-body">
-				<form method="get" asp-action="ByCode">
-					<div class="input-group">
-						<input class="form-control" name="code" placeholder="Nhập mã đơn (VD: HD123456)" />
-						<button class="btn btn-primary" type="submit">Tra cứu</button>
+	<div class="row g-4 mb-4">
+		<div class="col-12 col-lg-6">
+			<div class="lookup-card h-100">
+				<h5 class="lookup-title"><i class="bx bx-hash me-2"></i>Tra cứu theo mã đơn</h5>
+				<form method="get" asp-action="Index">
+					<div class="mb-3">
+						<label class="form-label">Mã đơn hàng</label>
+						<input class="form-control lookup-input" name="code" value="@Model.OrderCode" placeholder="Ví dụ: 251112GRMBHQS7" />
 					</div>
+					<button class="btn btn-primary w-100" type="submit">
+						<i class="bx bx-search me-1"></i>Tra cứu
+					</button>
 				</form>
 			</div>
 		</div>
-	</div>
-	<div class="col-12 col-lg-6">
-		<div class="card shadow-sm">
-			<div class="card-header">Theo khách hàng</div>
-			<div class="card-body">
-				<form method="get" asp-action="ByCustomer">
-					<div class="row g-2">
-						<div class="col-md-6">
-							<input class="form-control" name="tenKhachHang" placeholder="Họ tên" />
-						</div>
-						<div class="col-md-6">
-							<input class="form-control" name="cccd" placeholder="CCCD" />
-						</div>
+		<div class="col-12 col-lg-6">
+			<div class="lookup-card h-100">
+				<h5 class="lookup-title"><i class="bx bx-user-pin me-2"></i>Tra cứu theo khách hàng</h5>
+				<form method="get" asp-action="Index">
+					<div class="mb-3">
+						<label class="form-label">Họ tên khách hàng</label>
+						<input class="form-control lookup-input" name="tenKhachHang" value="@Model.TenKhachHang" placeholder="Nguyễn Văn A" />
 					</div>
-					<div class="text-end mt-2">
-						<button class="btn btn-primary" type="submit">Tra cứu</button>
+					<div class="mb-3">
+						<label class="form-label">Số điện thoại</label>
+						<input class="form-control lookup-input" name="soDienThoai" value="@Model.SoDienThoai" placeholder="0912345678" />
 					</div>
+					<button class="btn btn-outline-primary w-100" type="submit">
+						<i class="bx bx-search me-1"></i>Tra cứu
+					</button>
 				</form>
+				<small class="text-muted d-block mt-2">* Cần nhập cả họ tên và số điện thoại để tra cứu.</small>
 			</div>
 		</div>
 	</div>
-</div>
 
-@if (Model != null)
-{
-	<div class="card shadow-sm mt-4">
-		<div class="card-header">Kết quả</div>
-		<div class="card-body">
-			<pre class="mb-0 bg-light p-3 rounded small">@System.Text.Json.JsonSerializer.Serialize(Model, new System.Text.Json.JsonSerializerOptions { WriteIndented = true })</pre>
+	@if (Model.Searched)
+	{
+		@if (Model.Results.Any())
+		{
+			<div class="results-heading mb-3">
+				@if (Model.SearchedByCode)
+				{
+					<span>Kết quả tra cứu theo mã đơn <strong class="text-highlight">#@Model.OrderCode</strong></span>
+				}
+				else
+				{
+					<span>Kết quả tra cứu cho khách hàng <strong class="text-highlight">@Model.TenKhachHang</strong> - <strong class="text-highlight">@Model.SoDienThoai</strong></span>
+				}
+			</div>
+
+			@foreach (var order in Model.Results)
+			{
+				<div class="order-result-card shadow-sm">
+					<div class="order-result-header">
+						<div>
+							<div class="order-code">Đơn hàng #@order.MaHoaDon</div>
+							<div class="order-meta text-muted">Ngày đặt: @order.CreatedDate.ToString("dd/MM/yyyy HH:mm")</div>
+						</div>
+						<div class="text-end ms-auto">
+							<div class="badge bg-gradient">@order.PaymentMethodName</div>
+							<div class="text-muted small">Trạng thái: <strong>@order.TrangThaiHienThi</strong></div>
+						</div>
+					</div>
+
+					<div class="row g-3 mt-1">
+						<div class="col-md-6">
+							<div class="order-info-card">
+								<h6><i class="bx bx-user me-2"></i>Khách hàng</h6>
+								<ul class="info-list">
+									<li><span>Họ tên:</span> <strong>@order.TenKhachHang</strong></li>
+									<li><span>Số điện thoại:</span> <strong>@order.SoDienThoai</strong></li>
+									<li><span>Địa chỉ:</span> <strong>@order.DiaChi</strong></li>
+								</ul>
+							</div>
+						</div>
+						<div class="col-md-6">
+							<div class="order-info-card">
+								<h6><i class="bx bx-receipt me-2"></i>Thông tin đơn hàng</h6>
+								<ul class="info-list">
+									<li><span>Thanh toán:</span> <strong>@order.PaymentMethodName</strong></li>
+									<li><span>Trạng thái:</span> <strong>@order.TrangThaiHienThi</strong></li>
+									<li><span>Tổng cộng:</span> <strong class="text-highlight">@string.Format("{0:N0} ₫", order.TongTien)</strong></li>
+								</ul>
+							</div>
+						</div>
+					</div>
+
+					<div class="order-items-card">
+						<table class="table align-middle mb-0">
+							<thead>
+								<tr>
+									<th>Sản phẩm</th>
+									<th class="text-center">Số lượng</th>
+									<th class="text-center">Đơn giá</th>
+									<th class="text-center">Giảm</th>
+									<th class="text-end">Thành tiền</th>
+								</tr>
+							</thead>
+							<tbody>
+								@foreach (var item in order.ChiTietHoaDons)
+								{
+									var img = string.IsNullOrWhiteSpace(item.Product?.Image)
+										? Url.Content("~/images/placeholder.png")
+										: (item.Product.Image.StartsWith("http", StringComparison.OrdinalIgnoreCase)
+											? item.Product.Image
+											: Url.Content(item.Product.Image));
+									<tr>
+										<td>
+											<div class="d-flex align-items-center gap-3">
+												<img src="@img" alt="@item.Product?.Title" class="order-item-thumb" />
+												<div>
+													<div class="fw-semibold text-dark">@((item.Product != null && !string.IsNullOrWhiteSpace(item.Product.Title)) ? item.Product.Title : item.ProductId)</div>
+													<div class="text-muted small">Mã: @item.ProductId</div>
+												</div>
+											</div>
+										</td>
+										<td class="text-center fw-semibold">@item.SoLuong</td>
+										<td class="text-center">@string.Format("{0:N0} ₫", item.GiaBan)</td>
+										<td class="text-center">@((item.GiamGia > 0 ? $"{item.GiamGia}%" : "-"))</td>
+										<td class="text-end fw-semibold text-highlight">@string.Format("{0:N0} ₫", item.ThanhTien)</td>
+									</tr>
+								}
+							</tbody>
+						</table>
+					</div>
+				</div>
+			}
+		}
+		else
+		{
+			<div class="alert alert-warning mt-4">
+				<i class="bx bx-info-circle me-2"></i>@(Model.Message ?? "Không tìm thấy đơn hàng phù hợp.")
+			</div>
+		}
+	}
+	else
+	{
+		<div class="alert alert-info mt-4">
+			<i class="bx bx-info-circle me-2"></i>Nhập thông tin tra cứu ở biểu mẫu phía trên để xem chi tiết đơn hàng của bạn.
 		</div>
-	</div>
-}
+	}
+</section>
 
+@section Styles {
+	<style>
+		.order-lookup-section {
+			padding: 2.5rem 0 3rem;
+		}
+
+		.lookup-card {
+			background: linear-gradient(135deg, rgba(212, 165, 116, 0.08), rgba(139, 90, 43, 0.05));
+			border: 1px solid rgba(212, 165, 116, 0.25);
+			border-radius: 16px;
+			padding: 1.75rem;
+		}
+
+		.lookup-title {
+			font-weight: 700;
+			color: #2d1b0e;
+			margin-bottom: 1rem;
+		}
+
+		.lookup-input {
+			background: #fff;
+			border: 1px solid rgba(212, 165, 116, 0.35);
+			border-radius: 10px;
+			padding: 0.75rem 1rem;
+		}
+
+		.order-result-card {
+			background: #ffffff;
+			border: 1px solid rgba(212, 165, 116, 0.25);
+			border-radius: 20px;
+			padding: 1.75rem;
+			margin-bottom: 2rem;
+			box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+		}
+
+		.order-result-header {
+			display: flex;
+			align-items: center;
+			gap: 1.5rem;
+			flex-wrap: wrap;
+			padding-bottom: 1rem;
+			border-bottom: 1px dashed rgba(212, 165, 116, 0.3);
+		}
+
+		.order-code {
+			font-weight: 700;
+			font-size: 1.1rem;
+			color: #2d1b0e;
+		}
+
+		.text-highlight {
+			color: #d4a574;
+		}
+
+		.order-info-card {
+			background: rgba(212, 165, 116, 0.08);
+			border: 1px solid rgba(212, 165, 116, 0.25);
+			border-radius: 14px;
+			padding: 1.25rem;
+			height: 100%;
+		}
+
+		.order-info-card h6 {
+			font-weight: 700;
+			color: #2d1b0e;
+			margin-bottom: 0.75rem;
+		}
+
+		.info-list {
+			list-style: none;
+			margin: 0;
+			padding: 0;
+			display: flex;
+			flex-direction: column;
+			gap: 0.5rem;
+			color: #4b3b2a;
+		}
+
+		.info-list span {
+			color: #6f5a45;
+			margin-right: 0.5rem;
+		}
+
+		.order-items-card {
+			margin-top: 1.5rem;
+			border: 1px solid rgba(212, 165, 116, 0.2);
+			border-radius: 14px;
+			overflow: hidden;
+		}
+
+		.order-items-card thead {
+			background: rgba(212, 165, 116, 0.12);
+		}
+
+		.order-items-card th {
+			color: #6f5a45;
+			font-weight: 600;
+			border-bottom: 1px solid rgba(212, 165, 116, 0.2);
+		}
+
+		.order-items-card td {
+			border-color: rgba(212, 165, 116, 0.15);
+		}
+
+		.order-item-thumb {
+			width: 60px;
+			height: 60px;
+			object-fit: cover;
+			border-radius: 12px;
+			border: 2px solid rgba(212, 165, 116, 0.3);
+		}
+
+		.results-heading {
+			font-weight: 600;
+			color: #2d1b0e;
+		}
+
+		.badge.bg-gradient {
+			background: linear-gradient(135deg, #f0c896 0%, #d4a574 100%);
+			color: #2d1b0e;
+			padding: 0.4rem 0.85rem;
+			border-radius: 999px;
+			font-weight: 600;
+		}
+
+		@@media (max-width: 767.98px) {
+			.order-result-card {
+				padding: 1.25rem;
+			}
+
+			.order-item-thumb {
+				width: 48px;
+				height: 48px;
+			}
+		}
+	</style>
+}

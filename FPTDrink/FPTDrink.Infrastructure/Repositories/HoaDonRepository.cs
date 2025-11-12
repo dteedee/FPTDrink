@@ -20,8 +20,13 @@ namespace FPTDrink.Infrastructure.Repositories
 
 		public Task<HoaDon?> GetByIdAsync(string id, CancellationToken cancellationToken = default)
 		{
-			return _set.Include(x => x.ChiTietHoaDons).FirstOrDefaultAsync(x => x.MaHoaDon == id, cancellationToken);
+			return _set
+				.Include(x => x.ChiTietHoaDons)
+				.ThenInclude(ct => ct.Product)
+				.FirstOrDefaultAsync(x => x.MaHoaDon == id, cancellationToken);
 		}
+
+		public void Add(HoaDon entity) => _set.Add(entity);
 
 		public void Update(HoaDon entity) => _set.Update(entity);
 

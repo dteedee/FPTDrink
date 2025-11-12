@@ -118,6 +118,20 @@
                                         </select>
                                     </div>
                                 </div>
+                                <div class="col-12 d-none" id="vnpayOptions">
+                                    <div class="form-group">
+                                        <label class="form-label" for="paymentMethodVn">
+                                            <i class="bx bx-building-bank me-2"></i>Phương thức VNPay
+                                        </label>
+                                        <select asp-for="TypePaymentVN"
+                                                class="form-select form-input"
+                                                id="paymentMethodVn">
+                                            <option value="1">VNPay QR</option>
+                                            <option value="2" selected>Thẻ nội địa (ATM)</option>
+                                            <option value="3">Thẻ quốc tế</option>
+                                        </select>
+                                    </div>
+                                </div>
                             </div>
 
                             <div class="d-grid gap-2 mt-4">
@@ -701,6 +715,22 @@
 
             const validators = Array.from(form.querySelectorAll('[data-validate]'))
                 .map((input) => new FieldValidator(input));
+
+			const paymentSelect = form.querySelector('#paymentMethod');
+			const vnpayOptions = document.getElementById('vnpayOptions');
+			const toggleVnPayOptions = () => {
+				if (!paymentSelect || !vnpayOptions) return;
+				if (paymentSelect.value === '2') {
+					vnpayOptions.classList.remove('d-none');
+				} else {
+					vnpayOptions.classList.add('d-none');
+				}
+			};
+
+			if (paymentSelect) {
+				paymentSelect.addEventListener('change', toggleVnPayOptions);
+				toggleVnPayOptions();
+			}
 
             form.addEventListener('submit', (e) => {
                 e.preventDefault();

@@ -93,12 +93,11 @@ namespace FPTDrink.Infrastructure.Services
 		public async Task<IReadOnlyList<FPTDrink.Core.Models.Reports.CustomerSummaryInfo>> GetCustomersAsync(string? search, CancellationToken cancellationToken = default)
 		{
 			var customers = await _orderRepo.Query()
-				.GroupBy(h => new { h.IdKhachHang, h.TenKhachHang, h.Cccd })
+				.GroupBy(h => new { h.IdKhachHang, h.TenKhachHang })
 				.Select(g => new FPTDrink.Core.Models.Reports.CustomerSummaryInfo
 				{
 					MaKhachHang = g.Key.IdKhachHang,
 					TenKhachHang = g.Key.TenKhachHang,
-					CCCD = g.Key.Cccd,
 					Email = g.OrderByDescending(h => h.CreatedDate).FirstOrDefault()!.Email,
 					SoDienThoai = g.OrderByDescending(h => h.CreatedDate).FirstOrDefault()!.SoDienThoai
 				})
@@ -106,7 +105,7 @@ namespace FPTDrink.Infrastructure.Services
 			if (!string.IsNullOrWhiteSpace(search))
 			{
 				customers = customers
-					.Where(c => (c.MaKhachHang ?? "").Contains(search) || (c.TenKhachHang ?? "").Contains(search) || (c.CCCD ?? "").Contains(search))
+					.Where(c => (c.MaKhachHang ?? "").Contains(search) || (c.TenKhachHang ?? "").Contains(search) || (c.Email ?? "").Contains(search) || (c.SoDienThoai ?? "").Contains(search))
 					.ToList();
 			}
 			return customers;
@@ -134,7 +133,6 @@ namespace FPTDrink.Infrastructure.Services
 			{
 				MaKhachHang = id,
 				TenKhachHang = latest.TenKhachHang,
-				CCCD = latest.Cccd,
 				HoaDons = orders
 			};
 		}

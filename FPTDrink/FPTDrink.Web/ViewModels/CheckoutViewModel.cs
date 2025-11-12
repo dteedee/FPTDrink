@@ -23,6 +23,7 @@ namespace FPTDrink.Web.ViewModels
         public string Email { get; set; } = string.Empty;
 
         public int TypePayment { get; set; } = 1;
+		public int TypePaymentVN { get; set; } = 2;
 
         public List<CartItem> Items { get; set; } = new();
 
@@ -36,6 +37,7 @@ namespace FPTDrink.Web.ViewModels
     public class CreateOrderResponse
     {
         public string? OrderCode { get; set; }
+		public OrderDetailViewModel? Order { get; set; }
     }
 
     public class VnPayInitResponse

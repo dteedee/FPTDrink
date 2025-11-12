@@ -29,7 +29,6 @@ namespace FPTDrink.API.DTOs.Admin.Order
 	{
 		public string? MaKhachHang { get; set; }
 		public string? TenKhachHang { get; set; }
-		public string? CCCD { get; set; }
 		public string? Email { get; set; }
 		public string? SoDienThoai { get; set; }
 	}
@@ -48,7 +47,6 @@ namespace FPTDrink.API.DTOs.Admin.Order
 	{
 		public string MaKhachHang { get; set; } = string.Empty;
 		public string? TenKhachHang { get; set; }
-		public string? CCCD { get; set; }
 		public List<CustomerOrderBriefDto> HoaDons { get; set; } = new();
 	}
 }

@@ -16,7 +16,6 @@ namespace FPTDrink.Core.Models.Reports
 	{
 		public string MaKhachHang { get; set; } = string.Empty;
 		public string? TenKhachHang { get; set; }
-		public string? CCCD { get; set; }
 		public List<CustomerOrderBrief> HoaDons { get; set; } = new List<CustomerOrderBrief>();
 	}
 }

@@ -7,6 +7,7 @@ namespace FPTDrink.API.DTOs.Public.Checkout
 		[Required] public string OrderCode { get; set; } = string.Empty;
 		[Range(1, 3)] public int TypePaymentVN { get; set; } = 2;
 		public string? ReturnUrlOverride { get; set; }
+		public string? ClientIp { get; set; }
 	}
 
 	public class VnPayReturnDto

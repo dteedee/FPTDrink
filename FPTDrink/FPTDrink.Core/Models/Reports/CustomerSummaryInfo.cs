@@ -4,7 +4,6 @@ namespace FPTDrink.Core.Models.Reports
 	{
 		public string? MaKhachHang { get; set; }
 		public string? TenKhachHang { get; set; }
-		public string? CCCD { get; set; }
 		public string? Email { get; set; }
 		public string? SoDienThoai { get; set; }
 	}

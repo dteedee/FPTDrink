@@ -1,6 +1,8 @@
 using FPTDrink.Web.Services;
+using FPTDrink.Web.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace FPTDrink.Web.Controllers
@@ -14,24 +16,48 @@ namespace FPTDrink.Web.Controllers
 		}
 
 		[HttpGet]
-		public IActionResult Index() => View();
-
-		[HttpGet("tra-cuu-don-hang/ma")]
-		public async Task<IActionResult> ByCode(string code)
+		public async Task<IActionResult> Index(string? code, string? tenKhachHang, string? soDienThoai)
 		{
-			if (string.IsNullOrWhiteSpace(code)) return RedirectToAction("Index");
-			var order = await _api.GetAsync<object>($"api/public/Orders/{code}");
-			ViewBag.By = "code";
-			return View("Index", order);
-		}
+			var vm = new OrderLookupViewModel
+			{
+				OrderCode = code?.Trim(),
+				TenKhachHang = tenKhachHang?.Trim(),
+				SoDienThoai = soDienThoai?.Trim()
+			};
 
-		[HttpGet("tra-cuu-don-hang/khach-hang")]
-		public async Task<IActionResult> ByCustomer(string tenKhachHang, string cccd)
-		{
-			if (string.IsNullOrWhiteSpace(tenKhachHang) || string.IsNullOrWhiteSpace(cccd)) return RedirectToAction("Index");
-			var orders = await _api.GetAsync<List<object>>($"api/public/Orders/by-customer?TenKhachHang={System.Net.WebUtility.UrlEncode(tenKhachHang)}&CCCD={System.Net.WebUtility.UrlEncode(cccd)}");
-			ViewBag.By = "customer";
-			return View("Index", orders);
+			if (!string.IsNullOrWhiteSpace(vm.OrderCode))
+			{
+				vm.Searched = true;
+				vm.SearchedByCode = true;
+				var order = await _api.GetAsync<OrderDetailViewModel>($"api/public/Orders/{System.Net.WebUtility.UrlEncode(vm.OrderCode)}");
+				if (order != null)
+				{
+					vm.Results.Add(order);
+				}
+				else
+				{
+					vm.Message = $"Không tìm thấy đơn hàng với mã {vm.OrderCode}.";
+				}
+			}
+			else if (!string.IsNullOrWhiteSpace(vm.TenKhachHang) && !string.IsNullOrWhiteSpace(vm.SoDienThoai))
+			{
+				vm.Searched = true;
+				vm.SearchedByCode = false;
+				var orders = await _api.GetAsync<List<OrderDetailViewModel>>(
+					$"api/public/Orders/by-customer?TenKhachHang={System.Net.WebUtility.UrlEncode(vm.TenKhachHang)}&SoDienThoai={System.Net.WebUtility.UrlEncode(vm.SoDienThoai)}");
+				if (orders != null && orders.Count > 0)
+				{
+					vm.Results = orders
+						.OrderByDescending(o => o.CreatedDate)
+						.ToList();
+				}
+				else
+				{
+					vm.Message = $"Không tìm thấy đơn hàng cho khách hàng {vm.TenKhachHang}.";
+				}
+			}
+
+			return View(vm);
 		}
 	}
 }

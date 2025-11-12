@@ -8,10 +8,10 @@ namespace FPTDrink.API.DTOs.Public.Orders
 		public string MaHoaDon { get; set; } = string.Empty;
 	}
 
-	public class OrderNameCccdQuery
+	public class OrderNamePhoneQuery
 	{
 		[Required, StringLength(500)] public string TenKhachHang { get; set; } = string.Empty;
-		[Required, StringLength(50)] public string CCCD { get; set; } = string.Empty;
+		[Required, StringLength(20)] public string SoDienThoai { get; set; } = string.Empty;
 	}
 }
 

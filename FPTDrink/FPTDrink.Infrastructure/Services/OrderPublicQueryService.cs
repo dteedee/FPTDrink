@@ -19,13 +19,16 @@ namespace FPTDrink.Infrastructure.Services
 			return _orderRepo.Query()
 				.Where(o => o.MaHoaDon == maHoaDon)
 				.Include(o => o.ChiTietHoaDons)
+				.ThenInclude(ct => ct.Product)
 				.FirstOrDefaultAsync(cancellationToken);
 		}
 
-		public async Task<IReadOnlyList<HoaDon>> GetByNameAndCccdAsync(string tenKhachHang, string cccd, CancellationToken cancellationToken = default)
+		public async Task<IReadOnlyList<HoaDon>> GetByNameAndPhoneAsync(string tenKhachHang, string soDienThoai, CancellationToken cancellationToken = default)
 		{
 			return await _orderRepo.Query()
-				.Where(o => o.TenKhachHang == tenKhachHang && o.Cccd == cccd)
+				.Where(o => o.TenKhachHang == tenKhachHang && o.SoDienThoai == soDienThoai)
+				.Include(o => o.ChiTietHoaDons)
+				.ThenInclude(ct => ct.Product)
 				.OrderByDescending(o => o.CreatedDate)
 				.ToListAsync(cancellationToken);
 		}

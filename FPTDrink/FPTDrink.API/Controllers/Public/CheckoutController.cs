@@ -1,4 +1,5 @@
 using FPTDrink.API.DTOs.Public.Checkout;
+using FPTDrink.API.Extensions;
 using FPTDrink.Core.Interfaces.Repositories;
 using FPTDrink.Core.Interfaces.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -39,19 +40,22 @@ namespace FPTDrink.API.Controllers.Public
 				SoDienThoai = req.SoDienThoai,
 				DiaChi = req.DiaChi,
 				Email = req.Email,
-				CCCD = req.CCCD,
 				TypePayment = req.TypePayment,
 				Items = req.Items.Select(i => new FPTDrink.Core.Interfaces.Services.CreateOrderItemRequest { ProductId = i.ProductId, Quantity = i.Quantity }).ToList()
 			};
 			var order = await _checkoutService.CreateOrderAsync(coreReq, ct);
+			var persisted = await _orderRepo.GetByIdAsync(order.MaHoaDon, ct);
 			_ = Task.Run(async () =>
 			{
 				try
 				{
-					await SendOrderEmailAsync(order, admin: true, ct);
-					if (!string.IsNullOrWhiteSpace(order.Email))
+					if (persisted != null)
 					{
-						await SendOrderEmailAsync(order, admin: false, ct);
+						await SendOrderEmailAsync(persisted, admin: true, ct);
+						if (!string.IsNullOrWhiteSpace(persisted.Email))
+						{
+							await SendOrderEmailAsync(persisted, admin: false, ct);
+						}
 					}
 				}
 				catch (Exception ex)
@@ -60,7 +64,8 @@ namespace FPTDrink.API.Controllers.Public
 				}
 			});
 			var location = Url.ActionLink(action: "VnPayReturn", controller: "Checkout", values: null, protocol: Request.Scheme);
-			return Created(location ?? string.Empty, new { orderCode = order.MaHoaDon });
+			OrderDetailDto? dto = persisted != null ? OrderDetailMapper.ToDto(persisted) : null;
+			return Created(location ?? string.Empty, new { orderCode = order.MaHoaDon, order = dto });
 		}
 
 		[HttpPost("payment/vnpay")]
@@ -76,8 +81,30 @@ namespace FPTDrink.API.Controllers.Public
 			string vnpUrl = _config["VNPay:Url"] ?? "";
 			string tmnCode = _config["VNPay:TmnCode"] ?? "";
 			string hashSecret = _config["VNPay:HashSecret"] ?? "";
-			var url = _paymentService.CreateVnPayUrl(order, req.TypePaymentVN, returnUrl, vnpUrl, tmnCode, hashSecret);
+			var url = _paymentService.CreateVnPayUrl(order, req.TypePaymentVN, returnUrl, vnpUrl, tmnCode, hashSecret, req.ClientIp ?? string.Empty);
 			return Ok(new { paymentUrl = url });
+		}
+
+		[HttpPost("order/{orderCode}/send-email")]
+		[ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
+		[ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+		public async Task<IActionResult> SendInvoice(string orderCode, CancellationToken ct)
+		{
+			if (string.IsNullOrWhiteSpace(orderCode)) return BadRequest("Mã đơn hàng không hợp lệ.");
+			var order = await _orderRepo.GetByIdAsync(orderCode, ct);
+			if (order == null) return NotFound("Không tìm thấy đơn hàng.");
+			if (string.IsNullOrWhiteSpace(order.Email)) return BadRequest("Đơn hàng không có email khách hàng.");
+
+			try
+			{
+				await SendOrderEmailAsync(order, admin: false, ct);
+				return Ok(new { message = "Hoá đơn đã được gửi tới email khách hàng." });
+			}
+			catch (Exception ex)
+			{
+				_logger.LogError(ex, "Send invoice email failed for {OrderCode}", orderCode);
+				return StatusCode(StatusCodes.Status500InternalServerError, "Gửi hoá đơn thất bại. Vui lòng thử lại.");
+			}
 		}
 
 		[HttpGet("payment/vnpay-return")]
@@ -90,13 +117,16 @@ namespace FPTDrink.API.Controllers.Public
 				.ToDictionary(k => k.Key, v => v.Value.ToString());
 			var rawData = string.Join("&", dict.OrderBy(k => k.Key).Select(kv => $"{kv.Key}={Uri.EscapeDataString(kv.Value)}"));
 			string hashSecret = _config["VNPay:HashSecret"] ?? "";
-			string secureHash = qs["vnp_SecureHash"];
+			string secureHash = qs.TryGetValue("vnp_SecureHash", out var hashValues) ? hashValues.ToString() : string.Empty;
 			bool validSignature = VerifyHmacSha512(hashSecret, rawData, secureHash);
-			string orderCode = qs["vnp_TxnRef"];
-			string responseCode = qs["vnp_ResponseCode"];
-			string status = qs["vnp_TransactionStatus"];
+			string orderCode = qs.TryGetValue("vnp_TxnRef", out var orderValues) ? orderValues.ToString() : string.Empty;
+			string responseCode = qs.TryGetValue("vnp_ResponseCode", out var responseValues) ? responseValues.ToString() : string.Empty;
+			string status = qs.TryGetValue("vnp_TransactionStatus", out var statusValues) ? statusValues.ToString() : string.Empty;
 			long amount = 0;
-			long.TryParse(qs["vnp_Amount"], out amount);
+			if (qs.TryGetValue("vnp_Amount", out var amountValues))
+			{
+				long.TryParse(amountValues, out amount);
+			}
 			amount = amount / 100;
 			bool success = validSignature && responseCode == "00" && status == "00";
 
@@ -128,10 +158,10 @@ namespace FPTDrink.API.Controllers.Public
 			}
 			return Ok(new VnPayReturnDto
 			{
-				OrderCode = orderCode,
+				OrderCode = orderCode ?? string.Empty,
 				Amount = amount,
-				ResponseCode = responseCode,
-				TransactionStatus = status,
+				ResponseCode = responseCode ?? string.Empty,
+				TransactionStatus = status ?? string.Empty,
 				Success = success
 			});
 		}
@@ -168,7 +198,6 @@ namespace FPTDrink.API.Controllers.Public
 				.Replace("{{NamDat}}", order.CreatedDate.ToString("yyyy"))
 				.Replace("{{MaDon}}", order.MaHoaDon)
 				.Replace("{{TenKhachHang}}", order.TenKhachHang ?? "")
-				.Replace("{{CCCD}}", order.Cccd ?? "")
 				.Replace("{{DiaChiNhanHang}}", order.DiaChi ?? "")
 				.Replace("{{Phone}}", order.SoDienThoai ?? "")
 				.Replace("{{HinhThucThanhToan}}", order.PhuongThucThanhToan == 1 ? "COD" : order.PhuongThucThanhToan == 2 ? "Chuyển khoản" : "Mua trực tiếp")
@@ -222,5 +251,4 @@ namespace FPTDrink.API.Controllers.Public
 		}
 	}
 }
-
 

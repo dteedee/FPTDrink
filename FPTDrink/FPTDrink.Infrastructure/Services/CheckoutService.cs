@@ -1,8 +1,9 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using FPTDrink.Core.Interfaces.Repositories;
 using FPTDrink.Core.Interfaces.Services;
 using FPTDrink.Core.Models;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 
 namespace FPTDrink.Infrastructure.Services
 {
@@ -20,10 +21,18 @@ namespace FPTDrink.Infrastructure.Services
 		public async Task<HoaDon> CreateOrderAsync(CreateOrderRequest req, CancellationToken cancellationToken = default)
 		{
 			if (req.Items.Count == 0) throw new InvalidOperationException("Giỏ hàng trống.");
+
+			// Tải sản phẩm một lần để tránh truy vấn lặp
+			var productCache = new Dictionary<string, Product>();
 			foreach (var it in req.Items)
 			{
-				var p = await _productRepo.GetByIdAsync(it.ProductId, cancellationToken) ?? throw new InvalidOperationException($"Sản phẩm {it.ProductId} không tồn tại.");
-				if (p.SoLuong < it.Quantity) throw new InvalidOperationException($"Sản phẩm {p.Title} không đủ tồn kho. Còn lại: {p.SoLuong}");
+				var product = await _productRepo.GetByIdAsync(it.ProductId, cancellationToken) 
+				              ?? throw new InvalidOperationException($"Sản phẩm {it.ProductId} không tồn tại.");
+				if (product.SoLuong < it.Quantity)
+				{
+					throw new InvalidOperationException($"Sản phẩm {product.Title} không đủ tồn kho. Còn lại: {product.SoLuong}");
+				}
+				productCache[it.ProductId] = product;
 			}
 
 			HoaDon order = new HoaDon
@@ -32,7 +41,7 @@ namespace FPTDrink.Infrastructure.Services
 				SoDienThoai = req.SoDienThoai,
 				DiaChi = req.DiaChi,
 				Email = req.Email,
-				Cccd = req.CCCD,
+				Cccd = string.Empty,
 				TrangThai = 1,
 				PhuongThucThanhToan = req.TypePayment,
 				CreatedDate = DateTime.Now,
@@ -50,27 +59,21 @@ namespace FPTDrink.Infrastructure.Services
 
 			foreach (var it in req.Items)
 			{
-				var p = await _productRepo.GetByIdAsync(it.ProductId, cancellationToken);
+				var product = productCache[it.ProductId];
 				order.ChiTietHoaDons.Add(new ChiTietHoaDon
 				{
 					OrderId = order.MaHoaDon,
-					ProductId = p!.MaSanPham,
+					ProductId = product.MaSanPham,
 					SoLuong = it.Quantity,
-					GiaBan = p.GiaBan ?? p.GiaNiemYet,
-					GiamGia = 0
+					GiaBan = product.GiaBan ?? product.GiaNiemYet,
+					GiamGia = (int)(product.GiamGia ?? 0)
 				});
+
+				product.SoLuong = Math.Max(0, product.SoLuong - it.Quantity);
+				_productRepo.Update(product);
 			}
 
-			foreach (var it in req.Items)
-			{
-				var p = await _productRepo.GetByIdAsync(it.ProductId, cancellationToken);
-				p!.SoLuong = Math.Max(0, p.SoLuong - it.Quantity);
-				_productRepo.Update(p);
-			}
-			await _productRepo.SaveChangesAsync(cancellationToken);
-
-			await _orderRepo.SaveChangesAsync(cancellationToken);
-			_orderRepo.Update(order);
+			_orderRepo.Add(order);
 			await _orderRepo.SaveChangesAsync(cancellationToken);
 			return order;
 		}
@@ -78,14 +81,7 @@ namespace FPTDrink.Infrastructure.Services
 
 	public class VnPayService : IPaymentService
 	{
-		private readonly Microsoft.Extensions.Logging.ILogger<VnPayService> _logger;
-
-		public VnPayService(Microsoft.Extensions.Logging.ILogger<VnPayService> logger)
-		{
-			_logger = logger;
-		}
-
-		public string CreateVnPayUrl(HoaDon order, int typePaymentVN, string returnUrl, string vnpUrl, string tmnCode, string hashSecret)
+		public string CreateVnPayUrl(HoaDon order, int typePaymentVN, string returnUrl, string vnpUrl, string tmnCode, string hashSecret, string clientIp)
 		{
 			decimal tong = order.ChiTietHoaDons.Sum(x => x.SoLuong * x.GiaBan);
 			long amount = (long)(tong * 100);
@@ -97,7 +93,7 @@ namespace FPTDrink.Infrastructure.Services
 				["vnp_Amount"] = amount.ToString(),
 				["vnp_CreateDate"] = order.CreatedDate.ToString("yyyyMMddHHmmss"),
 				["vnp_CurrCode"] = "VND",
-				["vnp_IpAddr"] = "127.0.0.1",
+				["vnp_IpAddr"] = string.IsNullOrWhiteSpace(clientIp) ? "127.0.0.1" : clientIp,
 				["vnp_Locale"] = "vn",
 				["vnp_OrderInfo"] = $"Thanh toán đơn hàng: {order.MaHoaDon}",
 				["vnp_OrderType"] = "other",
@@ -111,9 +107,7 @@ namespace FPTDrink.Infrastructure.Services
 			var rawData = string.Join("&", dict.Select(kv => $"{kv.Key}={Uri.EscapeDataString(kv.Value)}"));
 			string secureHash = ComputeHmacSha512(hashSecret ?? string.Empty, rawData);
 			var query = rawData + "&vnp_SecureHashType=HMACSHA512&vnp_SecureHash=" + secureHash;
-			var url = $"{vnpUrl}?{query}";
-			_logger.LogInformation("VNPay URL created for {Order}: {Url}", order.MaHoaDon, url);
-			return url;
+			return $"{vnpUrl}?{query}";
 		}
 
 		private static string ComputeHmacSha512(string secret, string data)
