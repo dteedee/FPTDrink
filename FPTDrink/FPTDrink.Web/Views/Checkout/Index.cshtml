@@ -582,7 +582,7 @@
                     if (trimmed.length < 2) return 'Họ tên phải có ít nhất 2 ký tự';
                     if (trimmed.length > 50) return 'Họ tên không được vượt quá 50 ký tự';
                     // Hỗ trợ chữ cái Latin + tiếng Việt có dấu và khoảng trắng
-                    const nameRegex = /^[a-zA-ZÀ-ỹ\\s]+$/;
+                    const nameRegex = /^[\p{L}\p{M}\s]+$/u;
                     if (!nameRegex.test(trimmed)) return 'Họ tên chỉ được chứa chữ cái';
                     return true;
                 },
