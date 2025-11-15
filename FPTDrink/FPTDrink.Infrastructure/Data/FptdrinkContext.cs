@@ -24,7 +24,13 @@ public partial class FptdrinkContext : DbContext
 
     public virtual DbSet<ChucVu> ChucVus { get; set; }
 
+    public virtual DbSet<GioHang> GioHangs { get; set; }
+
+    public virtual DbSet<GioHangTam> GioHangTams { get; set; }
+
     public virtual DbSet<HoaDon> HoaDons { get; set; }
+
+    public virtual DbSet<KhachHang> KhachHangs { get; set; }
 
     public virtual DbSet<MigrationHistory> MigrationHistories { get; set; }
 
@@ -120,6 +126,66 @@ public partial class FptdrinkContext : DbContext
             entity.Property(e => e.TenChucVu).HasMaxLength(500);
         });
 
+        modelBuilder.Entity<GioHang>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK_dbo.GioHang");
+
+            entity.ToTable("GioHang");
+
+            entity.HasIndex(e => e.IdKhachHang, "IX_GioHang_KhachHang");
+
+            entity.HasIndex(e => e.MaSanPham, "IX_GioHang_Product");
+
+            entity.HasIndex(e => new { e.IdKhachHang, e.MaSanPham }, "IX_GioHang_Unique").IsUnique();
+
+            entity.Property(e => e.Id).HasColumnName("ID");
+            entity.Property(e => e.CreatedDate).HasColumnType("datetime");
+            entity.Property(e => e.IdKhachHang)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("ID_KhachHang");
+            entity.Property(e => e.MaSanPham)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.ModifiedDate).HasColumnType("datetime");
+
+            entity.HasOne(d => d.IdKhachHangNavigation).WithMany(p => p.GioHangs)
+                .HasForeignKey(d => d.IdKhachHang)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("FK_GioHang_KhachHang");
+
+            entity.HasOne(d => d.MaSanPhamNavigation).WithMany(p => p.GioHangs)
+                .HasForeignKey(d => d.MaSanPham)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("FK_GioHang_Product");
+        });
+
+        modelBuilder.Entity<GioHangTam>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK_dbo.GioHangTam");
+
+            entity.ToTable("GioHangTam");
+
+            entity.HasIndex(e => e.CartId, "IX_GioHangTam_CartId");
+
+            entity.HasIndex(e => e.ExpiryDate, "IX_GioHangTam_ExpiryDate");
+
+            entity.Property(e => e.Id).HasColumnName("ID");
+            entity.Property(e => e.CartId)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.CreatedDate).HasColumnType("datetime");
+            entity.Property(e => e.ExpiryDate).HasColumnType("datetime");
+            entity.Property(e => e.MaSanPham)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+
+            entity.HasOne(d => d.MaSanPhamNavigation).WithMany(p => p.GioHangTams)
+                .HasForeignKey(d => d.MaSanPham)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("FK_GioHangTam_Product");
+        });
+
         modelBuilder.Entity<HoaDon>(entity =>
         {
             entity.HasKey(e => e.MaHoaDon).HasName("PK_dbo.HoaDon");
@@ -142,7 +208,6 @@ public partial class FptdrinkContext : DbContext
             entity.Property(e => e.IdKhachHang)
                 .HasMaxLength(50)
                 .IsUnicode(false)
-                .HasDefaultValue("")
                 .HasColumnName("ID_KhachHang");
             entity.Property(e => e.IdNhanVien)
                 .HasMaxLength(50)
@@ -156,6 +221,72 @@ public partial class FptdrinkContext : DbContext
                 .HasForeignKey(d => d.IdNhanVien)
                 .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("FK_HoaDon_NhanVien");
+
+            entity.HasOne(d => d.KhachHang).WithMany(p => p.HoaDons)
+                .HasForeignKey(d => d.IdKhachHang)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("FK_HoaDon_KhachHang");
+        });
+
+        modelBuilder.Entity<KhachHang>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK_dbo.KhachHang");
+
+            entity.ToTable("KhachHang");
+
+            entity.HasIndex(e => e.TenDangNhap, "IX_KhachHang_TenDangNhap").IsUnique();
+
+            entity.HasIndex(e => e.Email, "IX_KhachHang_Email").IsUnique();
+
+            entity.HasIndex(e => e.SoDienThoai, "IX_KhachHang_SoDienThoai");
+
+            entity.HasIndex(e => e.GoogleId, "IX_KhachHang_GoogleId")
+                .IsUnique()
+                .HasFilter("([GoogleId] IS NOT NULL)");
+
+            entity.Property(e => e.Id)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("ID");
+            entity.Property(e => e.Cccd)
+                .HasMaxLength(500)
+                .IsUnicode(false)
+                .HasColumnName("CCCD");
+            entity.Property(e => e.CreatedDate)
+                .HasColumnType("datetime")
+                .HasDefaultValueSql("(getdate())");
+            entity.Property(e => e.DiaChi).HasMaxLength(500);
+            entity.Property(e => e.Email)
+                .HasMaxLength(500)
+                .IsUnicode(false);
+            entity.Property(e => e.EmailVerificationOtp)
+                .HasMaxLength(6)
+                .IsUnicode(false);
+            entity.Property(e => e.EmailVerificationOtpExpiry).HasColumnType("datetime");
+            entity.Property(e => e.GoogleEmail)
+                .HasMaxLength(500)
+                .IsUnicode(false);
+            entity.Property(e => e.GoogleId)
+                .HasMaxLength(255)
+                .IsUnicode(false);
+            entity.Property(e => e.HoTen).HasMaxLength(150);
+            entity.Property(e => e.Image).HasColumnType("nvarchar(max)");
+            entity.Property(e => e.IsActive).HasDefaultValue(true);
+            entity.Property(e => e.IsEmailVerified).HasDefaultValue(false);
+            entity.Property(e => e.IsGoogleAccount).HasDefaultValue(false);
+            entity.Property(e => e.LastLoginDate).HasColumnType("datetime");
+            entity.Property(e => e.MatKhau).HasMaxLength(255);
+            entity.Property(e => e.ModifiedDate).HasColumnType("datetime");
+            entity.Property(e => e.NgaySinh).HasColumnType("datetime");
+            entity.Property(e => e.PasswordResetExpiry).HasColumnType("datetime");
+            entity.Property(e => e.PasswordResetToken).HasMaxLength(255);
+            entity.Property(e => e.SoDienThoai)
+                .HasMaxLength(20)
+                .IsUnicode(false);
+            entity.Property(e => e.Status).HasDefaultValue(1);
+            entity.Property(e => e.TenDangNhap).HasMaxLength(50);
+
+            entity.Property(e => e.EmailVerificationAttempts).HasDefaultValue(0);
         });
 
         modelBuilder.Entity<MigrationHistory>(entity =>

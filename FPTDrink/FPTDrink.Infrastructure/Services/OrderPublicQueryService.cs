@@ -32,6 +32,16 @@ namespace FPTDrink.Infrastructure.Services
 				.OrderByDescending(o => o.CreatedDate)
 				.ToListAsync(cancellationToken);
 		}
+
+		public async Task<IReadOnlyList<HoaDon>> GetByCustomerIdAsync(string customerId, CancellationToken cancellationToken = default)
+		{
+			return await _orderRepo.Query()
+				.Where(o => o.IdKhachHang == customerId)
+				.Include(o => o.ChiTietHoaDons)
+				.ThenInclude(ct => ct.Product)
+				.OrderByDescending(o => o.CreatedDate)
+				.ToListAsync(cancellationToken);
+		}
 	}
 }
 

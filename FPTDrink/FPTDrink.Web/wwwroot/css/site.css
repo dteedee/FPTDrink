@@ -261,7 +261,9 @@ header.navbar-header.scrolled {
   width: 100%;
 }
 
-.navbar-header .header-login-btn {
+.navbar-header .header-login-btn,
+.navbar-header .header-register-btn,
+.navbar-header .header-user-btn {
   white-space: nowrap;
 }
 
@@ -315,14 +317,33 @@ header.navbar-header.scrolled {
     padding: 0.5rem 0.9rem;
     font-size: 0.9rem;
   }
-  .navbar-header .header-login-btn {
+  .navbar-header .header-login-btn,
+  .navbar-header .header-register-btn,
+  .navbar-header .header-user-btn {
     padding: 0.5rem 1.1rem;
     font-size: 0.9rem;
     white-space: nowrap;
   }
-  .navbar-header .header-login-btn i {
+  .navbar-header .header-login-btn i,
+  .navbar-header .header-register-btn i,
+  .navbar-header .header-user-btn i {
     font-size: 1rem;
     margin-right: 0.4rem;
+  }
+
+  .navbar-header .dropdown-menu {
+    min-width: 200px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+
+  .navbar-header .dropdown-item {
+    padding: 0.5rem 1rem;
+    transition: background-color 0.2s;
+  }
+
+  .navbar-header .dropdown-item:hover {
+    background-color: #f8f9fa;
   }
 }
 

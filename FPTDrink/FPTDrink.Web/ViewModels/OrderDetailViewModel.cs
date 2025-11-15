@@ -8,6 +8,7 @@ namespace FPTDrink.Web.ViewModels
 	public class OrderDetailViewModel
 	{
 		public string MaHoaDon { get; set; } = string.Empty;
+		public string? IdKhachHang { get; set; }
 		public string TenKhachHang { get; set; } = string.Empty;
 		public string SoDienThoai { get; set; } = string.Empty;
 		public string DiaChi { get; set; } = string.Empty;
@@ -32,11 +33,11 @@ namespace FPTDrink.Web.ViewModels
 		[JsonIgnore]
 		public string TrangThaiHienThi => TrangThai switch
 		{
-			1 => "Chờ xử lý",
-			2 => "Đã thanh toán",
+			0 => "Đã hủy",
+			1 => "Đang xử lý",
+			2 => "Hoàn tất",
 			3 => "Đang giao",
-			4 => "Hoàn tất",
-			5 => "Đã hủy",
+			4 => "Chờ thanh toán",
 			_ => "Không xác định"
 		};
 

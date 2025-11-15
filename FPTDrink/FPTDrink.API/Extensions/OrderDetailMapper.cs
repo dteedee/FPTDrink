@@ -11,6 +11,7 @@ namespace FPTDrink.API.Extensions
 			var dto = new OrderDetailDto
 			{
 				MaHoaDon = order.MaHoaDon,
+				IdKhachHang = order.IdKhachHang,
 				TenKhachHang = order.TenKhachHang,
 				SoDienThoai = order.SoDienThoai,
 				DiaChi = order.DiaChi,

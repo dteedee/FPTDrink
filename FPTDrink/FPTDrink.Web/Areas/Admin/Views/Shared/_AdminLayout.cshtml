@@ -59,6 +59,9 @@
                 <a asp-area="Admin" asp-controller="Staffs" asp-action="Index" class="sidebar-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Staffs" ? "active" : "")">
                     <i class="bx bx-group"></i><span>Nhân viên</span>
                 </a>
+                <a asp-area="Admin" asp-controller="Customers" asp-action="Index" class="sidebar-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Customers" ? "active" : "")">
+                    <i class="bx bx-user-circle"></i><span>Khách hàng</span>
+                </a>
                 <a asp-area="Admin" asp-controller="Roles" asp-action="Index" class="sidebar-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Roles" ? "active" : "")">
                     <i class="bx bx-lock-alt"></i><span>Chức vụ & phân quyền</span>
                 </a>

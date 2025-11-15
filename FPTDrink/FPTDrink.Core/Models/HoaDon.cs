@@ -26,7 +26,7 @@ public partial class HoaDon
 
     public string? Modifiedby { get; set; }
 
-    public string IdKhachHang { get; set; } = null!;
+    public string? IdKhachHang { get; set; }
 
     public string Cccd { get; set; } = null!;
 
@@ -35,4 +35,6 @@ public partial class HoaDon
     public virtual ICollection<ChiTietHoaDon> ChiTietHoaDons { get; set; } = new List<ChiTietHoaDon>();
 
     public virtual NhanVien? IdNhanVienNavigation { get; set; }
+
+    public virtual KhachHang? KhachHang { get; set; }
 }

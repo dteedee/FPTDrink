@@ -250,13 +250,13 @@ namespace FPTDrink.Infrastructure.Services
 
 			var startDate = string.Equals(period, "thisMonth", StringComparison.OrdinalIgnoreCase)
 				? new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1)
-				: today.AddDays(-(days - 1)); // Để có 7 ngày bao gồm cả hôm nay: từ 6 ngày trước đến hôm nay
+				: today.AddDays(-(days - 1));
 
 			for (int i = 0; i < days; i++)
 			{
 				var date = startDate.AddDays(i);
 				if (string.Equals(period, "thisMonth", StringComparison.OrdinalIgnoreCase) && date > today) break;
-				if (date > today) break; // Không lấy ngày trong tương lai
+				if (date > today) break;
 				decimal rev = await _db.HoaDons
 					.Where(x => x.TrangThai == 2 && x.CreatedDate.Date == date)
 					.SelectMany(x => x.ChiTietHoaDons)

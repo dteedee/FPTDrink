@@ -65,9 +65,40 @@
                 <button class="btn btn-primary" type="submit">Tìm</button>
               </div>
             </form>
-            <a class="btn btn-coffee header-login-btn" asp-area="Admin" asp-controller="Auth" asp-action="Login">
-              <i class="bx bx-log-in-circle me-2"></i>Đăng nhập
-            </a>
+            @{
+              var isCustomerAuthenticated = Context.IsCustomerAuthenticated();
+              var customerName = Context.GetCustomerName();
+            }
+            @if (isCustomerAuthenticated)
+            {
+              <div class="dropdown">
+                <button class="btn btn-coffee header-user-btn dropdown-toggle" type="button" id="userMenuDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                  <i class="bx bx-user me-2"></i>@(customerName ?? "Tài khoản")
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenuDropdown">
+                  <li><a class="dropdown-item" asp-controller="CustomerAccount" asp-action="Index"><i class="bx bx-user me-2"></i>Tài khoản của tôi</a></li>
+                  <li><a class="dropdown-item" asp-controller="CustomerOrders" asp-action="Index"><i class="bx bx-package me-2"></i>Đơn hàng của tôi</a></li>
+                  <li><hr class="dropdown-divider"></li>
+                  <li>
+                    <form asp-controller="CustomerAuth" asp-action="Logout" method="post" class="d-inline">
+                      @Html.AntiForgeryToken()
+                      <button type="submit" class="dropdown-item text-danger">
+                        <i class="bx bx-log-out me-2"></i>Đăng xuất
+                      </button>
+                    </form>
+                  </li>
+                </ul>
+              </div>
+            }
+            else
+            {
+              <a class="btn btn-outline-light header-register-btn" asp-controller="CustomerAuth" asp-action="Register">
+                <i class="bx bx-user-plus me-2"></i>Đăng ký
+              </a>
+              <a class="btn btn-coffee header-login-btn" asp-controller="CustomerAuth" asp-action="Login">
+                <i class="bx bx-log-in-circle me-2"></i>Đăng nhập
+              </a>
+            }
           </div>
         </div>
       </div>

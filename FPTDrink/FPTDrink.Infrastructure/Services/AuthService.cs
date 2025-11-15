@@ -42,7 +42,6 @@ namespace FPTDrink.Infrastructure.Services
 
 		public Task LogoutAsync()
 		{
-			// Stateless API: không lưu server session. Client tự xoá token/cookie phía client.
 			return Task.CompletedTask;
 		}
 	}

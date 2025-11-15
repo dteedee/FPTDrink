@@ -1,0 +1,97 @@
+@model FPTDrink.Web.ViewModels.CustomerOrdersViewModel
+@{
+    ViewData["Title"] = "Đơn hàng của tôi";
+}
+
+<section class="py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <h2 class="mb-4"><i class="bx bx-package me-2"></i>Đơn hàng của tôi</h2>
+
+                @if (TempData["SuccessMessage"] != null)
+                {
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        <i class="bx bx-check-circle me-2"></i>@TempData["SuccessMessage"]
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                }
+                @if (TempData["ErrorMessage"] != null)
+                {
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <i class="bx bx-error-circle me-2"></i>@TempData["ErrorMessage"]
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                }
+
+                @if (!Model.Orders.Any())
+                {
+                    <div class="card shadow-sm">
+                        <div class="card-body text-center py-5">
+                            <i class="bx bx-package text-muted" style="font-size: 4rem;"></i>
+                            <p class="text-muted mt-3 mb-0">Bạn chưa có đơn hàng nào.</p>
+                            <a asp-controller="Products" asp-action="Index" class="btn btn-coffee mt-3">
+                                <i class="bx bx-shopping-bag me-2"></i>Mua sắm ngay
+                            </a>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div class="card shadow-sm">
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover align-middle">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Mã đơn</th>
+                                            <th>Ngày đặt</th>
+                                            <th>Trạng thái</th>
+                                            <th class="text-end">Tổng tiền</th>
+                                            <th class="text-center">Thao tác</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var order in Model.Orders)
+                                        {
+                                            <tr>
+                                                <td><strong>#@order.MaHoaDon</strong></td>
+                                                <td>@order.CreatedDate.ToString("dd/MM/yyyy HH:mm")</td>
+                                                <td>
+                                                    <span class="badge @GetStatusBadgeClass(order.TrangThai)">
+                                                        @order.TrangThaiHienThi
+                                                    </span>
+                                                </td>
+                                                <td class="text-end">
+                                                    <strong class="text-coffee">@order.TongTien.ToString("N0") ₫</strong>
+                                                </td>
+                                                <td class="text-center">
+                                                    <a asp-action="Details" asp-route-orderCode="@order.MaHoaDon" class="btn btn-sm btn-coffee-outline">
+                                                        <i class="bx bx-show me-1"></i>Xem chi tiết
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</section>
+
+@functions {
+    private string GetStatusBadgeClass(int status) => status switch
+    {
+        0 => "bg-danger",              // Đã hủy
+        1 => "bg-warning text-dark",   // Đang xử lý
+        2 => "bg-success",             // Hoàn tất
+        3 => "bg-info text-dark",      // Đang giao
+        4 => "bg-secondary",           // Chờ thanh toán
+        _ => "bg-secondary"
+    };
+}
+

@@ -4,6 +4,7 @@ using System.Text;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 
 namespace FPTDrink.Web.Services
@@ -11,6 +12,7 @@ namespace FPTDrink.Web.Services
 	public class ApiClient
 	{
 		private readonly HttpClient _httpClient;
+		private readonly IHttpContextAccessor _httpContextAccessor;
 		private readonly ILogger<ApiClient>? _logger;
 		private static readonly JsonSerializerOptions JsonOptions = new JsonSerializerOptions
 		{
@@ -18,17 +20,33 @@ namespace FPTDrink.Web.Services
 			PropertyNameCaseInsensitive = true
 		};
 
-		public ApiClient(IHttpClientFactory httpClientFactory, ILogger<ApiClient>? logger = null)
+		public ApiClient(IHttpClientFactory httpClientFactory, IHttpContextAccessor httpContextAccessor, ILogger<ApiClient>? logger = null)
 		{
 			_httpClient = httpClientFactory.CreateClient("FPTDrinkApi");
+			_httpContextAccessor = httpContextAccessor;
 			_logger = logger;
+		}
+
+		private void AddAuthorizationHeader(HttpRequestMessage request)
+		{
+			var httpContext = _httpContextAccessor.HttpContext;
+			if (httpContext != null)
+			{
+				var token = httpContext.Request.Cookies["customer_token"];
+				if (!string.IsNullOrWhiteSpace(token))
+				{
+					request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+				}
+			}
 		}
 
 		public async Task<T?> GetAsync<T>(string url, CancellationToken cancellationToken = default)
 		{
 			try
 			{
-				var response = await _httpClient.GetAsync(url, cancellationToken);
+				var request = new HttpRequestMessage(HttpMethod.Get, url);
+				AddAuthorizationHeader(request);
+				var response = await _httpClient.SendAsync(request, cancellationToken);
 				
 				if (!response.IsSuccessStatusCode)
 				{
@@ -61,7 +79,12 @@ namespace FPTDrink.Web.Services
 		{
 			try
 			{
-				var response = await _httpClient.PostAsJsonAsync(url, payload, cancellationToken);
+				var request = new HttpRequestMessage(HttpMethod.Post, url)
+				{
+					Content = JsonContent.Create(payload, options: JsonOptions)
+				};
+				AddAuthorizationHeader(request);
+				var response = await _httpClient.SendAsync(request, cancellationToken);
 				if (!response.IsSuccessStatusCode)
 				{
 					var errorContent = await response.Content.ReadAsStringAsync(cancellationToken);
@@ -81,7 +104,12 @@ namespace FPTDrink.Web.Services
 		{
 			try
 			{
-				var response = await _httpClient.PutAsJsonAsync(url, payload, cancellationToken);
+				var request = new HttpRequestMessage(HttpMethod.Put, url)
+				{
+					Content = JsonContent.Create(payload, options: JsonOptions)
+				};
+				AddAuthorizationHeader(request);
+				var response = await _httpClient.SendAsync(request, cancellationToken);
 				if (!response.IsSuccessStatusCode)
 				{
 					var errorContent = await response.Content.ReadAsStringAsync(cancellationToken);
@@ -101,7 +129,9 @@ namespace FPTDrink.Web.Services
 		{
 			try
 			{
-				var response = await _httpClient.DeleteAsync(url, cancellationToken);
+				var request = new HttpRequestMessage(HttpMethod.Delete, url);
+				AddAuthorizationHeader(request);
+				var response = await _httpClient.SendAsync(request, cancellationToken);
 				if (!response.IsSuccessStatusCode)
 				{
 					var errorContent = await response.Content.ReadAsStringAsync(cancellationToken);

@@ -1,0 +1,379 @@
+@model FPTDrink.Web.ViewModels.OrderDetailViewModel
+@{
+    ViewData["Title"] = $"Chi tiết đơn hàng #{Model.MaHoaDon}";
+}
+
+<section class="py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2><i class="bx bx-receipt me-2"></i>Chi tiết đơn hàng #@Model.MaHoaDon</h2>
+                    <a asp-action="Index" class="btn btn-coffee-outline">
+                        <i class="bx bx-arrow-back me-2"></i>Quay lại
+                    </a>
+                </div>
+
+                @if (TempData["ErrorMessage"] != null)
+                {
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <i class="bx bx-error-circle me-2"></i>@TempData["ErrorMessage"]
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                }
+
+                <div class="row g-4">
+                    <div class="col-lg-8">
+                        <div class="card shadow-sm mb-4 order-detail-card order-detail-products">
+                            <div class="card-header order-detail-header-products">
+                                <h5 class="mb-0"><i class="bx bx-list-ul me-2"></i>Sản phẩm đã đặt</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table align-middle">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th>Sản phẩm</th>
+                                                <th class="text-center">Số lượng</th>
+                                                <th class="text-end">Đơn giá</th>
+                                                <th class="text-end">Thành tiền</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach (var item in Model.ChiTietHoaDons)
+                                            {
+                                                <tr>
+                                                    <td>
+                                                        <div class="d-flex align-items-center">
+                                                            @if (item.Product?.Image != null)
+                                                            {
+                                                                <img src="@item.Product.Image" alt="@item.Product.Title" class="me-3" style="width: 60px; height: 60px; object-fit: cover; border-radius: 8px;" />
+                                                            }
+                                                            <div>
+                                                                <strong>@(item.Product?.Title ?? "Sản phẩm")</strong>
+                                                                @if (item.GiamGia > 0)
+                                                                {
+                                                                    <div class="small text-muted">Giảm @item.GiamGia%</div>
+                                                                }
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td class="text-center">@item.SoLuong</td>
+                                                    <td class="text-end">@item.GiaSauGiam.ToString("N0") ₫</td>
+                                                    <td class="text-end"><strong>@item.ThanhTien.ToString("N0") ₫</strong></td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                        <tfoot class="table-light">
+                                            <tr>
+                                                <th colspan="3" class="text-end">Tổng cộng:</th>
+                                                <th class="text-end text-coffee">@Model.TongTien.ToString("N0") ₫</th>
+                                            </tr>
+                                        </tfoot>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-4">
+                        <div class="card shadow-sm mb-4 order-detail-card order-detail-info">
+                            <div class="card-header order-detail-header-info">
+                                <h5 class="mb-0"><i class="bx bx-info-circle me-2"></i>Thông tin đơn hàng</h5>
+                            </div>
+                            <div class="card-body">
+                                <dl class="row mb-0">
+                                    <dt class="col-sm-5">Mã đơn:</dt>
+                                    <dd class="col-sm-7"><strong>#@Model.MaHoaDon</strong></dd>
+
+                                    <dt class="col-sm-5">Ngày đặt:</dt>
+                                    <dd class="col-sm-7">@Model.CreatedDate.ToString("dd/MM/yyyy HH:mm")</dd>
+
+                                    <dt class="col-sm-5">Trạng thái:</dt>
+                                    <dd class="col-sm-7">
+                                        <span class="badge @GetStatusBadgeClass(Model.TrangThai)">
+                                            @Model.TrangThaiHienThi
+                                        </span>
+                                    </dd>
+
+                                    <dt class="col-sm-5">Thanh toán:</dt>
+                                    <dd class="col-sm-7">@Model.PaymentMethodName</dd>
+
+                                    <dt class="col-sm-5">Tổng tiền:</dt>
+                                    <dd class="col-sm-7"><strong class="text-coffee">@Model.TongTien.ToString("N0") ₫</strong></dd>
+                                </dl>
+                            </div>
+                        </div>
+
+                        <div class="card shadow-sm order-detail-card order-detail-delivery">
+                            <div class="card-header order-detail-header-delivery">
+                                <h5 class="mb-0"><i class="bx bx-user me-2"></i>Thông tin giao hàng</h5>
+                            </div>
+                            <div class="card-body">
+                                <dl class="row mb-0">
+                                    <dt class="col-sm-4">Họ tên:</dt>
+                                    <dd class="col-sm-8">@Model.TenKhachHang</dd>
+
+                                    <dt class="col-sm-4">SĐT:</dt>
+                                    <dd class="col-sm-8">@Model.SoDienThoai</dd>
+
+                                    @if (!string.IsNullOrWhiteSpace(Model.Email))
+                                    {
+                                        <dt class="col-sm-4">Email:</dt>
+                                        <dd class="col-sm-8">@Model.Email</dd>
+                                    }
+
+                                    <dt class="col-sm-4">Địa chỉ:</dt>
+                                    <dd class="col-sm-8">@Model.DiaChi</dd>
+                                </dl>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Styles {
+    <style>
+        .order-detail-card {
+            border: none;
+            border-radius: 16px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .order-detail-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12) !important;
+        }
+
+        .order-detail-header-products {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1.25rem 1.5rem;
+            border: none;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .order-detail-header-products::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+            animation: shimmer 3s infinite;
+        }
+
+        .order-detail-header-products h5 {
+            position: relative;
+            z-index: 1;
+            font-weight: 600;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .order-detail-header-info {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 1.25rem 1.5rem;
+            border: none;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .order-detail-header-info::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.15) 0%, transparent 70%);
+            animation: shimmer 3s infinite reverse;
+        }
+
+        .order-detail-header-info h5 {
+            position: relative;
+            z-index: 1;
+            font-weight: 600;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .order-detail-header-delivery {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 1.25rem 1.5rem;
+            border: none;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .order-detail-header-delivery::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.1) 50%, transparent 70%);
+            background-size: 200% 200%;
+            animation: slide 2s infinite;
+        }
+
+        .order-detail-header-delivery h5 {
+            position: relative;
+            z-index: 1;
+            font-weight: 600;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .order-detail-card .card-body {
+            padding: 1.5rem;
+            background: #ffffff;
+        }
+
+        .order-detail-products .card-body {
+            background: linear-gradient(to bottom, #f8f9ff 0%, #ffffff 100%);
+        }
+
+        .order-detail-info .card-body {
+            background: linear-gradient(to bottom, #fff5f8 0%, #ffffff 100%);
+        }
+
+        .order-detail-delivery .card-body {
+            background: linear-gradient(to bottom, #f0f9ff 0%, #ffffff 100%);
+        }
+
+        .order-detail-products .table {
+            margin-bottom: 0;
+        }
+
+        .order-detail-products .table thead th {
+            background: rgba(102, 126, 234, 0.1);
+            color: #667eea;
+            font-weight: 600;
+            border-bottom: 2px solid rgba(102, 126, 234, 0.2);
+            padding: 0.75rem;
+        }
+
+        .order-detail-products .table tbody td {
+            padding: 1rem 0.75rem;
+            vertical-align: middle;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .order-detail-products .table tbody tr:hover {
+            background: rgba(102, 126, 234, 0.05);
+        }
+
+        .order-detail-products .table tfoot {
+            background: rgba(102, 126, 234, 0.08);
+        }
+
+        .order-detail-products .table tfoot th {
+            font-weight: 700;
+            color: #667eea;
+            padding: 1rem 0.75rem;
+        }
+
+        .order-detail-info .card-body dl {
+            margin-bottom: 0;
+        }
+
+        .order-detail-info .card-body dt {
+            color: #f5576c;
+            font-weight: 600;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .order-detail-info .card-body dd {
+            color: #2d1b0e;
+            font-weight: 500;
+            margin-bottom: 0.75rem;
+        }
+
+        .order-detail-info .card-body dd:last-child {
+            margin-bottom: 0;
+        }
+
+        .order-detail-delivery .card-body dl {
+            margin-bottom: 0;
+        }
+
+        .order-detail-delivery .card-body dt {
+            color: #4facfe;
+            font-weight: 600;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .order-detail-delivery .card-body dd {
+            color: #2d1b0e;
+            font-weight: 500;
+            margin-bottom: 0.75rem;
+        }
+
+        .order-detail-delivery .card-body dd:last-child {
+            margin-bottom: 0;
+        }
+
+        @@keyframes shimmer {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        @@keyframes slide {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        @@media (max-width: 768px) {
+            .order-detail-card {
+                margin-bottom: 1.5rem;
+            }
+
+            .order-detail-header-products,
+            .order-detail-header-info,
+            .order-detail-header-delivery {
+                padding: 1rem;
+            }
+
+            .order-detail-header-products h5,
+            .order-detail-header-info h5,
+            .order-detail-header-delivery h5 {
+                font-size: 1rem;
+            }
+        }
+    </style>
+}
+
+@functions {
+    private string GetStatusBadgeClass(int status) => status switch
+    {
+        0 => "bg-danger",              // Đã hủy
+        1 => "bg-warning text-dark",   // Đang xử lý
+        2 => "bg-success",             // Hoàn tất
+        3 => "bg-info text-dark",       // Đang giao
+        4 => "bg-secondary",            // Chờ thanh toán
+        _ => "bg-secondary"
+    };
+}
+

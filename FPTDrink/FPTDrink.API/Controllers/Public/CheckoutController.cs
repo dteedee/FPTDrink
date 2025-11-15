@@ -1,7 +1,9 @@
+using System.Security.Claims;
 using FPTDrink.API.DTOs.Public.Checkout;
 using FPTDrink.API.Extensions;
 using FPTDrink.Core.Interfaces.Repositories;
 using FPTDrink.Core.Interfaces.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
@@ -17,8 +19,9 @@ namespace FPTDrink.API.Controllers.Public
 		private readonly IConfiguration _config;
 		private readonly IEmailService _emailService;
 		private readonly ILogger<CheckoutController> _logger;
+		private readonly ICartMergeService _cartMergeService;
 
-		public CheckoutController(ICheckoutService checkoutService, IPaymentService paymentService, IHoaDonRepository orderRepo, IConfiguration config, IEmailService emailService, ILogger<CheckoutController> logger)
+		public CheckoutController(ICheckoutService checkoutService, IPaymentService paymentService, IHoaDonRepository orderRepo, IConfiguration config, IEmailService emailService, ILogger<CheckoutController> logger, ICartMergeService cartMergeService)
 		{
 			_checkoutService = checkoutService;
 			_paymentService = paymentService;
@@ -26,16 +29,21 @@ namespace FPTDrink.API.Controllers.Public
 			_config = config;
 			_emailService = emailService;
 			_logger = logger;
+			_cartMergeService = cartMergeService;
 		}
 
 		[HttpPost("order")]
+		[Authorize(Policy = "VerifiedCustomer")]
 		[ProducesResponseType(typeof(object), StatusCodes.Status201Created)]
 		[ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
 		public async Task<IActionResult> CreateOrder([FromBody] CreateOrderRequestDto req, CancellationToken ct)
 		{
 			if (!ModelState.IsValid) return ValidationProblem(ModelState);
+			var customerId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+			if (string.IsNullOrWhiteSpace(customerId)) return Forbid();
 			var coreReq = new FPTDrink.Core.Interfaces.Services.CreateOrderRequest
 			{
+				CustomerId = customerId,
 				TenKhachHang = req.TenKhachHang,
 				SoDienThoai = req.SoDienThoai,
 				DiaChi = req.DiaChi,
@@ -44,6 +52,7 @@ namespace FPTDrink.API.Controllers.Public
 				Items = req.Items.Select(i => new FPTDrink.Core.Interfaces.Services.CreateOrderItemRequest { ProductId = i.ProductId, Quantity = i.Quantity }).ToList()
 			};
 			var order = await _checkoutService.CreateOrderAsync(coreReq, ct);
+			await _cartMergeService.ClearAsync(customerId, ct);
 			var persisted = await _orderRepo.GetByIdAsync(order.MaHoaDon, ct);
 			// Only send email to admin when order is created, not to customer
 			_ = Task.Run(async () =>
@@ -66,6 +75,7 @@ namespace FPTDrink.API.Controllers.Public
 		}
 
 		[HttpPost("payment/vnpay")]
+		[Authorize(Policy = "VerifiedCustomer")]
 		[ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
 		[ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
 		[ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]

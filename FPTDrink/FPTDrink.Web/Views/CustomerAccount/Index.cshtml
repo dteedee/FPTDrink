@@ -1,0 +1,448 @@
+@model FPTDrink.Web.ViewModels.CustomerAccountViewModel
+@{
+    ViewData["Title"] = "Tài khoản của tôi";
+}
+
+<section class="customer-account-section py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <div class="account-card shadow-lg">
+                    <div class="account-header">
+                        <h2 class="mb-0"><i class="bx bx-user-circle me-2"></i>Tài khoản của tôi</h2>
+                    </div>
+
+                    <div class="account-body">
+                        @if (TempData["SuccessMessage"] != null)
+                        {
+                            <div class="alert alert-success alert-dismissible fade show rounded-3" role="alert">
+                                <i class="bx bx-check-circle me-2"></i>@TempData["SuccessMessage"]
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Đóng"></button>
+                            </div>
+                        }
+                        @if (TempData["ErrorMessage"] != null)
+                        {
+                            <div class="alert alert-danger alert-dismissible fade show rounded-3" role="alert">
+                                <i class="bx bx-error-circle me-2"></i>@TempData["ErrorMessage"]
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Đóng"></button>
+                            </div>
+                        }
+
+                        <ul class="nav nav-pills nav-justified mb-4" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link active" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="true">
+                                    <i class="bx bx-user me-2"></i>Thông tin cá nhân
+                                </button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="password-tab" data-bs-toggle="tab" data-bs-target="#password" type="button" role="tab" aria-controls="password" aria-selected="false">
+                                    <i class="bx bx-lock-alt me-2"></i>Đổi mật khẩu
+                                </button>
+                            </li>
+                        </ul>
+
+                        <div class="tab-content">
+                            <!-- Tab Thông tin cá nhân -->
+                            <div class="tab-pane fade show active" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+                                <form asp-action="UpdateProfile" method="post" novalidate>
+                                    @Html.AntiForgeryToken()
+                                    
+                                    <div class="row g-4">
+                                        <div class="col-md-6">
+                                            <label class="form-label fw-semibold">
+                                                <i class="bx bx-user me-1"></i>Tên đăng nhập
+                                            </label>
+                                            <div class="input-group">
+                                                <span class="input-group-text bg-light"><i class="bx bx-user-circle"></i></span>
+                                                <input type="text" class="form-control" value="@Model.Profile.TenDangNhap" disabled readonly />
+                                            </div>
+                                            <small class="text-muted">Tên đăng nhập không thể thay đổi</small>
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <label class="form-label fw-semibold">
+                                                <i class="bx bx-envelope me-1"></i>Email
+                                            </label>
+                                            <div class="input-group">
+                                                <span class="input-group-text bg-light"><i class="bx bx-envelope"></i></span>
+                                                <input type="email" class="form-control" value="@Model.Profile.Email" disabled readonly />
+                                            </div>
+                                            @if (Model.Profile.IsEmailVerified)
+                                            {
+                                                <small class="text-success d-flex align-items-center mt-1">
+                                                    <i class="bx bx-check-circle me-1"></i>Đã xác thực email
+                                                </small>
+                                            }
+                                            else
+                                            {
+                                                <small class="text-warning d-flex align-items-center mt-1">
+                                                    <i class="bx bx-x-circle me-1"></i>Chưa xác thực email
+                                                </small>
+                                            }
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <label for="HoTen" class="form-label fw-semibold">
+                                                <i class="bx bx-id-card me-1"></i>Họ tên <span class="text-danger">*</span>
+                                            </label>
+                                            <div class="input-group">
+                                                <span class="input-group-text bg-light"><i class="bx bx-user"></i></span>
+                                                <input name="HoTen" id="HoTen" value="@Model.Profile.HoTen" class="form-control" placeholder="Nhập họ tên của bạn" required />
+                                            </div>
+                                            @if (ViewData.ModelState["HoTen"]?.Errors?.Any() == true)
+                                            {
+                                                <span class="text-danger small d-block mt-1">
+                                                    <i class="bx bx-error-circle me-1"></i>@ViewData.ModelState["HoTen"].Errors.First().ErrorMessage
+                                                </span>
+                                            }
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <label for="SoDienThoai" class="form-label fw-semibold">
+                                                <i class="bx bx-phone me-1"></i>Số điện thoại <span class="text-danger">*</span>
+                                            </label>
+                                            <div class="input-group">
+                                                <span class="input-group-text bg-light"><i class="bx bx-phone"></i></span>
+                                                <input name="SoDienThoai" id="SoDienThoai" value="@Model.Profile.SoDienThoai" class="form-control" placeholder="Nhập số điện thoại" required />
+                                            </div>
+                                            @if (ViewData.ModelState["SoDienThoai"]?.Errors?.Any() == true)
+                                            {
+                                                <span class="text-danger small d-block mt-1">
+                                                    <i class="bx bx-error-circle me-1"></i>@ViewData.ModelState["SoDienThoai"].Errors.First().ErrorMessage
+                                                </span>
+                                            }
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <label for="NgaySinh" class="form-label fw-semibold">
+                                                <i class="bx bx-calendar me-1"></i>Ngày sinh
+                                            </label>
+                                            <div class="input-group">
+                                                <span class="input-group-text bg-light"><i class="bx bx-calendar"></i></span>
+                                                <input name="NgaySinh" id="NgaySinh" type="date" value="@(Model.Profile.NgaySinh?.ToString("yyyy-MM-dd"))" class="form-control" max="@DateTime.Today.AddYears(-15).ToString("yyyy-MM-dd")" />
+                                            </div>
+                                            @if (ViewData.ModelState["NgaySinh"]?.Errors?.Any() == true)
+                                            {
+                                                <span class="text-danger small d-block mt-1">
+                                                    <i class="bx bx-error-circle me-1"></i>@ViewData.ModelState["NgaySinh"].Errors.First().ErrorMessage
+                                                </span>
+                                            }
+                                            <small class="text-muted">Bạn phải trên 15 tuổi để sử dụng dịch vụ</small>
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <label for="GioiTinh" class="form-label fw-semibold">
+                                                <i class="bx bx-male-female me-1"></i>Giới tính
+                                            </label>
+                                            <div class="input-group">
+                                                <span class="input-group-text bg-light"><i class="bx bx-male-female"></i></span>
+                                                <select name="GioiTinh" id="GioiTinh" class="form-select">
+                                                    <option value="">-- Chọn giới tính --</option>
+                                                    <option value="true" selected="@(Model.Profile.GioiTinh == true)">Nam</option>
+                                                    <option value="false" selected="@(Model.Profile.GioiTinh == false)">Nữ</option>
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-12">
+                                            <label for="DiaChi" class="form-label fw-semibold">
+                                                <i class="bx bx-map me-1"></i>Địa chỉ
+                                            </label>
+                                            <div class="input-group">
+                                                <span class="input-group-text bg-light align-items-start pt-3"><i class="bx bx-map"></i></span>
+                                                <textarea name="DiaChi" id="DiaChi" class="form-control" rows="3" placeholder="Nhập địa chỉ của bạn">@Model.Profile.DiaChi</textarea>
+                                            </div>
+                                            @if (ViewData.ModelState["DiaChi"]?.Errors?.Any() == true)
+                                            {
+                                                <span class="text-danger small d-block mt-1">
+                                                    <i class="bx bx-error-circle me-1"></i>@ViewData.ModelState["DiaChi"].Errors.First().ErrorMessage
+                                                </span>
+                                            }
+                                        </div>
+                                    </div>
+
+                                    <div class="mt-4 pt-3 border-top">
+                                        <button type="submit" class="btn btn-coffee btn-lg px-5">
+                                            <i class="bx bx-save me-2"></i>Cập nhật thông tin
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+
+                            <!-- Tab Đổi mật khẩu -->
+                            <div class="tab-pane fade" id="password" role="tabpanel" aria-labelledby="password-tab">
+                                <form asp-action="ChangePassword" method="post" novalidate>
+                                    @Html.AntiForgeryToken()
+                                    
+                                    <div class="row g-4">
+                                        <div class="col-12">
+                                            <label for="CurrentPassword" class="form-label fw-semibold">
+                                                <i class="bx bx-lock me-1"></i>Mật khẩu hiện tại <span class="text-danger">*</span>
+                                            </label>
+                                            <div class="input-group">
+                                                <span class="input-group-text bg-light"><i class="bx bx-lock-alt"></i></span>
+                                                <input name="CurrentPassword" id="CurrentPassword" type="password" class="form-control" placeholder="Nhập mật khẩu hiện tại" autocomplete="current-password" />
+                                                <button class="btn btn-outline-secondary toggle-password" type="button" aria-label="Ẩn hiện mật khẩu">
+                                                    <i class="bx bx-low-vision"></i>
+                                                </button>
+                                            </div>
+                                            @if (ViewData.ModelState["CurrentPassword"]?.Errors?.Any() == true)
+                                            {
+                                                <span class="text-danger small d-block mt-1">
+                                                    <i class="bx bx-error-circle me-1"></i>@ViewData.ModelState["CurrentPassword"].Errors.First().ErrorMessage
+                                                </span>
+                                            }
+                                        </div>
+
+                                        <div class="col-12">
+                                            <label for="NewPassword" class="form-label fw-semibold">
+                                                <i class="bx bx-key me-1"></i>Mật khẩu mới <span class="text-danger">*</span>
+                                            </label>
+                                            <div class="input-group">
+                                                <span class="input-group-text bg-light"><i class="bx bx-lock-alt"></i></span>
+                                                <input name="NewPassword" id="NewPassword" type="password" class="form-control" placeholder="Nhập mật khẩu mới (tối thiểu 6 ký tự)" autocomplete="new-password" />
+                                                <button class="btn btn-outline-secondary toggle-password" type="button" aria-label="Ẩn hiện mật khẩu">
+                                                    <i class="bx bx-low-vision"></i>
+                                                </button>
+                                            </div>
+                                            @if (ViewData.ModelState["NewPassword"]?.Errors?.Any() == true)
+                                            {
+                                                <span class="text-danger small d-block mt-1">
+                                                    <i class="bx bx-error-circle me-1"></i>@ViewData.ModelState["NewPassword"].Errors.First().ErrorMessage
+                                                </span>
+                                            }
+                                            <small class="text-muted d-block mt-1">Mật khẩu phải có ít nhất 6 ký tự</small>
+                                        </div>
+
+                                        <div class="col-12">
+                                            <label for="ConfirmNewPassword" class="form-label fw-semibold">
+                                                <i class="bx bx-check-circle me-1"></i>Xác nhận mật khẩu mới <span class="text-danger">*</span>
+                                            </label>
+                                            <div class="input-group">
+                                                <span class="input-group-text bg-light"><i class="bx bx-lock-alt"></i></span>
+                                                <input name="ConfirmNewPassword" id="ConfirmNewPassword" type="password" class="form-control" placeholder="Nhập lại mật khẩu mới để xác nhận" autocomplete="new-password" />
+                                                <button class="btn btn-outline-secondary toggle-password" type="button" aria-label="Ẩn hiện mật khẩu">
+                                                    <i class="bx bx-low-vision"></i>
+                                                </button>
+                                            </div>
+                                            @if (ViewData.ModelState["ConfirmNewPassword"]?.Errors?.Any() == true)
+                                            {
+                                                <span class="text-danger small d-block mt-1">
+                                                    <i class="bx bx-error-circle me-1"></i>@ViewData.ModelState["ConfirmNewPassword"].Errors.First().ErrorMessage
+                                                </span>
+                                            }
+                                        </div>
+                                    </div>
+
+                                    <div class="mt-4 pt-3 border-top">
+                                        <button type="submit" class="btn btn-coffee btn-lg px-5">
+                                            <i class="bx bx-key me-2"></i>Đổi mật khẩu
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Styles {
+    <style>
+        .customer-account-section {
+            min-height: calc(100vh - 200px);
+            background: linear-gradient(135deg, #f5f0e8 0%, #e8ddd0 100%);
+        }
+
+        .account-card {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid rgba(212, 165, 116, 0.2);
+        }
+
+        .account-header {
+            background: linear-gradient(135deg, #d4a574 0%, #b8935f 100%);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .account-header h2 {
+            color: white;
+            font-weight: 600;
+            font-size: 1.75rem;
+        }
+
+        .account-body {
+            padding: 2.5rem;
+        }
+
+        .nav-pills .nav-link {
+            color: #6c757d;
+            border-radius: 8px;
+            padding: 0.75rem 1.5rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .nav-pills .nav-link:hover {
+            background-color: rgba(212, 165, 116, 0.1);
+            color: #d4a574;
+        }
+
+        .nav-pills .nav-link.active {
+            background-color: #d4a574;
+            color: white;
+        }
+
+        .form-label {
+            color: #495057;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-label .text-danger {
+            font-size: 0.875rem;
+        }
+
+        .input-group-text {
+            background-color: #f8f9fa;
+            border-right: none;
+            color: #6c757d;
+            min-width: 45px;
+            justify-content: center;
+        }
+
+        .form-control,
+        .form-select {
+            border-left: none;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus,
+        .form-select:focus {
+            border-color: #d4a574;
+            box-shadow: 0 0 0 0.2rem rgba(212, 165, 116, 0.25);
+        }
+
+        .input-group:focus-within .input-group-text {
+            border-color: #d4a574;
+            background-color: #fff;
+        }
+
+        .form-control:disabled,
+        .form-control[readonly] {
+            background-color: #f8f9fa;
+            opacity: 0.7;
+        }
+
+        .btn-coffee {
+            background-color: #d4a574;
+            border-color: #d4a574;
+            color: white;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .btn-coffee:hover {
+            background-color: #b8935f;
+            border-color: #b8935f;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(212, 165, 116, 0.3);
+        }
+
+        .toggle-password {
+            border-left: none;
+            cursor: pointer;
+        }
+
+        .toggle-password:hover {
+            background-color: #e9ecef;
+        }
+
+        .alert {
+            border: none;
+            border-radius: 8px;
+        }
+
+        .text-danger {
+            color: #dc3545 !important;
+        }
+
+        .text-success {
+            color: #28a745 !important;
+        }
+
+        .text-warning {
+            color: #ffc107 !important;
+        }
+
+        small.text-muted {
+            font-size: 0.875rem;
+            color: #6c757d;
+        }
+
+        @@media (max-width: 768px) {
+            .account-body {
+                padding: 1.5rem;
+            }
+
+            .nav-pills .nav-link {
+                padding: 0.5rem 1rem;
+                font-size: 0.875rem;
+            }
+        }
+    </style>
+}
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.toggle-password').forEach(button => {
+                button.addEventListener('click', function() {
+                    const input = this.closest('.input-group').querySelector('input[type="password"], input[type="text"]');
+                    const icon = this.querySelector('i');
+                    if (input.type === 'password') {
+                        input.type = 'text';
+                        icon.classList.remove('bx-low-vision');
+                        icon.classList.add('bx-show');
+                    } else {
+                        input.type = 'password';
+                        icon.classList.remove('bx-show');
+                        icon.classList.add('bx-low-vision');
+                    }
+                });
+            });
+
+            const dateInput = document.querySelector('input[type="date"]#NgaySinh');
+            if (dateInput) {
+                const maxDate = new Date();
+                maxDate.setFullYear(maxDate.getFullYear() - 15);
+                dateInput.setAttribute('max', maxDate.toISOString().split('T')[0]);
+            }
+
+            const passwordErrors = document.querySelectorAll('#password .text-danger');
+            const hasPasswordErrors = passwordErrors.length > 0;
+            const urlParams = new URLSearchParams(window.location.search);
+            const fromPasswordChange = urlParams.get('tab') === 'password';
+            
+            if (hasPasswordErrors || fromPasswordChange) {
+                const passwordTab = document.querySelector('#password-tab');
+                if (passwordTab) {
+                    const tab = new bootstrap.Tab(passwordTab);
+                    tab.show();
+                }
+            } else {
+                const profileTab = document.querySelector('#profile-tab');
+                if (profileTab) {
+                    const tab = new bootstrap.Tab(profileTab);
+                    tab.show();
+                }
+            }
+        });
+    </script>
+}

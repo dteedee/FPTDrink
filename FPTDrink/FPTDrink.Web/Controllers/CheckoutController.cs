@@ -1,21 +1,29 @@
 using FPTDrink.Web.Services;
 using FPTDrink.Web.ViewModels;
+using FPTDrink.Web.Extensions;
+using FPTDrink.Web.Helpers;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
+using System.Net.Http;
+using System.Net.Http.Json;
 
 namespace FPTDrink.Web.Controllers
 {
 	public class CheckoutController : Controller
 	{
 		private readonly ApiClient _api;
+		private readonly IHttpClientFactory _httpClientFactory;
 		private const string CartCookie = "cart_id";
 
-		public CheckoutController(ApiClient api)
+		public CheckoutController(ApiClient api, IHttpClientFactory httpClientFactory)
 		{
 			_api = api;
+			_httpClientFactory = httpClientFactory;
 		}
 
 		private string? GetCartId() => Request.Cookies.TryGetValue(CartCookie, out var v) ? v : null;
@@ -30,7 +38,59 @@ namespace FPTDrink.Web.Controllers
 				return RedirectToAction("Index", "ShoppingCart");
 			}
 			ViewBag.Cart = cart;
-			return View(new CheckoutViewModel());
+
+			var model = new CheckoutViewModel();
+
+			// Nếu customer đã đăng nhập, lấy thông tin và pre-fill form
+			if (HttpContext.IsCustomerAuthenticated())
+			{
+				var customerId = HttpContext.GetCustomerId();
+				if (!string.IsNullOrWhiteSpace(customerId))
+				{
+					try
+					{
+						// Lấy token từ cookie để gọi API
+						var token = Request.Cookies["customer_token"];
+						if (!string.IsNullOrWhiteSpace(token))
+						{
+							// Tạo HttpClient với token để gọi API customer profile
+							using var httpClient = new System.Net.Http.HttpClient();
+							httpClient.DefaultRequestHeaders.Authorization = 
+								new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+							
+							var apiBaseUrl = HttpContext.RequestServices
+								.GetRequiredService<IConfiguration>()["ApiBaseUrl"] ?? "http://localhost:5213";
+							httpClient.BaseAddress = new Uri(apiBaseUrl);
+
+							var response = await httpClient.GetAsync("api/public/customer/profile");
+							if (response.IsSuccessStatusCode)
+							{
+								var customerProfile = await response.Content.ReadFromJsonAsync<CustomerProfileDto>(
+									new JsonSerializerOptions 
+									{ 
+										PropertyNameCaseInsensitive = true,
+										PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+									});
+								if (customerProfile != null)
+								{
+									model.TenKhachHang = customerProfile.HoTen ?? string.Empty;
+									model.SoDienThoai = customerProfile.SoDienThoai ?? string.Empty;
+									model.Email = customerProfile.Email ?? string.Empty;
+									model.DiaChi = customerProfile.DiaChi ?? string.Empty;
+								}
+							}
+						}
+					}
+					catch (Exception ex)
+					{
+						// Log lỗi nhưng không block checkout flow
+						var logger = HttpContext.RequestServices.GetRequiredService<ILogger<CheckoutController>>();
+						logger.LogWarning(ex, "Không thể lấy thông tin customer để pre-fill form");
+					}
+				}
+			}
+
+			return View(model);
 		}
 
 		[HttpPost]
@@ -133,7 +193,7 @@ namespace FPTDrink.Web.Controllers
 				}
 			}
 
-			var order = await _api.GetAsync<OrderDetailViewModel>($"api/public/Orders/{orderCode}");
+			var order = await GetOrderByCodeAsync(orderCode);
 			return View(order);
 		}
 
@@ -176,11 +236,28 @@ namespace FPTDrink.Web.Controllers
 			OrderDetailViewModel? order = null;
 			if (!string.IsNullOrWhiteSpace(orderCode))
 			{
-				order = await _api.GetAsync<OrderDetailViewModel>($"api/public/Orders/{orderCode}");
+				order = await GetOrderByCodeAsync(orderCode);
 			}
 
 			ViewBag.Message = message;
 			return View(order);
+		}
+
+		private async Task<OrderDetailViewModel?> GetOrderByCodeAsync(string orderCode)
+		{
+			var httpClient = _httpClientFactory.CreateClient("FPTDrinkApi");
+			var token = HttpContext.Request.Cookies["customer_token"];
+			if (!string.IsNullOrWhiteSpace(token))
+			{
+				httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+			}
+
+			var response = await httpClient.GetAsync($"api/public/Orders/{System.Net.WebUtility.UrlEncode(orderCode)}");
+			if (!response.IsSuccessStatusCode) return null;
+
+			var jsonContent = await response.Content.ReadAsStringAsync();
+			var jsonDoc = JsonDocument.Parse(jsonContent);
+			return OrderMappingHelper.MapFromJson(jsonDoc.RootElement);
 		}
 	}
 }

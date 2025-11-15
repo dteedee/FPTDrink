@@ -1,6 +1,8 @@
 using FPTDrink.API.Extensions;
 using FPTDrink.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
+using FPTDrink.Core.Interfaces.Options;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
@@ -43,12 +45,19 @@ builder.Services
 			ClockSkew = TimeSpan.FromSeconds(30)
 		};
 	});
+builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection("Jwt"));
 builder.Services.AddAuthorization(options =>
 {
 	options.AddPolicy("Admin", p => p.RequireRole("Admin"));
 	options.AddPolicy("Employee", p => p.RequireRole("Employee", "Admin"));
 	options.AddPolicy("ThuNgan", p => p.RequireRole("Thu ngân", "Admin"));
 	options.AddPolicy("KeToan", p => p.RequireRole("Kế toán", "Admin"));
+	options.AddPolicy("Customer", p => p.RequireRole("Customer"));
+	options.AddPolicy("VerifiedCustomer", policy =>
+		policy.RequireAssertion(ctx =>
+			ctx.User.HasClaim(ClaimTypes.Role, "Customer") &&
+			string.Equals(ctx.User.FindFirstValue("isVerified"), "true", StringComparison.OrdinalIgnoreCase) &&
+			string.Equals(ctx.User.FindFirstValue("isActive"), "true", StringComparison.OrdinalIgnoreCase)));
 });
 builder.Services.AddControllers(options =>
 {

@@ -56,7 +56,6 @@ namespace FPTDrink.Infrastructure.Services
 				if (age < 18 || age > 40) throw new InvalidOperationException($"Độ tuổi phải 18-40. Tuổi: {age}");
 			}
 
-			// Không cho phép 2 người có Chức vụ "Quản lý"
 			var quanLy = await _roleRepo.Query().FirstOrDefaultAsync(x => x.TenChucVu == "Quản lý", cancellationToken);
 			if (quanLy != null && model.IdChucVu == quanLy.Id)
 			{

@@ -8,11 +8,18 @@ using System.Net.Http;
 using System;
 using System.IO;
 using Microsoft.Extensions.FileProviders;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.DataProtection;
+using System.Collections.Generic;
+using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllersWithViews();
 builder.Services.Configure<FPTDrink.Web.Extensions.EmailOptions>(builder.Configuration.GetSection("Email"));
 builder.Services.Configure<FPTDrink.Web.Extensions.VnPayOptions>(builder.Configuration.GetSection("VNPay"));
+builder.Services.Configure<FPTDrink.Core.Interfaces.Options.JwtOptions>(builder.Configuration.GetSection("Jwt"));
 builder.Services.AddDbContext<FPTDrink.Infrastructure.Data.FptdrinkContext>(options =>
 	options.UseSqlServer(builder.Configuration.GetConnectionString("MyCnn")));
 builder.Services.AddDistributedMemoryCache();
@@ -22,7 +29,30 @@ builder.Services.AddSession(options =>
 	options.IdleTimeout = TimeSpan.FromMinutes(60);
 	options.Cookie.HttpOnly = true;
 	options.Cookie.IsEssential = true;
+	// Trong development, dùng Lax để tránh lỗi OAuth state
+	// Trong production, có thể cần None nếu dùng cross-domain
+	options.Cookie.SameSite = SameSiteMode.Lax;
+	options.Cookie.SecurePolicy = builder.Environment.IsDevelopment() 
+		? CookieSecurePolicy.None 
+		: CookieSecurePolicy.SameAsRequest;
+	options.Cookie.Path = "/";
 });
+
+// Data Protection - Cần thiết cho OAuth state
+var dataProtectionKeysPath = Path.Combine(builder.Environment.ContentRootPath, "DataProtection-Keys");
+if (!Directory.Exists(dataProtectionKeysPath))
+{
+	Directory.CreateDirectory(dataProtectionKeysPath);
+}
+var dataProtectionBuilder = builder.Services.AddDataProtection()
+	.PersistKeysToFileSystem(new DirectoryInfo(dataProtectionKeysPath))
+	.SetApplicationName("FPTDrink");
+
+// Trong development, không cần encrypt quá mạnh
+if (builder.Environment.IsDevelopment())
+{
+	dataProtectionBuilder.SetDefaultKeyLifetime(TimeSpan.FromDays(90));
+}
 builder.Services.AddFptDrinkInfrastructure(builder.Configuration);
 
 var apiBaseUrl = builder.Configuration.GetValue<string>("ApiBaseUrl");
@@ -39,6 +69,27 @@ builder.Services.AddHttpClient("FPTDrinkApi", client =>
 });
 builder.Services.AddScoped<FPTDrink.Web.Services.ApiClient>();
 builder.Services.AddHttpContextAccessor();
+
+// Authentication configuration
+builder.Services.AddAuthentication(options =>
+{
+	options.DefaultScheme = "Cookies";
+})
+.AddCookie("Cookies", options =>
+{
+	options.Cookie.Name = ".FPTDrink.Auth";
+	options.Cookie.SameSite = SameSiteMode.Lax;
+	options.Cookie.SecurePolicy = builder.Environment.IsDevelopment() 
+		? CookieSecurePolicy.None 
+		: CookieSecurePolicy.SameAsRequest;
+	options.Cookie.HttpOnly = true;
+	options.Cookie.Path = "/";
+	options.ExpireTimeSpan = TimeSpan.FromDays(30);
+	options.SlidingExpiration = true;
+	// Đảm bảo cookie được gửi trong mọi request
+	options.Cookie.IsEssential = true;
+});
+
 var app = builder.Build();
 
 if (!app.Environment.IsDevelopment())
@@ -74,8 +125,10 @@ if (Directory.Exists(uploadsPath))
 }
 
 
-app.UseRouting();
+// Session phải được load TRƯỚC Authentication để OAuth state có thể được lưu
 app.UseSession();
+app.UseRouting();
+app.UseAuthentication();
 app.UseAuthorization();
 app.UseVisitorsTracking();
 

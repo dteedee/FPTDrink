@@ -1,0 +1,357 @@
+@model IReadOnlyList<FPTDrink.Web.Areas.Admin.ViewModels.AdminCustomerListItemViewModel>
+@{
+    ViewData["Title"] = "Khách hàng";
+    var search = ViewBag.Search as string;
+    var topSpenders = ViewBag.TopSpenders as List<FPTDrink.Web.Areas.Admin.ViewModels.AdminCustomerTopSpenderViewModel> ?? new List<FPTDrink.Web.Areas.Admin.ViewModels.AdminCustomerTopSpenderViewModel>();
+}
+
+<div class="admin-page-header">
+    <div class="admin-page-title">
+        <h2>Khách hàng</h2>
+        <p>Quản lý tài khoản khách hàng và thống kê mua hàng.</p>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-lg-12">
+        <div class="card">
+            <div class="card-header bg-coffee text-white">
+                <h5 class="mb-0"><i class="bx bx-trophy me-2"></i>Top 10 Khách hàng mua nhiều nhất</h5>
+            </div>
+            <div class="card-body">
+                @if (topSpenders.Any())
+                {
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>STT</th>
+                                    <th>Khách hàng</th>
+                                    <th>Liên hệ</th>
+                                    <th class="text-center">Số đơn</th>
+                                    <th class="text-end">Tổng tiền</th>
+                                    <th class="text-center">Đơn cuối</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @{
+                                    var topStt = 1;
+                                }
+                                @foreach (var spender in topSpenders)
+                                {
+                                    <tr>
+                                        <td>@(topStt++)</td>
+                                        <td>
+                                            <strong>@spender.CustomerName</strong>
+                                        </td>
+                                        <td>
+                                            <div><i class="bx bx-phone me-1"></i>@spender.Phone</div>
+                                            <div><i class="bx bx-envelope me-1"></i>@spender.Email</div>
+                                        </td>
+                                        <td class="text-center">
+                                            <span class="badge bg-coffee">@spender.TotalOrders đơn</span>
+                                        </td>
+                                        <td class="text-end">
+                                            <strong class="text-coffee">@spender.TotalSpent.ToString("N0") ₫</strong>
+                                        </td>
+                                        <td class="text-center">
+                                            @if (spender.LastOrderDate.HasValue)
+                                            {
+                                                <small class="text-muted">@spender.LastOrderDate.Value.ToString("dd/MM/yyyy")</small>
+                                            }
+                                            else
+                                            {
+                                                <small class="text-muted">-</small>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                else
+                {
+                    <p class="text-muted mb-0">Chưa có dữ liệu thống kê.</p>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<form method="get" class="admin-filter-bar row g-3 mb-4">
+    <div class="col-lg-9">
+        <label class="form-label">Từ khóa tìm kiếm</label>
+        <div class="input-group">
+            <span class="input-group-text"><i class="bx bx-search"></i></span>
+            <input class="form-control" type="text" name="search" value="@search" placeholder="Tên, tài khoản, email, SĐT..." />
+        </div>
+    </div>
+    <div class="col-lg-3 d-flex align-items-end gap-2">
+        <button class="btn btn-coffee admin-pill-button flex-grow-1" type="submit"><i class="bx bx-filter-alt"></i>Lọc danh sách</button>
+        <a asp-action="Index" class="btn btn-coffee-outline admin-pill-button"><i class="bx bx-reset"></i></a>
+    </div>
+</form>
+
+<div class="admin-table-wrapper admin-table-customers">
+    <table class="table table-hover align-middle mb-0">
+        <thead class="table-light">
+            <tr>
+                <th class="stt-column">STT</th>
+                <th class="sortable-header sort-none">Tài khoản</th>
+                <th class="sortable-header sort-none">Khách hàng</th>
+                <th class="sortable-header sort-none">Liên hệ</th>
+                <th class="sortable-header sort-none">Địa chỉ</th>
+                <th class="text-center sortable-header sort-none">Số đơn</th>
+                <th class="text-end sortable-header sort-none">Tổng tiền</th>
+                <th class="text-center sortable-header sort-none">Trạng thái</th>
+                <th class="text-end">Thao tác</th>
+            </tr>
+        </thead>
+        <tbody>
+        @if (!Model.Any())
+        {
+            <tr>
+                <td colspan="9" class="text-center text-muted py-4">Chưa có khách hàng phù hợp.</td>
+            </tr>
+        }
+        else
+        {
+            var stt = 1;
+            foreach (var item in Model)
+            {
+                <tr>
+                    <td class="stt-column">@(stt++)</td>
+                    <td>
+                        <strong>@item.Username</strong>
+                        <div class="small text-muted">@item.Id</div>
+                    </td>
+                    <td>
+                        <div>@item.FullName</div>
+                        <small class="text-muted">
+                            Đăng ký: @item.CreatedDate.ToString("dd/MM/yyyy")
+                            @if (item.LastLoginDate.HasValue)
+                            {
+                                <text><br />Đăng nhập: @item.LastLoginDate.Value.ToString("dd/MM/yyyy")</text>
+                            }
+                        </small>
+                    </td>
+                    <td>
+                        <div><i class="bx bx-phone me-1"></i>@item.Phone</div>
+                        <div><i class="bx bx-envelope me-1"></i>@item.Email</div>
+                        @if (item.IsEmailVerified)
+                        {
+                            <span class="badge bg-success mt-1"><i class="bx bx-check-circle"></i> Đã xác thực</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-warning text-dark mt-1"><i class="bx bx-x-circle"></i> Chưa xác thực</span>
+                        }
+                    </td>
+                    <td>
+                        @if (!string.IsNullOrWhiteSpace(item.Address))
+                        {
+                            <small>@item.Address</small>
+                        }
+                        else
+                        {
+                            <small class="text-muted">-</small>
+                        }
+                    </td>
+                    <td class="text-center">
+                        <span class="badge bg-coffee">@item.TotalOrders</span>
+                    </td>
+                    <td class="text-end">
+                        <strong class="text-coffee">@item.TotalSpent.ToString("N0") ₫</strong>
+                    </td>
+                    <td class="text-center">
+                        <span class="status-badge @(item.IsActive ? "success" : "danger")">
+                            @(item.IsActive ? "Hoạt động" : "Đã khóa")
+                        </span>
+                    </td>
+                    <td class="text-end">
+                        <div class="admin-table-actions justify-content-end">
+                            <form asp-action="ToggleLock" asp-route-id="@item.Id" method="post" class="d-inline js-toggle-lock-form" 
+                                  data-confirm="@(item.IsActive ? "Khóa tài khoản khách hàng này?" : "Mở khóa tài khoản khách hàng này?")"
+                                  data-is-active="@item.IsActive.ToString().ToLower()">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn @(item.IsActive ? "btn-danger" : "btn-success") admin-pill-button btn-sm" 
+                                        title="@(item.IsActive ? "Khóa tài khoản" : "Mở khóa tài khoản")">
+                                    <i class="bx @(item.IsActive ? "bx-lock-alt" : "bx-lock-open-alt")"></i>
+                                    @(item.IsActive ? "Khóa" : "Mở khóa")
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+            }
+        }
+        </tbody>
+    </table>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            function showToast(message, type = 'success') {
+                const toastContainer = document.getElementById('toast-container') || createToastContainer();
+                const toastId = 'toast-' + Date.now();
+                const bgClass = type === 'success' ? 'bg-success' : 'bg-danger';
+                const icon = type === 'success' ? 'bx-check-circle' : 'bx-error-circle';
+                
+                const toastHtml = `
+                    <div id="${toastId}" class="toast align-items-center text-white ${bgClass} border-0" role="alert" aria-live="assertive" aria-atomic="true">
+                        <div class="d-flex">
+                            <div class="toast-body">
+                                <i class="bx ${icon} me-2"></i>${message}
+                            </div>
+                            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                        </div>
+                    </div>
+                `;
+                
+                toastContainer.insertAdjacentHTML('beforeend', toastHtml);
+                const toastElement = document.getElementById(toastId);
+                const toast = new bootstrap.Toast(toastElement, { autohide: true, delay: 3000 });
+                toast.show();
+                
+                toastElement.addEventListener('hidden.bs.toast', function() {
+                    toastElement.remove();
+                });
+            }
+            
+            function createToastContainer() {
+                const container = document.createElement('div');
+                container.id = 'toast-container';
+                container.className = 'toast-container position-fixed top-0 end-0 p-3';
+                container.style.zIndex = '9999';
+                document.body.appendChild(container);
+                return container;
+            }
+
+            let confirmModal = null;
+            let currentForm = null;
+            
+            function getOrCreateConfirmModal() {
+                let modalElement = document.getElementById('confirmToggleLockModal');
+                
+                if (!modalElement) {
+                    const modalHtml = `
+                        <div class="modal fade" id="confirmToggleLockModal" tabindex="-1" aria-labelledby="confirmToggleLockModalLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content">
+                                    <div class="modal-header border-0 pb-0">
+                                        <h5 class="modal-title" id="confirmToggleLockModalLabel">
+                                            <i class="bx bx-question-mark text-warning me-2" style="font-size: 1.5rem;"></i>Xác nhận thao tác
+                                        </h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <p class="mb-0" id="confirmToggleLockMessage"></p>
+                                    </div>
+                                    <div class="modal-footer border-0 pt-0">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                            <i class="bx bx-x me-1"></i>Hủy
+                                        </button>
+                                        <button type="button" class="btn btn-coffee" id="confirmToggleLockBtn">
+                                            <i class="bx bx-check me-1"></i>Đồng ý
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    document.body.insertAdjacentHTML('beforeend', modalHtml);
+                    modalElement = document.getElementById('confirmToggleLockModal');
+                }
+                
+                if (!confirmModal) {
+                    confirmModal = new bootstrap.Modal(modalElement);
+                }
+                
+                return confirmModal;
+            }
+
+            document.querySelectorAll('.js-toggle-lock-form').forEach(form => {
+                form.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    currentForm = this;
+                    
+                    const modal = getOrCreateConfirmModal();
+                    const message = this.dataset.confirm;
+                    document.getElementById('confirmToggleLockMessage').textContent = message;
+                    modal.show();
+                });
+            });
+
+            document.addEventListener('click', async function(e) {
+                if (e.target && (e.target.id === 'confirmToggleLockBtn' || e.target.closest('#confirmToggleLockBtn'))) {
+                    e.preventDefault();
+                    if (!currentForm) return;
+                    
+                    const modal = getOrCreateConfirmModal();
+                    modal.hide();
+                    const form = currentForm;
+                    const formData = new FormData(form);
+                    const button = form.querySelector('button[type="submit"]');
+                    const originalText = button.innerHTML;
+                    const row = form.closest('tr');
+                    const isActive = form.dataset.isActive === 'true';
+                    
+                    try {
+                        button.disabled = true;
+                        button.innerHTML = '<i class="bx bx-loader-alt bx-spin"></i> Đang xử lý...';
+                        
+                        const tokenInput = form.querySelector('input[name="__RequestVerificationToken"]');
+                        const token = tokenInput?.value || form.querySelector('[name="__RequestVerificationToken"]')?.value;
+                        
+                        const headers = {};
+                        if (token) {
+                            headers['RequestVerificationToken'] = token;
+                        }
+                        
+                        const response = await fetch(form.action, {
+                            method: 'POST',
+                            body: formData,
+                            headers: headers,
+                            credentials: 'same-origin'
+                        });
+                        
+                        const result = await response.json();
+                        
+                        if (result.success) {
+                            const newIsActive = result.isActive;
+                            const statusBadge = row.querySelector('.status-badge');
+                            const statusText = newIsActive ? 'Hoạt động' : 'Đã khóa';
+                            const statusClass = newIsActive ? 'success' : 'danger';
+                            
+                            statusBadge.className = `status-badge ${statusClass}`;
+                            statusBadge.textContent = statusText;
+                            
+                            button.className = `btn ${newIsActive ? 'btn-danger' : 'btn-success'} admin-pill-button btn-sm`;
+                            button.innerHTML = `<i class="bx ${newIsActive ? 'bx-lock-alt' : 'bx-lock-open-alt'}"></i>${newIsActive ? 'Khóa' : 'Mở khóa'}`;
+                            button.title = newIsActive ? 'Khóa tài khoản' : 'Mở khóa tài khoản';
+                            
+                            form.dataset.isActive = newIsActive.toString();
+                            form.dataset.confirm = newIsActive ? 'Khóa tài khoản khách hàng này?' : 'Mở khóa tài khoản khách hàng này?';
+                            
+                            showToast(result.message || 'Thao tác thành công!', 'success');
+                        } else {
+                            showToast(result.message || 'Có lỗi xảy ra. Vui lòng thử lại.', 'error');
+                            button.disabled = false;
+                            button.innerHTML = originalText;
+                        }
+                    } catch (error) {
+                        console.error('Error:', error);
+                        showToast('Có lỗi xảy ra. Vui lòng thử lại.', 'error');
+                        button.disabled = false;
+                        button.innerHTML = originalText;
+                    } finally {
+                        currentForm = null;
+                    }
+                }
+            });
+        });
+    </script>
+}
+

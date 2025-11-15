@@ -1,0 +1,122 @@
+@model FPTDrink.Web.ViewModels.VerifyOtpViewModel
+@{
+    ViewData["Title"] = "Xác thực email";
+}
+
+<section class="customer-auth-section py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-5 col-md-7">
+                <div class="auth-card shadow-lg">
+                    <div class="auth-header text-center mb-4">
+                        <div class="otp-icon mb-3">
+                            <i class="bx bx-envelope-open text-coffee" style="font-size: 4rem;"></i>
+                        </div>
+                        <h1 class="h3 fw-bold text-coffee">Xác thực email</h1>
+                        <p class="text-muted mb-0">Chúng tôi đã gửi mã OTP đến email của bạn</p>
+                        <p class="text-muted small mt-2">@Model.Email</p>
+                    </div>
+
+                    <form asp-action="VerifyOtp" method="post" novalidate class="auth-form">
+                        @Html.AntiForgeryToken()
+                        
+                        <input type="hidden" asp-for="Email" />
+
+                        <div class="mb-4">
+                            <label asp-for="Otp" class="form-label fw-semibold text-center d-block">Nhập mã OTP</label>
+                            <div class="otp-input-group">
+                                <input asp-for="Otp" class="form-control form-control-lg text-center otp-input" 
+                                       type="text" maxlength="6" placeholder="000000" 
+                                       style="font-size: 2rem; letter-spacing: 0.5rem; font-weight: bold;" />
+                            </div>
+                            <span class="text-danger small d-block text-center mt-2" asp-validation-for="Otp"></span>
+                        </div>
+
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger rounded-3 py-2 mb-3" role="alert"></div>
+
+                        <button type="submit" class="btn btn-coffee w-100 btn-lg mb-3">
+                            <i class="bx bx-check-circle me-2"></i>Xác thực
+                        </button>
+
+                        <div class="text-center">
+                            <p class="mb-2 text-muted small">
+                                Không nhận được mã? 
+                            </p>
+                            <form asp-action="ResendOtp" method="post" class="d-inline">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="email" value="@Model.Email" />
+                                <button type="submit" class="btn btn-link text-coffee p-0 fw-semibold">
+                                    <i class="bx bx-refresh me-1"></i>Gửi lại mã OTP
+                                </button>
+                            </form>
+                        </div>
+
+                        <div class="text-center mt-4">
+                            <a asp-action="Login" class="text-muted small text-decoration-none">
+                                <i class="bx bx-arrow-back me-1"></i>Quay lại đăng nhập
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Styles {
+    <style>
+        .customer-auth-section {
+            min-height: calc(100vh - 200px);
+            background: linear-gradient(135deg, #f5f0e8 0%, #e8ddd0 100%);
+        }
+
+        .auth-card {
+            background: white;
+            border-radius: 16px;
+            padding: 2.5rem;
+            border: 1px solid rgba(212, 165, 116, 0.2);
+        }
+
+        .otp-icon {
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @@keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .otp-input-group {
+            max-width: 300px;
+            margin: 0 auto;
+        }
+
+        .otp-input {
+            border: 2px solid #d4a574;
+        }
+
+        .otp-input:focus {
+            border-color: #b8935f;
+            box-shadow: 0 0 0 0.2rem rgba(212, 165, 116, 0.25);
+        }
+    </style>
+}
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const otpInput = document.querySelector('.otp-input');
+            if (otpInput) {
+                // Chỉ cho phép nhập số
+                otpInput.addEventListener('input', function(e) {
+                    this.value = this.value.replace(/[^0-9]/g, '');
+                });
+
+                // Tự động focus vào input
+                otpInput.focus();
+            }
+        });
+    </script>
+}
+

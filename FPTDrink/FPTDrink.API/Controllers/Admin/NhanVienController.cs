@@ -110,7 +110,7 @@ namespace FPTDrink.API.Controllers.Admin
 
 		[HttpPost("{id}/reset-password")]
 		[PermissionAuthorize("FPTDrink_ChinhSua", "Quản lý")]
-		public async Task<IActionResult> ResetPassword(string id, [FromBody] ResetPasswordRequest request, CancellationToken ct = default)
+		public async Task<IActionResult> ResetPassword(string id, [FromBody] DTOs.Admin.NhanVien.ResetPasswordRequest request, CancellationToken ct = default)
 		{
 			var ok = await _service.ResetPasswordAsync(id, request.NewPassword, ct);
 			return ok ? Ok(new { success = true }) : NotFound();

@@ -41,6 +41,7 @@ namespace FPTDrink.Infrastructure.Services
 
 			HoaDon order = new HoaDon
 			{
+				IdKhachHang = req.CustomerId,
 				TenKhachHang = req.TenKhachHang,
 				SoDienThoai = req.SoDienThoai,
 				DiaChi = req.DiaChi,

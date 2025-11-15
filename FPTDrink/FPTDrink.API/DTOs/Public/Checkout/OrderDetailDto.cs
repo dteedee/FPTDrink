@@ -6,6 +6,7 @@ namespace FPTDrink.API.DTOs.Public.Checkout
 	public class OrderDetailDto
 	{
 		public string MaHoaDon { get; set; } = string.Empty;
+		public string? IdKhachHang { get; set; }
 		public string TenKhachHang { get; set; } = string.Empty;
 		public string SoDienThoai { get; set; } = string.Empty;
 		public string DiaChi { get; set; } = string.Empty;

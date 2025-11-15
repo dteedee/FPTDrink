@@ -1,0 +1,167 @@
+@model FPTDrink.Web.ViewModels.CustomerRegisterViewModel
+@{
+    ViewData["Title"] = "Đăng ký tài khoản";
+}
+
+<section class="customer-auth-section py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-6 col-md-8">
+                <div class="auth-card shadow-lg">
+                    <div class="auth-header text-center mb-4">
+                        <img src="~/images/logocf.png" alt="FPTDrink Logo" class="auth-logo mb-3" />
+                        <h1 class="h3 fw-bold text-coffee">Đăng ký tài khoản</h1>
+                        <p class="text-muted mb-0">Tạo tài khoản để mua sắm và nhận nhiều ưu đãi</p>
+                    </div>
+
+                    <form asp-action="Register" method="post" novalidate class="auth-form">
+                        @Html.AntiForgeryToken()
+                        
+                        <div class="mb-3">
+                            <label asp-for="HoTen" class="form-label fw-semibold"></label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bx bx-user"></i></span>
+                                <input asp-for="HoTen" class="form-control" placeholder="Nhập họ tên" />
+                            </div>
+                            <span class="text-danger small" asp-validation-for="HoTen"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="TenDangNhap" class="form-label fw-semibold"></label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bx bx-user-circle"></i></span>
+                                <input asp-for="TenDangNhap" class="form-control" placeholder="Nhập tên đăng nhập" autocomplete="username" />
+                            </div>
+                            <span class="text-danger small" asp-validation-for="TenDangNhap"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Email" class="form-label fw-semibold"></label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bx bx-envelope"></i></span>
+                                <input asp-for="Email" class="form-control" type="email" placeholder="Nhập email" autocomplete="email" />
+                            </div>
+                            <span class="text-danger small" asp-validation-for="Email"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="SoDienThoai" class="form-label fw-semibold"></label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bx bx-phone"></i></span>
+                                <input asp-for="SoDienThoai" class="form-control" placeholder="Nhập số điện thoại" autocomplete="tel" />
+                            </div>
+                            <span class="text-danger small" asp-validation-for="SoDienThoai"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="MatKhau" class="form-label fw-semibold"></label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bx bx-lock-alt"></i></span>
+                                <input asp-for="MatKhau" class="form-control" type="password" placeholder="Nhập mật khẩu" autocomplete="new-password" />
+                                <button class="btn btn-outline-secondary toggle-password" type="button" aria-label="Ẩn hiện mật khẩu">
+                                    <i class="bx bx-low-vision"></i>
+                                </button>
+                            </div>
+                            <span class="text-danger small" asp-validation-for="MatKhau"></span>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="ConfirmMatKhau" class="form-label fw-semibold"></label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bx bx-lock-alt"></i></span>
+                                <input asp-for="ConfirmMatKhau" class="form-control" type="password" placeholder="Xác nhận mật khẩu" autocomplete="new-password" />
+                                <button class="btn btn-outline-secondary toggle-password" type="button" aria-label="Ẩn hiện mật khẩu">
+                                    <i class="bx bx-low-vision"></i>
+                                </button>
+                            </div>
+                            <span class="text-danger small" asp-validation-for="ConfirmMatKhau"></span>
+                        </div>
+
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger rounded-3 py-2 mb-3" role="alert"></div>
+
+                        <button type="submit" class="btn btn-coffee w-100 btn-lg mb-3">
+                            <i class="bx bx-user-plus me-2"></i>Đăng ký
+                        </button>
+
+                        <div class="text-center">
+                            <p class="mb-0 text-muted">
+                                Đã có tài khoản? 
+                                <a asp-action="Login" class="text-coffee fw-semibold text-decoration-none">Đăng nhập ngay</a>
+                            </p>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Styles {
+    <style>
+        .customer-auth-section {
+            min-height: calc(100vh - 200px);
+            background: linear-gradient(135deg, #f5f0e8 0%, #e8ddd0 100%);
+        }
+
+        .auth-card {
+            background: white;
+            border-radius: 16px;
+            padding: 2.5rem;
+            border: 1px solid rgba(212, 165, 116, 0.2);
+        }
+
+        .auth-logo {
+            width: 80px;
+            height: auto;
+        }
+
+        .auth-form .input-group-text {
+            background-color: #f8f9fa;
+            border-right: none;
+            color: #6c757d;
+        }
+
+        .auth-form .form-control {
+            border-left: none;
+        }
+
+        .auth-form .form-control:focus {
+            border-color: #d4a574;
+            box-shadow: 0 0 0 0.2rem rgba(212, 165, 116, 0.25);
+        }
+
+        .auth-form .input-group:focus-within .input-group-text {
+            border-color: #d4a574;
+            background-color: #fff;
+        }
+
+        .toggle-password {
+            border-left: none;
+        }
+    </style>
+}
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Toggle password visibility
+            document.querySelectorAll('.toggle-password').forEach(button => {
+                button.addEventListener('click', function() {
+                    const input = this.closest('.input-group').querySelector('input[type="password"], input[type="text"]');
+                    const icon = this.querySelector('i');
+                    if (input.type === 'password') {
+                        input.type = 'text';
+                        icon.classList.remove('bx-low-vision');
+                        icon.classList.add('bx-show');
+                    } else {
+                        input.type = 'password';
+                        icon.classList.remove('bx-show');
+                        icon.classList.add('bx-low-vision');
+                    }
+                });
+            });
+        });
+    </script>
+}
+

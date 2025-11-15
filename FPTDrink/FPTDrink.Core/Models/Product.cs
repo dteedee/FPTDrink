@@ -67,4 +67,8 @@ public partial class Product
     public virtual ProductCategory ProductCategory { get; set; } = null!;
 
     public virtual NhaCungCap Supplier { get; set; } = null!;
+
+    public virtual ICollection<GioHang> GioHangs { get; set; } = new List<GioHang>();
+
+    public virtual ICollection<GioHangTam> GioHangTams { get; set; } = new List<GioHangTam>();
 }

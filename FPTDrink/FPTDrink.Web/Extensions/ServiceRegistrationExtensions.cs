@@ -26,6 +26,9 @@ namespace FPTDrink.Web.Extensions
 			services.AddScoped<IChucVuRepository, ChucVuRepository>();
 			services.AddScoped<IPhanQuyenRepository, PhanQuyenRepository>();
 			services.AddScoped<INhanVienRepository, NhanVienRepository>();
+			services.AddScoped<IKhachHangRepository, KhachHangRepository>();
+			services.AddScoped<IGioHangRepository, GioHangRepository>();
+			services.AddScoped<IGioHangTamRepository, GioHangTamRepository>();
 			services.AddScoped<IHoaDonRepository, HoaDonRepository>();
 			services.AddScoped<IChiTietHoaDonRepository, ChiTietHoaDonRepository>();
 			services.AddScoped<IProductRepository, ProductRepository>();
@@ -53,6 +56,9 @@ namespace FPTDrink.Web.Extensions
 			services.AddScoped<ICheckoutService, CheckoutService>();
 			services.AddScoped<IPaymentService, VnPayService>();
 			services.AddScoped<IEmailService, SmtpEmailService>();
+			services.AddScoped<ICustomerAuthService, CustomerAuthService>();
+			services.AddScoped<ICustomerService, CustomerService>();
+			services.AddScoped<ICartMergeService, CartMergeService>();
 			services.AddSingleton<IVisitorsOnlineTracker, VisitorsOnlineTracker>();
 			services.AddScoped<IVisitorStatsService, VisitorStatsService>();
 

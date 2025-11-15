@@ -6,6 +6,7 @@ namespace FPTDrink.Core.Interfaces.Services
 	{
 		Task<HoaDon?> GetByCodeAsync(string maHoaDon, CancellationToken cancellationToken = default);
 		Task<IReadOnlyList<HoaDon>> GetByNameAndPhoneAsync(string tenKhachHang, string soDienThoai, CancellationToken cancellationToken = default);
+		Task<IReadOnlyList<HoaDon>> GetByCustomerIdAsync(string customerId, CancellationToken cancellationToken = default);
 	}
 }
 

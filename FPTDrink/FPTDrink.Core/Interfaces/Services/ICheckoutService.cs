@@ -10,6 +10,7 @@ namespace FPTDrink.Core.Interfaces.Services
 
 	public class CreateOrderRequest
 	{
+		public string? CustomerId { get; set; }
 		public string TenKhachHang { get; set; } = string.Empty;
 		public string SoDienThoai { get; set; } = string.Empty;
 		public string DiaChi { get; set; } = string.Empty;

@@ -70,6 +70,10 @@ appsettings.Local.json
 appsettings.*.json
 secrets.json
 
+## Data Protection Keys
+DataProtection-Keys/
+**/DataProtection-Keys/
+
 ## Rider / JetBrains
 .idea/
 *.sln.iml
