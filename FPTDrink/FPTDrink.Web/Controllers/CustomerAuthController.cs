@@ -97,11 +97,31 @@ namespace FPTDrink.Web.Controllers
 				else
 				{
 					var errorContent = await response.Content.ReadAsStringAsync(cancellationToken);
-					var errorJson = JsonSerializer.Deserialize<JsonElement>(errorContent, JsonOptions);
-					var errorMessage = errorJson.TryGetProperty("message", out var msgProp) 
-						? msgProp.GetString() 
-						: "Đăng ký thất bại. Vui lòng thử lại.";
-					ModelState.AddModelError(string.Empty, errorMessage ?? "Đăng ký thất bại. Vui lòng thử lại.");
+					string errorMessage = "Đăng ký thất bại. Vui lòng thử lại.";
+					
+					// Try to parse as JSON, if it fails, use the raw content
+					if (!string.IsNullOrWhiteSpace(errorContent))
+					{
+						try
+						{
+							var errorJson = JsonSerializer.Deserialize<JsonElement>(errorContent, JsonOptions);
+							if (errorJson.TryGetProperty("message", out var msgProp))
+							{
+								errorMessage = msgProp.GetString() ?? errorMessage;
+							}
+						}
+						catch (JsonException)
+						{
+							// If not valid JSON, use the raw content (trimmed)
+							errorMessage = errorContent.Trim();
+							if (string.IsNullOrWhiteSpace(errorMessage))
+							{
+								errorMessage = "Đăng ký thất bại. Vui lòng thử lại.";
+							}
+						}
+					}
+					
+					ModelState.AddModelError(string.Empty, errorMessage);
 				}
 			}
 			catch (Exception ex)
@@ -195,11 +215,31 @@ namespace FPTDrink.Web.Controllers
 				else
 				{
 					var errorContent = await response.Content.ReadAsStringAsync(cancellationToken);
-					var errorJson = JsonSerializer.Deserialize<JsonElement>(errorContent, JsonOptions);
-					var errorMessage = errorJson.TryGetProperty("message", out var msgProp)
-						? msgProp.GetString()
-						: "Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin.";
-					ModelState.AddModelError(string.Empty, errorMessage ?? "Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin.");
+					string errorMessage = "Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin.";
+					
+					// Try to parse as JSON, if it fails, use the raw content
+					if (!string.IsNullOrWhiteSpace(errorContent))
+					{
+						try
+						{
+							var errorJson = JsonSerializer.Deserialize<JsonElement>(errorContent, JsonOptions);
+							if (errorJson.TryGetProperty("message", out var msgProp))
+							{
+								errorMessage = msgProp.GetString() ?? errorMessage;
+							}
+						}
+						catch (JsonException)
+						{
+							// If not valid JSON, use the raw content (trimmed)
+							errorMessage = errorContent.Trim();
+							if (string.IsNullOrWhiteSpace(errorMessage))
+							{
+								errorMessage = "Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin.";
+							}
+						}
+					}
+					
+					ModelState.AddModelError(string.Empty, errorMessage);
 				}
 			}
 			catch (Exception ex)
@@ -288,11 +328,31 @@ namespace FPTDrink.Web.Controllers
 				else
 				{
 					var errorContent = await response.Content.ReadAsStringAsync(cancellationToken);
-					var errorJson = JsonSerializer.Deserialize<JsonElement>(errorContent, JsonOptions);
-					var errorMessage = errorJson.TryGetProperty("message", out var msgProp)
-						? msgProp.GetString()
-						: "Mã OTP không đúng. Vui lòng thử lại.";
-					ModelState.AddModelError(string.Empty, errorMessage ?? "Mã OTP không đúng. Vui lòng thử lại.");
+					string errorMessage = "Mã OTP không đúng. Vui lòng thử lại.";
+					
+					// Try to parse as JSON, if it fails, use the raw content
+					if (!string.IsNullOrWhiteSpace(errorContent))
+					{
+						try
+						{
+							var errorJson = JsonSerializer.Deserialize<JsonElement>(errorContent, JsonOptions);
+							if (errorJson.TryGetProperty("message", out var msgProp))
+							{
+								errorMessage = msgProp.GetString() ?? errorMessage;
+							}
+						}
+						catch (JsonException)
+						{
+							// If not valid JSON, use the raw content (trimmed)
+							errorMessage = errorContent.Trim();
+							if (string.IsNullOrWhiteSpace(errorMessage))
+							{
+								errorMessage = "Mã OTP không đúng. Vui lòng thử lại.";
+							}
+						}
+					}
+					
+					ModelState.AddModelError(string.Empty, errorMessage);
 				}
 			}
 			catch (Exception ex)
@@ -325,10 +385,30 @@ namespace FPTDrink.Web.Controllers
 				else
 				{
 					var errorContent = await response.Content.ReadAsStringAsync(cancellationToken);
-					var errorJson = JsonSerializer.Deserialize<JsonElement>(errorContent, JsonOptions);
-					var errorMessage = errorJson.TryGetProperty("message", out var msgProp)
-						? msgProp.GetString()
-						: "Không thể gửi lại mã OTP. Vui lòng thử lại.";
+					string errorMessage = "Không thể gửi lại mã OTP. Vui lòng thử lại.";
+					
+					// Try to parse as JSON, if it fails, use the raw content
+					if (!string.IsNullOrWhiteSpace(errorContent))
+					{
+						try
+						{
+							var errorJson = JsonSerializer.Deserialize<JsonElement>(errorContent, JsonOptions);
+							if (errorJson.TryGetProperty("message", out var msgProp))
+							{
+								errorMessage = msgProp.GetString() ?? errorMessage;
+							}
+						}
+						catch (JsonException)
+						{
+							// If not valid JSON, use the raw content (trimmed)
+							errorMessage = errorContent.Trim();
+							if (string.IsNullOrWhiteSpace(errorMessage))
+							{
+								errorMessage = "Không thể gửi lại mã OTP. Vui lòng thử lại.";
+							}
+						}
+					}
+					
 					TempData["ErrorMessage"] = errorMessage;
 				}
 			}
@@ -370,11 +450,31 @@ namespace FPTDrink.Web.Controllers
 				else
 				{
 					var errorContent = await response.Content.ReadAsStringAsync(cancellationToken);
-					var errorJson = JsonSerializer.Deserialize<JsonElement>(errorContent, JsonOptions);
-					var errorMessage = errorJson.TryGetProperty("message", out var msgProp)
-						? msgProp.GetString()
-						: "Không thể gửi mã OTP. Vui lòng thử lại.";
-					ModelState.AddModelError(string.Empty, errorMessage ?? "Không thể gửi mã OTP. Vui lòng thử lại.");
+					string errorMessage = "Không thể gửi mã OTP. Vui lòng thử lại.";
+					
+					// Try to parse as JSON, if it fails, use the raw content
+					if (!string.IsNullOrWhiteSpace(errorContent))
+					{
+						try
+						{
+							var errorJson = JsonSerializer.Deserialize<JsonElement>(errorContent, JsonOptions);
+							if (errorJson.TryGetProperty("message", out var msgProp))
+							{
+								errorMessage = msgProp.GetString() ?? errorMessage;
+							}
+						}
+						catch (JsonException)
+						{
+							// If not valid JSON, use the raw content (trimmed)
+							errorMessage = errorContent.Trim();
+							if (string.IsNullOrWhiteSpace(errorMessage))
+							{
+								errorMessage = "Không thể gửi mã OTP. Vui lòng thử lại.";
+							}
+						}
+					}
+					
+					ModelState.AddModelError(string.Empty, errorMessage);
 				}
 			}
 			catch (Exception ex)
@@ -421,11 +521,31 @@ namespace FPTDrink.Web.Controllers
 				else
 				{
 					var errorContent = await response.Content.ReadAsStringAsync(cancellationToken);
-					var errorJson = JsonSerializer.Deserialize<JsonElement>(errorContent, JsonOptions);
-					var errorMessage = errorJson.TryGetProperty("message", out var msgProp)
-						? msgProp.GetString()
-						: "Đặt lại mật khẩu thất bại. Vui lòng thử lại.";
-					ModelState.AddModelError(string.Empty, errorMessage ?? "Đặt lại mật khẩu thất bại. Vui lòng thử lại.");
+					string errorMessage = "Đặt lại mật khẩu thất bại. Vui lòng thử lại.";
+					
+					// Try to parse as JSON, if it fails, use the raw content
+					if (!string.IsNullOrWhiteSpace(errorContent))
+					{
+						try
+						{
+							var errorJson = JsonSerializer.Deserialize<JsonElement>(errorContent, JsonOptions);
+							if (errorJson.TryGetProperty("message", out var msgProp))
+							{
+								errorMessage = msgProp.GetString() ?? errorMessage;
+							}
+						}
+						catch (JsonException)
+						{
+							// If not valid JSON, use the raw content (trimmed)
+							errorMessage = errorContent.Trim();
+							if (string.IsNullOrWhiteSpace(errorMessage))
+							{
+								errorMessage = "Đặt lại mật khẩu thất bại. Vui lòng thử lại.";
+							}
+						}
+					}
+					
+					ModelState.AddModelError(string.Empty, errorMessage);
 				}
 			}
 			catch (Exception ex)
